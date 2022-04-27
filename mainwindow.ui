@@ -1,0 +1,826 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>767</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>OpenSprite</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_6">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="checkBox_2">
+        <property name="text">
+         <string>Overlay next sprite</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QScrollArea" name="scrollArea_3">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>190</height>
+         </size>
+        </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents_3">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>385</width>
+           <height>186</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="EditorLabel" name="label_editor">
+            <property name="mouseTracking">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <spacer name="verticalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Pen</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="7" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_7">
+           <property name="text">
+            <string>Show browser grid lines</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_9">
+           <property name="text">
+            <string>Selecting an animation select it's images</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_6">
+           <property name="text">
+            <string>Show editor crosshairs</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_8">
+           <property name="text">
+            <string>Show control tips</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="3">
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="3" column="2">
+            <widget class="QRadioButton" name="radioButton_mc2">
+             <property name="text">
+              <string>Multi-colour 2</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QRadioButton" name="radio_transparent">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Transparent</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QComboBox" name="comboBox_2"/>
+           </item>
+           <item row="2" column="2">
+            <widget class="QRadioButton" name="radioButton_mc1">
+             <property name="text">
+              <string>Multi-colour 1</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QRadioButton" name="radio_sprite_col">
+             <property name="text">
+              <string>Sprite colour</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QComboBox" name="comboBox"/>
+           </item>
+           <item row="2" column="3">
+            <widget class="QComboBox" name="comboBox_3"/>
+           </item>
+           <item row="3" column="3">
+            <widget class="QComboBox" name="comboBox_4"/>
+           </item>
+          </layout>
+         </item>
+         <item row="10" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_10">
+           <property name="text">
+            <string>Show animation values in hex</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_editor_grid_lines">
+           <property name="text">
+            <string>Show editor grid lines</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_3">
+           <property name="text">
+            <string>Show palette as luminace pairs</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_4">
+           <property name="text">
+            <string>Draw sprite overlays</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="3">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_palette">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="checkbox_multicolor">
+        <property name="text">
+         <string>Multi-colour mode</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="1">
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="4" column="3">
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="5" column="0">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="0" colspan="3">
+       <widget class="QScrollArea" name="scrollArea">
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>359</width>
+           <height>303</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_viewer">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item row="1" column="1" rowspan="2">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Quantity</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Image Data : 16000 Bytes</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Animation Data : 32 Bytes</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" rowspan="2">
+       <widget class="QSpinBox" name="spinBox">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="0" rowspan="2" colspan="3">
+       <widget class="QScrollArea" name="scrollArea_2">
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents_2">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>359</width>
+           <height>309</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_animation">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="menuImport_Export">
+     <property name="title">
+      <string>Import/Export</string>
+     </property>
+     <widget class="QMenu" name="menuRaw_RPG">
+      <property name="title">
+       <string>Raw / RPG</string>
+      </property>
+      <addaction name="separator"/>
+      <addaction name="actionImport_Sprite_Data"/>
+      <addaction name="actionExport_Sprite_Data"/>
+     </widget>
+     <widget class="QMenu" name="menuASCII_Text">
+      <property name="title">
+       <string>ASCII Text</string>
+      </property>
+      <addaction name="actionExport_Sprite_Data_asm_listing"/>
+      <addaction name="actionExport_Animation_Data_asm_listing"/>
+      <addaction name="actionExport_Sprite_Attribute_Data_asm_listing"/>
+     </widget>
+     <widget class="QMenu" name="menuSEUCK">
+      <property name="title">
+       <string>SEUCK</string>
+      </property>
+      <addaction name="actionImport_Sprite_Data_2"/>
+      <addaction name="actionExport_Sprite_Data_2"/>
+     </widget>
+     <widget class="QMenu" name="menuBitmap_Image">
+      <property name="title">
+       <string>Bitmap Image</string>
+      </property>
+      <addaction name="actionImport_Sprite_Sheet"/>
+      <addaction name="actionExport_Sprite_Sheet"/>
+      <addaction name="actionExport_Current_Sprite"/>
+     </widget>
+     <widget class="QMenu" name="menuVice_Snapshot">
+      <property name="title">
+       <string>Vice Snapshot</string>
+      </property>
+      <addaction name="actionImport_Sprite_Data_3"/>
+     </widget>
+     <addaction name="separator"/>
+     <addaction name="menuRaw_RPG"/>
+     <addaction name="menuASCII_Text"/>
+     <addaction name="menuSEUCK"/>
+     <addaction name="menuBitmap_Image"/>
+     <addaction name="menuVice_Snapshot"/>
+    </widget>
+    <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave_Project"/>
+    <addaction name="actionSave_Project_as"/>
+    <addaction name="separator"/>
+    <addaction name="menuImport_Export"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionSelect_All"/>
+    <addaction name="separator"/>
+    <addaction name="actionClear"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="actionPaste_Ino"/>
+    <addaction name="separator"/>
+    <addaction name="actionCrop"/>
+    <addaction name="actionReverse_Order"/>
+    <addaction name="actionShakedown"/>
+    <addaction name="separator"/>
+    <addaction name="actionSlide_Up"/>
+    <addaction name="actionSlide_Down"/>
+    <addaction name="actionSlide_Left"/>
+    <addaction name="actionSlide_Right"/>
+    <addaction name="separator"/>
+    <addaction name="actionFlip_Top_to_Bottom"/>
+    <addaction name="actionFlip_Left_to_Right"/>
+    <addaction name="separator"/>
+    <addaction name="actionReflect_Top_to_Bottom"/>
+    <addaction name="actionReflect_Left_to_Right"/>
+    <addaction name="separator"/>
+    <addaction name="actionNegative"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <widget class="QMenu" name="menuPixel_Colour_Swap">
+     <property name="title">
+      <string>Pixel Colour Swap</string>
+     </property>
+     <addaction name="actionSprite_colour_Multi_colour_1"/>
+     <addaction name="actionSprite_colour_Multi_colour_2"/>
+     <addaction name="actionSprite_colour_Transparent"/>
+     <addaction name="actionMulti_colour_1_Multi_colour_2"/>
+     <addaction name="actionMulti_colour_1_Transparent"/>
+     <addaction name="actionMulti_colour_2_Transparent"/>
+    </widget>
+    <addaction name="separator"/>
+    <addaction name="menuPixel_Colour_Swap"/>
+    <addaction name="separator"/>
+    <addaction name="actionZ_Rotator"/>
+   </widget>
+   <widget class="QMenu" name="menuInfo">
+    <property name="title">
+     <string>Info</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuInfo"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionNew">
+   <property name="text">
+    <string>New Project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open Project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave_Project">
+   <property name="text">
+    <string>Save Project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_Project_as">
+   <property name="text">
+    <string>Save Project as</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionImport_Sprite_Data">
+   <property name="text">
+    <string>Import Sprite Data</string>
+   </property>
+  </action>
+  <action name="actionExport_Sprite_Data">
+   <property name="text">
+    <string>Export Sprite Data</string>
+   </property>
+  </action>
+  <action name="actionExport_Sprite_Data_asm_listing">
+   <property name="text">
+    <string>Export Sprite Data  (asm listing)</string>
+   </property>
+  </action>
+  <action name="actionExport_Animation_Data_asm_listing">
+   <property name="text">
+    <string>Export Animation Data (asm listing)</string>
+   </property>
+  </action>
+  <action name="actionExport_Sprite_Attribute_Data_asm_listing">
+   <property name="text">
+    <string>Export Sprite Attribute Data (asm listing)</string>
+   </property>
+  </action>
+  <action name="actionImport_Sprite_Data_2">
+   <property name="text">
+    <string>Import Sprite Data</string>
+   </property>
+  </action>
+  <action name="actionExport_Sprite_Data_2">
+   <property name="text">
+    <string>Export Sprite Data</string>
+   </property>
+  </action>
+  <action name="actionImport_Sprite_Sheet">
+   <property name="text">
+    <string>Import Sprite Sheet</string>
+   </property>
+  </action>
+  <action name="actionExport_Sprite_Sheet">
+   <property name="text">
+    <string>Export Sprite Sheet</string>
+   </property>
+  </action>
+  <action name="actionExport_Current_Sprite">
+   <property name="text">
+    <string>Export Current Sprite</string>
+   </property>
+  </action>
+  <action name="actionImport_Sprite_Data_3">
+   <property name="text">
+    <string>Import Sprite Data</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Z</string>
+   </property>
+  </action>
+  <action name="actionSelect_All">
+   <property name="text">
+    <string>Select All</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="text">
+    <string>Clear</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="text">
+    <string>Cut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="text">
+    <string>Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="text">
+    <string>Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionPaste_Ino">
+   <property name="text">
+    <string>Paste Into</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionCrop">
+   <property name="text">
+    <string>Crop</string>
+   </property>
+  </action>
+  <action name="actionReverse_Order">
+   <property name="text">
+    <string>Reverse Order</string>
+   </property>
+  </action>
+  <action name="actionShakedown">
+   <property name="text">
+    <string>Shakedown</string>
+   </property>
+  </action>
+  <action name="actionSlide_Up">
+   <property name="text">
+    <string>Slide Up</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+  </action>
+  <action name="actionSlide_Down">
+   <property name="text">
+    <string>Slide Down</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionSlide_Left">
+   <property name="text">
+    <string>Slide Left</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionSlide_Right">
+   <property name="text">
+    <string>Slide Right</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionFlip_Top_to_Bottom">
+   <property name="text">
+    <string>Flip Top to Bottom</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionFlip_Left_to_Right">
+   <property name="text">
+    <string>Flip Left to Right</string>
+   </property>
+   <property name="shortcut">
+    <string>G</string>
+   </property>
+  </action>
+  <action name="actionReflect_Top_to_Bottom">
+   <property name="text">
+    <string>Reflect Top to Bottom</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionReflect_Left_to_Right">
+   <property name="text">
+    <string>Reflect Left to Right</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+J</string>
+   </property>
+  </action>
+  <action name="actionNegative">
+   <property name="text">
+    <string>Negative</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionZ_Rotator">
+   <property name="text">
+    <string>Z-Rotator</string>
+   </property>
+  </action>
+  <action name="actionSprite_colour_Multi_colour_1">
+   <property name="text">
+    <string>Sprite colour &lt;&gt; Multi-colour 1</string>
+   </property>
+  </action>
+  <action name="actionSprite_colour_Multi_colour_2">
+   <property name="text">
+    <string>Sprite colour &lt;&gt; Multi-colour 2</string>
+   </property>
+  </action>
+  <action name="actionSprite_colour_Transparent">
+   <property name="text">
+    <string>Sprite colour &lt;&gt; Transparent</string>
+   </property>
+  </action>
+  <action name="actionMulti_colour_1_Multi_colour_2">
+   <property name="text">
+    <string>Multi-colour 1 &lt;&gt; Multi-colour 2</string>
+   </property>
+  </action>
+  <action name="actionMulti_colour_1_Transparent">
+   <property name="text">
+    <string>Multi-colour 1 &lt;&gt; Transparent</string>
+   </property>
+  </action>
+  <action name="actionMulti_colour_2_Transparent">
+   <property name="text">
+    <string>Multi-colour 2 &lt;&gt; Transparent</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>EditorLabel</class>
+   <extends>QLabel</extends>
+   <header>editorlabel.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
