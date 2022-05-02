@@ -6,6 +6,11 @@
 #include <QPainter>
 
 #include <QDebug>
+
+#include "sprite.h"
+
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -31,8 +36,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QList<QColor> col_list;
     QStringList col_names;
+    QList<Sprite> list;
+    QList<QColor> col_list;
 
 };
 #endif // MAINWINDOW_H

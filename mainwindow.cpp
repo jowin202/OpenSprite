@@ -44,16 +44,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     for (int i = 0; i < 16; i++)
     {
-        this->ui->comboBox->addItem(col_names.at(i));
-        this->ui->comboBox->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
-        this->ui->comboBox_2->addItem(col_names.at(i));
-        this->ui->comboBox_2->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
-        this->ui->comboBox_3->addItem(col_names.at(i));
-        this->ui->comboBox_3->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
-        this->ui->comboBox_4->addItem(col_names.at(i));
-        this->ui->comboBox_4->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
+        this->ui->combo_transparent->addItem(col_names.at(i));
+        this->ui->combo_transparent->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
+        this->ui->combo_sprite_col->addItem(col_names.at(i));
+        this->ui->combo_sprite_col->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
+        this->ui->combo_multicol_1->addItem(col_names.at(i));
+        this->ui->combo_multicol_1->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
+        this->ui->combo_multicol_2->addItem(col_names.at(i));
+        this->ui->combo_multicol_2->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
     }
 
+    connect(this->ui->combo_transparent, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_transparent(int)));
+    this->ui->combo_transparent->setCurrentIndex(6);
+    this->ui->combo_sprite_col->setCurrentIndex(5);
 
     this->update_editor();
     this->color_palette();
@@ -109,11 +112,11 @@ void MainWindow::on_checkBox_editor_grid_lines_toggled(bool checked)
 
 void MainWindow::on_checkbox_multicolor_toggled(bool checked)
 {
-    this->ui->label_editor->setmulticol(checked);
+    this->ui->label_editor->set_multicol(checked);
     this->ui->radioButton_mc1->setEnabled(checked);
     this->ui->radioButton_mc2->setEnabled(checked);
-    this->ui->comboBox_3->setEnabled(checked);
-    this->ui->comboBox_4->setEnabled(checked);
+    this->ui->combo_multicol_1->setEnabled(checked);
+    this->ui->combo_multicol_2->setEnabled(checked);
     if (!checked)
     {
         if (this->ui->radioButton_mc1->isChecked() || this->ui->radioButton_mc2->isChecked())

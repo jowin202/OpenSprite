@@ -49,7 +49,7 @@
            <number>0</number>
           </property>
           <item row="0" column="0">
-           <widget class="EditorLabel" name="label_editor">
+           <widget class="Editor" name="label_editor">
             <property name="mouseTracking">
              <bool>true</bool>
             </property>
@@ -94,34 +94,6 @@
          <string>Pen</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="7" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_7">
-           <property name="text">
-            <string>Show browser grid lines</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_9">
-           <property name="text">
-            <string>Selecting an animation select it's images</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_6">
-           <property name="text">
-            <string>Show editor crosshairs</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_8">
-           <property name="text">
-            <string>Show control tips</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0" colspan="3">
           <layout class="QGridLayout" name="gridLayout">
            <item row="3" column="2">
@@ -148,7 +120,7 @@
             </widget>
            </item>
            <item row="1" column="3">
-            <widget class="QComboBox" name="comboBox_2"/>
+            <widget class="QComboBox" name="combo_sprite_col"/>
            </item>
            <item row="2" column="2">
             <widget class="QRadioButton" name="radioButton_mc1">
@@ -165,20 +137,27 @@
             </widget>
            </item>
            <item row="0" column="3">
-            <widget class="QComboBox" name="comboBox"/>
+            <widget class="QComboBox" name="combo_transparent"/>
            </item>
            <item row="2" column="3">
-            <widget class="QComboBox" name="comboBox_3"/>
+            <widget class="QComboBox" name="combo_multicol_1"/>
            </item>
            <item row="3" column="3">
-            <widget class="QComboBox" name="comboBox_4"/>
+            <widget class="QComboBox" name="combo_multicol_2"/>
            </item>
           </layout>
          </item>
-         <item row="10" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_10">
+         <item row="3" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_3">
            <property name="text">
-            <string>Show animation values in hex</string>
+            <string>Show palette as luminace pairs</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_8">
+           <property name="text">
+            <string>Show control tips</string>
            </property>
           </widget>
          </item>
@@ -192,10 +171,17 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_3">
+         <item row="10" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_10">
            <property name="text">
-            <string>Show palette as luminace pairs</string>
+            <string>Show animation values in hex</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_7">
+           <property name="text">
+            <string>Show browser grid lines</string>
            </property>
           </widget>
          </item>
@@ -242,6 +228,20 @@
             </spacer>
            </item>
           </layout>
+         </item>
+         <item row="9" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_9">
+           <property name="text">
+            <string>Selecting an animation select it's images</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_6">
+           <property name="text">
+            <string>Show editor crosshairs</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -816,9 +816,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>EditorLabel</class>
+   <class>Editor</class>
    <extends>QLabel</extends>
-   <header>editorlabel.h</header>
+   <header>editor.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
