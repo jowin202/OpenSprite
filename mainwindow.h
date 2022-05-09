@@ -5,6 +5,8 @@
 #include <QImage>
 #include <QPainter>
 
+#include <QMouseEvent>
+#include <QWheelEvent>
 #include <QDebug>
 
 #include "sprite.h"
@@ -22,17 +24,33 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void keyPressEvent(QKeyEvent *ev);
+    void keyReleaseEvent(QKeyEvent *ev);
+
 
 public slots:
     void update_editor();
     void color_palette();
     QIcon createIconFromColor(QColor col);
+    void show_current_cell(int x, int y);
 
 private slots:
     void on_checkBox_editor_grid_lines_toggled(bool checked);
 
     void on_checkbox_multicolor_toggled(bool checked);
 
+
+    void on_checkBox_expand_x_toggled(bool checked);
+
+    void on_checkBox_expand_y_toggled(bool checked);
+
+    void on_radio_transparent_toggled(bool checked);
+
+    void on_radio_sprite_col_toggled(bool checked);
+
+    void on_radioButton_mc1_toggled(bool checked);
+
+    void on_radioButton_mc2_toggled(bool checked);
 
 private:
     Ui::MainWindow *ui;

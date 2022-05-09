@@ -6,7 +6,12 @@
 #include <QDebug>
 #include <QPoint>
 #include <QMouseEvent>
+#include <QWheelEvent>
 #include <QPainter>
+
+#include <QDebug>
+#include <iostream>
+#include "sprite.h"
 
 class Editor: public QLabel
 {
@@ -17,6 +22,21 @@ public:
     void mouseMoveEvent(QMouseEvent *ev);
     void mousePressEvent(QMouseEvent *ev);
     void mouseReleaseEvent(QMouseEvent *ev);
+    void wheelEvent(QWheelEvent *ev);
+    void keyPressEvent(QKeyEvent *ev);
+    void keyReleaseEvent(QKeyEvent *ev);
+
+    void update_multiplicator()
+    {
+        if (this->expand_y)
+            this->multiplikator_y = 2*multiplikator;
+        else this->multiplikator_y = multiplikator;
+
+        if (this->expand_x)
+            this->multiplikator_x = 2*multiplikator;
+        else this->multiplikator_x = multiplikator;
+    }
+
 
     void set_multicol(bool multicol){
         this->multicol = multicol;
@@ -28,10 +48,12 @@ public:
     }
     void set_expand_x(bool expand_x){
         this->expand_x = expand_x;
+        this->update_multiplicator();
         this->updateView();
     }
     void set_expand_y(bool expand_y){
         this->expand_y = expand_y;
+        this->update_multiplicator();
         this->updateView();
     }
     void setgridlines(bool gridlines){
@@ -39,6 +61,36 @@ public:
         this->updateView();
     }
 
+    char get_bit(int x, int y)
+    {
+        if (this->multicol)
+        {
+
+        }
+        else
+        {
+            char val = this->sprite->sprite_data[3*y + x/8];
+            int pos = x%8;
+            return (val&(0x01 << (7-pos))) >> (7-pos);
+        }
+        return 0;
+    }
+
+    void set_bit(int x, int y, bool value)
+    {
+        if (this->multicol)
+        {
+
+        }
+        else
+        {
+            int pos = x%8;
+            if (value)
+                this->sprite->sprite_data[3*y + x/8] |= (0x01 << (7-pos));
+            else
+                this->sprite->sprite_data[3*y + x/8] &= ~(0x01 << (7-pos));
+        }
+    }
     void updateView();
 
 signals:
@@ -55,7 +107,13 @@ public slots:
         this->sprite_color = color;
         this->updateView();
     }
+    void set_sprite(Sprite *sprite)
+    {
+        this->sprite = sprite;
+    }
 
+signals:
+    void mouse_updated_cell_updated(int,int);
 private:
     QPoint curr_pos;
     bool multicol = true;
@@ -69,6 +127,14 @@ private:
 
     int transparent_color = 6;
     int sprite_color = 5;
+    int multiplikator = 1;
+    int multiplikator_x = 1;
+    int multiplikator_y = 1;
+    bool control_pressed = false;
+
+    bool left_button_pressed = false;
+
+    Sprite *sprite = 0;
 };
 
 #endif // EDITOR_H

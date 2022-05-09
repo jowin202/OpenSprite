@@ -24,36 +24,86 @@ Editor::Editor(QWidget *parent) : QLabel(parent)
 
 void Editor::mouseMoveEvent(QMouseEvent *ev)
 {
-    if (ev->pos().x() > 192 || ev->pos().x() < 0)
+    if (ev->pos().x() > this->pixmap()->width() || ev->pos().x() < 0)
         return;
-    if (ev->pos().y() > 168 || ev->pos().y() < 0)
+    if (ev->pos().y() > this->pixmap()->height() || ev->pos().y() < 0)
         return;
+
+
 
     if (this->multicol)
     {
-        this->curr_pos.setX(ev->pos().x()/16);
-        this->curr_pos.setY(ev->pos().y()/8);
+        this->curr_pos.setX(ev->pos().x()/(multiplikator_x*16));
+        this->curr_pos.setY(ev->pos().y()/(multiplikator_y*8));
     }
     else
     {
-        this->curr_pos.setX(ev->pos().x()/32);
-        this->curr_pos.setY(ev->pos().y()/8);
+        this->curr_pos.setX(ev->pos().x()/(multiplikator_x*8));
+        this->curr_pos.setY(ev->pos().y()/(multiplikator_y*8));
+
+        if (this->left_button_pressed)
+        {
+            this->set_bit(this->curr_pos.x(), this->curr_pos.y(), true);
+            this->updateView();
+        }
+
     }
+    emit mouse_updated_cell_updated(this->curr_pos.x(), this->curr_pos.y());
 }
 
 void Editor::mousePressEvent(QMouseEvent *ev)
 {
-
+    this->left_button_pressed = true;
+    if (ev->button() == Qt::LeftButton)
+    {
+        this->set_bit(curr_pos.x(), curr_pos.y(), true);
+    }
+    else if (ev->button() == Qt::RightButton)
+    {
+        this->set_bit(curr_pos.x(), curr_pos.y(), false);
+    }
+        this->updateView();
 }
 
 void Editor::mouseReleaseEvent(QMouseEvent *ev)
 {
+    if (ev->button() == Qt::LeftButton)
+        this->left_button_pressed = false;
+}
 
+void Editor::wheelEvent(QWheelEvent *ev)
+{
+    if (this->control_pressed == false)
+        return;
+
+    if (ev->delta() > 0 && this->multiplikator < 5)
+    {
+        this->multiplikator++;
+    }
+    else if (ev->delta() < 0 && this->multiplikator > 1)
+    {
+        this->multiplikator--;
+    }
+    this->multiplikator = this->multiplikator;
+    this->update_multiplicator();
+    this->updateView();
+}
+
+void Editor::keyPressEvent(QKeyEvent *ev)
+{
+    if (ev->key() == Qt::Key_Control)
+        this->control_pressed = true;
+}
+
+void Editor::keyReleaseEvent(QKeyEvent *ev)
+{
+    if (ev->key() == Qt::Key_Control)
+        this->control_pressed = false;
 }
 
 void Editor::updateView()
 {
-    QImage img(192,168,QImage::Format_RGB32);
+    QImage img(192*multiplikator_x,168*multiplikator_y,QImage::Format_RGB32);
     QPainter painter;
     painter.begin(&img);
     painter.fillRect(0,0,img.width(),img.height(), col_list.at(this->transparent_color));
@@ -63,18 +113,40 @@ void Editor::updateView()
         {
             for (int i = 0; i < 12; i++)
             {
-                painter.drawLine(7+16*i,0,7+16*i,img.height());
+                painter.drawLine(multiplikator_x*(7+16*i),0,multiplikator_x*(7+16*i),img.height());
             }
         }
         for (int i = 1; i < 12; i++)
         {
-            painter.drawLine(-1+16*i,0,-1+16*i,img.height());
+            painter.drawLine(multiplikator_x*(-1+16*i),0,multiplikator_x*(-1+16*i),img.height());
         }
         for (int j = 1; j < 21; j++)
         {
-            painter.drawLine(0,-1+8*j,img.width(), -1+8*j);
+            painter.drawLine(0,-1+multiplikator_y*8*j,img.width(), -1+multiplikator_y*8*j);
         }
     }
+
+    if (this->multicol)
+    {
+
+    }
+    else
+    {
+        qDebug() << "test";
+        for (int y = 0; y < 21; y++)
+        {
+            for (int x = 0; x < 24; x++)
+            {
+                if (get_bit(x,y) == 1)
+                {
+                    int h = this->pixmap()->height()/21;
+                    int w = this->pixmap()->width()/24;
+                    painter.fillRect(x*w,y*h,w,h,this->col_list.at(this->sprite_color));
+                }
+            }
+        }
+    }
+
     painter.end();
     this->setPixmap(QPixmap::fromImage(img));
 }

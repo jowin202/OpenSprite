@@ -7,6 +7,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    Sprite *sprite = new Sprite;
+    this->ui->label_editor->set_sprite(sprite);
+
 
     col_list << QColor(0,0,0);
     col_list << QColor(255,255,255);
@@ -55,9 +58,10 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     connect(this->ui->combo_transparent, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_transparent(int)));
-    this->ui->combo_transparent->setCurrentIndex(6);
+    connect(this->ui->combo_sprite_col, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_sprite_color(int))); this->ui->combo_transparent->setCurrentIndex(6);
     this->ui->combo_sprite_col->setCurrentIndex(5);
 
+    connect(this->ui->label_editor, SIGNAL(mouse_updated_cell_updated(int,int)), this, SLOT(show_current_cell(int,int)));
     this->update_editor();
     this->color_palette();
 }
@@ -66,6 +70,17 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::keyPressEvent(QKeyEvent *ev)
+{
+    this->ui->label_editor->keyPressEvent(ev);
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *ev)
+{
+    this->ui->label_editor->keyReleaseEvent(ev);
+}
+
 
 void MainWindow::update_editor()
 {
@@ -104,6 +119,11 @@ QIcon MainWindow::createIconFromColor(QColor col)
     return QIcon(QPixmap::fromImage(img));
 }
 
+void MainWindow::show_current_cell(int x, int y)
+{
+    this->ui->statusbar->showMessage(QString("Current cell: (%1,%2)").arg(x).arg(y));
+}
+
 
 void MainWindow::on_checkBox_editor_grid_lines_toggled(bool checked)
 {
@@ -123,4 +143,34 @@ void MainWindow::on_checkbox_multicolor_toggled(bool checked)
             this->ui->radio_transparent->setChecked(true);
     }
     this->update_editor();
+}
+
+void MainWindow::on_checkBox_expand_x_toggled(bool checked)
+{
+    this->ui->label_editor->set_expand_x(checked);
+}
+
+void MainWindow::on_checkBox_expand_y_toggled(bool checked)
+{
+    this->ui->label_editor->set_expand_y(checked);
+}
+
+void MainWindow::on_radio_transparent_toggled(bool checked)
+{
+    qDebug() << "transparent: " << checked;
+}
+
+void MainWindow::on_radio_sprite_col_toggled(bool checked)
+{
+    qDebug() << "col: " << checked;
+}
+
+void MainWindow::on_radioButton_mc1_toggled(bool checked)
+{
+    qDebug() << "mc1: " << checked;
+}
+
+void MainWindow::on_radioButton_mc2_toggled(bool checked)
+{
+    qDebug() << "mc2: " << checked;
 }
