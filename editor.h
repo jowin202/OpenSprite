@@ -22,9 +22,8 @@ public:
     void mouseMoveEvent(QMouseEvent *ev);
     void mousePressEvent(QMouseEvent *ev);
     void mouseReleaseEvent(QMouseEvent *ev);
-    void wheelEvent(QWheelEvent *ev);
-    void keyPressEvent(QKeyEvent *ev);
-    void keyReleaseEvent(QKeyEvent *ev);
+
+    enum {TRANSPARENT, COLOR, MC1, MC2 };
 
     void update_multiplicator()
     {
@@ -107,10 +106,31 @@ public slots:
         this->sprite_color = color;
         this->updateView();
     }
+    void set_mc1(int mc1)
+    {
+        this->mc1 = mc1;
+        this->updateView();
+    }
+    void set_mc2(int mc2)
+    {
+        this->mc2 = mc2;
+        this->updateView();
+    }
     void set_sprite(Sprite *sprite)
     {
         this->sprite = sprite;
     }
+    void set_multiplicator(int m)
+    {
+        this->multiplikator = m;
+        this->update_multiplicator();
+        this->updateView();
+    }
+    void set_right_button(int v)
+    {this->right_button = v;}
+    void set_left_button(int v)
+    {this->left_button = v;}
+
 
 signals:
     void mouse_updated_cell_updated(int,int);
@@ -127,12 +147,17 @@ private:
 
     int transparent_color = 6;
     int sprite_color = 5;
+    int mc1 = 2;
+    int mc2 = 3;
     int multiplikator = 1;
     int multiplikator_x = 1;
     int multiplikator_y = 1;
-    bool control_pressed = false;
+
+    int left_button = COLOR;
+    int right_button = TRANSPARENT;
 
     bool left_button_pressed = false;
+    bool right_button_pressed = false;
 
     Sprite *sprite = 0;
 };

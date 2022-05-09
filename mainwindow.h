@@ -26,6 +26,8 @@ public:
     ~MainWindow();
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
+    void wheelEvent(QWheelEvent *ev);
+
 
 
 public slots:
@@ -44,19 +46,29 @@ private slots:
 
     void on_checkBox_expand_y_toggled(bool checked);
 
-    void on_radio_transparent_toggled(bool checked);
 
-    void on_radio_sprite_col_toggled(bool checked);
+    void on_combo_zoom_currentIndexChanged(int index);
 
-    void on_radioButton_mc1_toggled(bool checked);
+    void on_actionZoom_In_triggered();
 
-    void on_radioButton_mc2_toggled(bool checked);
+    void on_actionZoom_Out_triggered();
+
+    void on_radio_transparent_left_toggled(bool checked);
+    void on_radio_sprite_left_toggled(bool checked);
+    void on_radio_mc1_left_toggled(bool checked);
+    void on_radio_mc2_left_toggled(bool checked);
+
+    void on_radio_transparent_right_toggled(bool checked);
+    void on_radio_sprite_right_toggled(bool checked);
+    void on_radio_mc1_right_toggled(bool checked);
+    void on_radio_mc2_right_toggled(bool checked);
 
 private:
     Ui::MainWindow *ui;
     QStringList col_names;
     QList<Sprite> list;
     QList<QColor> col_list;
+    bool control_pressed = false;
 
 };
 #endif // MAINWINDOW_H

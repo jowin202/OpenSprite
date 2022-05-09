@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QButtonGroup>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -10,6 +12,18 @@ MainWindow::MainWindow(QWidget *parent)
     Sprite *sprite = new Sprite;
     this->ui->label_editor->set_sprite(sprite);
 
+
+    QButtonGroup *group1 = new QButtonGroup;
+    group1->addButton(this->ui->radio_transparent_left);
+    group1->addButton(this->ui->radio_sprite_left);
+    group1->addButton(this->ui->radio_mc1_left);
+    group1->addButton(this->ui->radio_mc2_left);
+    QButtonGroup *group2 = new QButtonGroup;
+    group2->addButton(this->ui->radio_transparent_right);
+    group2->addButton(this->ui->radio_sprite_right);
+    group2->addButton(this->ui->radio_mc1_right);
+    group2->addButton(this->ui->radio_mc2_right);
+    this->ui->radio_transparent_right->setChecked(true);
 
     col_list << QColor(0,0,0);
     col_list << QColor(255,255,255);
@@ -57,9 +71,14 @@ MainWindow::MainWindow(QWidget *parent)
         this->ui->combo_multicol_2->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
     }
 
-    connect(this->ui->combo_transparent, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_transparent(int)));
-    connect(this->ui->combo_sprite_col, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_sprite_color(int))); this->ui->combo_transparent->setCurrentIndex(6);
+    this->ui->combo_transparent->setCurrentIndex(6);
     this->ui->combo_sprite_col->setCurrentIndex(5);
+    this->ui->combo_multicol_1->setCurrentIndex(2);
+    this->ui->combo_multicol_2->setCurrentIndex(3);
+    connect(this->ui->combo_transparent, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_transparent(int)));
+    connect(this->ui->combo_sprite_col, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_sprite_color(int)));
+    connect(this->ui->combo_multicol_1, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc1(int)));
+    connect(this->ui->combo_multicol_1, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc2(int)));
 
     connect(this->ui->label_editor, SIGNAL(mouse_updated_cell_updated(int,int)), this, SLOT(show_current_cell(int,int)));
     this->update_editor();
@@ -73,12 +92,25 @@ MainWindow::~MainWindow()
 
 void MainWindow::keyPressEvent(QKeyEvent *ev)
 {
-    this->ui->label_editor->keyPressEvent(ev);
+    if (ev->key() == Qt::Key_Control)
+        this->control_pressed = true;
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *ev)
 {
-    this->ui->label_editor->keyReleaseEvent(ev);
+    if (ev->key() == Qt::Key_Control)
+        this->control_pressed = false;
+}
+
+void MainWindow::wheelEvent(QWheelEvent *ev)
+{
+    if (control_pressed)
+    {
+        if (ev->delta() > 10)
+            this->on_actionZoom_In_triggered();
+        else if (ev->delta() < -10)
+            this->on_actionZoom_Out_triggered();
+    }
 }
 
 
@@ -133,14 +165,18 @@ void MainWindow::on_checkBox_editor_grid_lines_toggled(bool checked)
 void MainWindow::on_checkbox_multicolor_toggled(bool checked)
 {
     this->ui->label_editor->set_multicol(checked);
-    this->ui->radioButton_mc1->setEnabled(checked);
-    this->ui->radioButton_mc2->setEnabled(checked);
+    this->ui->radio_mc1_left->setEnabled(checked);
+    this->ui->radio_mc2_left->setEnabled(checked);
+    this->ui->radio_mc1_right->setEnabled(checked);
+    this->ui->radio_mc2_right->setEnabled(checked);
     this->ui->combo_multicol_1->setEnabled(checked);
     this->ui->combo_multicol_2->setEnabled(checked);
     if (!checked)
     {
-        if (this->ui->radioButton_mc1->isChecked() || this->ui->radioButton_mc2->isChecked())
-            this->ui->radio_transparent->setChecked(true);
+        if (this->ui->radio_mc1_left->isChecked() || this->ui->radio_mc2_left->isChecked())
+            this->ui->radio_sprite_left->setChecked(true);
+        if (this->ui->radio_mc1_right->isChecked() || this->ui->radio_mc2_right->isChecked())
+            this->ui->radio_transparent_right->setChecked(true);
     }
     this->update_editor();
 }
@@ -155,22 +191,70 @@ void MainWindow::on_checkBox_expand_y_toggled(bool checked)
     this->ui->label_editor->set_expand_y(checked);
 }
 
-void MainWindow::on_radio_transparent_toggled(bool checked)
+
+void MainWindow::on_combo_zoom_currentIndexChanged(int index)
 {
-    qDebug() << "transparent: " << checked;
+    this->ui->label_editor->set_multiplicator(index+1);
 }
 
-void MainWindow::on_radio_sprite_col_toggled(bool checked)
+void MainWindow::on_actionZoom_In_triggered()
 {
-    qDebug() << "col: " << checked;
+    if (this->ui->combo_zoom->currentIndex() == 4)
+        return;
+    this->ui->combo_zoom->setCurrentIndex(this->ui->combo_zoom->currentIndex()+1);
 }
 
-void MainWindow::on_radioButton_mc1_toggled(bool checked)
+void MainWindow::on_actionZoom_Out_triggered()
 {
-    qDebug() << "mc1: " << checked;
+    if (this->ui->combo_zoom->currentIndex() == 0)
+        return;
+    this->ui->combo_zoom->setCurrentIndex(this->ui->combo_zoom->currentIndex()-1);
 }
 
-void MainWindow::on_radioButton_mc2_toggled(bool checked)
+void MainWindow::on_radio_transparent_left_toggled(bool checked)
 {
-    qDebug() << "mc2: " << checked;
+    if (checked)
+        this->ui->label_editor->set_left_button(Editor::TRANSPARENT);
+}
+
+void MainWindow::on_radio_sprite_left_toggled(bool checked)
+{
+    if (checked)
+        this->ui->label_editor->set_left_button(Editor::COLOR);
+}
+
+void MainWindow::on_radio_mc1_left_toggled(bool checked)
+{
+    if (checked)
+        this->ui->label_editor->set_left_button(Editor::MC1);
+}
+
+void MainWindow::on_radio_mc2_left_toggled(bool checked)
+{
+    if (checked)
+        this->ui->label_editor->set_left_button(Editor::MC2);
+}
+
+void MainWindow::on_radio_transparent_right_toggled(bool checked)
+{
+    if (checked)
+        this->ui->label_editor->set_right_button(Editor::TRANSPARENT);
+}
+
+void MainWindow::on_radio_sprite_right_toggled(bool checked)
+{
+    if (checked)
+        this->ui->label_editor->set_right_button(Editor::COLOR);
+}
+
+void MainWindow::on_radio_mc1_right_toggled(bool checked)
+{
+    if (checked)
+        this->ui->label_editor->set_right_button(Editor::MC1);
+}
+
+void MainWindow::on_radio_mc2_right_toggled(bool checked)
+{
+    if (checked)
+        this->ui->label_editor->set_right_button(Editor::MC2);
 }

@@ -43,7 +43,12 @@ void Editor::mouseMoveEvent(QMouseEvent *ev)
 
         if (this->left_button_pressed)
         {
-            this->set_bit(this->curr_pos.x(), this->curr_pos.y(), true);
+            this->set_bit(this->curr_pos.x(), this->curr_pos.y(), left_button == COLOR);
+            this->updateView();
+        }
+        else if (this->right_button_pressed)
+        {
+            this->set_bit(this->curr_pos.x(), this->curr_pos.y(), right_button == COLOR);
             this->updateView();
         }
 
@@ -53,14 +58,15 @@ void Editor::mouseMoveEvent(QMouseEvent *ev)
 
 void Editor::mousePressEvent(QMouseEvent *ev)
 {
-    this->left_button_pressed = true;
     if (ev->button() == Qt::LeftButton)
     {
-        this->set_bit(curr_pos.x(), curr_pos.y(), true);
+        this->left_button_pressed = true;
+        this->set_bit(curr_pos.x(), curr_pos.y(), left_button == COLOR);
     }
     else if (ev->button() == Qt::RightButton)
     {
-        this->set_bit(curr_pos.x(), curr_pos.y(), false);
+        this->right_button_pressed = true;
+        this->set_bit(curr_pos.x(), curr_pos.y(), right_button == COLOR);
     }
         this->updateView();
 }
@@ -69,37 +75,11 @@ void Editor::mouseReleaseEvent(QMouseEvent *ev)
 {
     if (ev->button() == Qt::LeftButton)
         this->left_button_pressed = false;
+    if (ev->button() == Qt::RightButton)
+        this->right_button_pressed = false;
 }
 
-void Editor::wheelEvent(QWheelEvent *ev)
-{
-    if (this->control_pressed == false)
-        return;
 
-    if (ev->delta() > 0 && this->multiplikator < 5)
-    {
-        this->multiplikator++;
-    }
-    else if (ev->delta() < 0 && this->multiplikator > 1)
-    {
-        this->multiplikator--;
-    }
-    this->multiplikator = this->multiplikator;
-    this->update_multiplicator();
-    this->updateView();
-}
-
-void Editor::keyPressEvent(QKeyEvent *ev)
-{
-    if (ev->key() == Qt::Key_Control)
-        this->control_pressed = true;
-}
-
-void Editor::keyReleaseEvent(QKeyEvent *ev)
-{
-    if (ev->key() == Qt::Key_Control)
-        this->control_pressed = false;
-}
 
 void Editor::updateView()
 {
@@ -109,6 +89,7 @@ void Editor::updateView()
     painter.fillRect(0,0,img.width(),img.height(), col_list.at(this->transparent_color));
     if (this->gridlines)
     {
+        /*
         if (!this->multicol)
         {
             for (int i = 0; i < 12; i++)
@@ -124,6 +105,18 @@ void Editor::updateView()
         {
             painter.drawLine(0,-1+multiplikator_y*8*j,img.width(), -1+multiplikator_y*8*j);
         }
+        */
+
+
+        for (int i = 1; i < (this->multicol ? 12 : 24); i++)
+        {
+            painter.drawLine(img.width()/(this->multicol ? 12.0 : 24.) * i,0,img.width()/(this->multicol ? 12.0 : 24.) * i, img.height());
+        }
+        for (int j = 1; j < 21; j++)
+        {
+            painter.drawLine(0,img.height()/21.0*j,img.width(), img.height()/21.0*j);
+        }
+
     }
 
     if (this->multicol)
@@ -132,15 +125,14 @@ void Editor::updateView()
     }
     else
     {
-        qDebug() << "test";
+        int h = img.height()/21;
+        int w = img.width()/24;
         for (int y = 0; y < 21; y++)
         {
             for (int x = 0; x < 24; x++)
             {
                 if (get_bit(x,y) == 1)
                 {
-                    int h = this->pixmap()->height()/21;
-                    int w = this->pixmap()->width()/24;
                     painter.fillRect(x*w,y*h,w,h,this->col_list.at(this->sprite_color));
                 }
             }
