@@ -35,6 +35,57 @@ void Editor::mouseMoveEvent(QMouseEvent *ev)
     {
         this->curr_pos.setX(ev->pos().x()/(multiplikator_x*16));
         this->curr_pos.setY(ev->pos().y()/(multiplikator_y*8));
+
+        if (left_button_pressed)
+        {
+            if (this->left_button == TRANSPARENT)
+            {
+                this->set_bit(2*curr_pos.x(), curr_pos.y(), false);
+                this->set_bit(2*curr_pos.x()+1, curr_pos.y(), false);
+            }
+            else if (this->left_button == COLOR)
+            {
+                this->set_bit(2*curr_pos.x(), curr_pos.y(), true);
+                this->set_bit(2*curr_pos.x()+1, curr_pos.y(), false);
+            }
+            else if (this->left_button == MC1)
+            {
+                this->set_bit(2*curr_pos.x(), curr_pos.y(), false);
+                this->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
+            }
+            else if (this->left_button == MC2)
+            {
+                this->set_bit(2*curr_pos.x(), curr_pos.y(), true);
+                this->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
+            }
+            this->updateView();
+        }
+
+        if (right_button_pressed)
+        {
+            if (this->right_button == TRANSPARENT)
+            {
+                this->set_bit(2*curr_pos.x(), curr_pos.y(), false);
+                this->set_bit(2*curr_pos.x()+1, curr_pos.y(), false);
+            }
+            else if (this->right_button == COLOR)
+            {
+                this->set_bit(2*curr_pos.x(), curr_pos.y(), true);
+                this->set_bit(2*curr_pos.x()+1, curr_pos.y(), false);
+            }
+            else if (this->right_button == MC1)
+            {
+                this->set_bit(2*curr_pos.x(), curr_pos.y(), false);
+                this->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
+            }
+            else if (this->right_button == MC2)
+            {
+                this->set_bit(2*curr_pos.x(), curr_pos.y(), true);
+                this->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
+            }
+            this->updateView();
+        }
+
     }
     else
     {
@@ -61,12 +112,69 @@ void Editor::mousePressEvent(QMouseEvent *ev)
     if (ev->button() == Qt::LeftButton)
     {
         this->left_button_pressed = true;
-        this->set_bit(curr_pos.x(), curr_pos.y(), left_button == COLOR);
+        if (multicol)
+        {
+            if (left_button_pressed)
+            {
+                if (this->left_button == TRANSPARENT)
+                {
+                    this->set_bit(2*curr_pos.x(), curr_pos.y(), false);
+                    this->set_bit(2*curr_pos.x()+1, curr_pos.y(), false);
+                }
+                else if (this->left_button == COLOR)
+                {
+                    this->set_bit(2*curr_pos.x(), curr_pos.y(), true);
+                    this->set_bit(2*curr_pos.x()+1, curr_pos.y(), false);
+                }
+                else if (this->left_button == MC1)
+                {
+                    this->set_bit(2*curr_pos.x(), curr_pos.y(), false);
+                    this->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
+                }
+                else if (this->left_button == MC2)
+                {
+                    this->set_bit(2*curr_pos.x(), curr_pos.y(), true);
+                    this->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
+                }
+                this->updateView();
+            }
+        }
+        else
+            this->set_bit(curr_pos.x(), curr_pos.y(), left_button == COLOR);
     }
     else if (ev->button() == Qt::RightButton)
     {
         this->right_button_pressed = true;
-        this->set_bit(curr_pos.x(), curr_pos.y(), right_button == COLOR);
+        if (multicol)
+        {
+
+            if (right_button_pressed)
+            {
+                if (this->right_button == TRANSPARENT)
+                {
+                    this->set_bit(2*curr_pos.x(), curr_pos.y(), false);
+                    this->set_bit(2*curr_pos.x()+1, curr_pos.y(), false);
+                }
+                else if (this->right_button == COLOR)
+                {
+                    this->set_bit(2*curr_pos.x(), curr_pos.y(), true);
+                    this->set_bit(2*curr_pos.x()+1, curr_pos.y(), false);
+                }
+                else if (this->right_button == MC1)
+                {
+                    this->set_bit(2*curr_pos.x(), curr_pos.y(), false);
+                    this->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
+                }
+                else if (this->right_button == MC2)
+                {
+                    this->set_bit(2*curr_pos.x(), curr_pos.y(), true);
+                    this->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
+                }
+                this->updateView();
+            }
+        }
+        else
+            this->set_bit(curr_pos.x(), curr_pos.y(), right_button == COLOR);
     }
         this->updateView();
 }
@@ -121,6 +229,27 @@ void Editor::updateView()
 
     if (this->multicol)
     {
+        int h = img.height()/21;
+        int w = img.width()/12;
+        for (int y = 0; y < 21; y++)
+        {
+            for (int x = 0; x < 12; x++)
+            {
+                if (get_bit(2*x,y)== 1 && get_bit(2*x+1,y) == 0)
+                {
+                    painter.fillRect(x*w,y*h,w,h,this->col_list.at(this->sprite_color));
+                }
+                else if (get_bit(2*x,y) == 0 && get_bit(2*x+1,y) == 1)
+                {
+                    painter.fillRect(x*w,y*h,w,h,this->col_list.at(this->mc1));
+                }
+                else if (get_bit(2*x,y) == 1 && get_bit(2*x+1,y) == 1)
+                {
+                    painter.fillRect(x*w,y*h,w,h,this->col_list.at(this->mc2));
+                }
+
+            }
+        }
 
     }
     else

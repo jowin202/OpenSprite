@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+
     Sprite *sprite = new Sprite;
     this->ui->label_editor->set_sprite(sprite);
 

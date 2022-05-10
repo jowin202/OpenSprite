@@ -62,34 +62,23 @@ public:
 
     char get_bit(int x, int y)
     {
-        if (this->multicol)
-        {
-
-        }
-        else
-        {
-            char val = this->sprite->sprite_data[3*y + x/8];
-            int pos = x%8;
-            return (val&(0x01 << (7-pos))) >> (7-pos);
-        }
-        return 0;
+        if (sprite == 0)
+            return 0;
+        char val = this->sprite->sprite_data[3*y + x/8];
+        int pos = x%8;
+        return (val&(0x01 << (7-pos))) >> (7-pos);
     }
 
     void set_bit(int x, int y, bool value)
     {
-        if (this->multicol)
-        {
-
-        }
+        int pos = x%8;
+        if (value)
+            this->sprite->sprite_data[3*y + x/8] |= (0x01 << (7-pos));
         else
-        {
-            int pos = x%8;
-            if (value)
-                this->sprite->sprite_data[3*y + x/8] |= (0x01 << (7-pos));
-            else
-                this->sprite->sprite_data[3*y + x/8] &= ~(0x01 << (7-pos));
-        }
+            this->sprite->sprite_data[3*y + x/8] &= ~(0x01 << (7-pos));
     }
+
+
     void updateView();
 
 signals:
