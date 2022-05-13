@@ -40,6 +40,8 @@ public:
     void set_multicol(bool multicol){
         this->multicol = multicol;
         this->updateView();
+        if (this->sprite != 0)
+            this->sprite->multi_color_mode = true;
     }
     void set_overlay(bool overlay){
         this->overlay = overlay;
@@ -60,23 +62,6 @@ public:
         this->updateView();
     }
 
-    char get_bit(int x, int y)
-    {
-        if (sprite == 0)
-            return 0;
-        char val = this->sprite->sprite_data[3*y + x/8];
-        int pos = x%8;
-        return (val&(0x01 << (7-pos))) >> (7-pos);
-    }
-
-    void set_bit(int x, int y, bool value)
-    {
-        int pos = x%8;
-        if (value)
-            this->sprite->sprite_data[3*y + x/8] |= (0x01 << (7-pos));
-        else
-            this->sprite->sprite_data[3*y + x/8] &= ~(0x01 << (7-pos));
-    }
 
 
     void updateView();
@@ -148,7 +133,7 @@ private:
     bool left_button_pressed = false;
     bool right_button_pressed = false;
 
-    Sprite *sprite = 0;
+    Sprite * sprite = 0;
 };
 
 #endif // EDITOR_H

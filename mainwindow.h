@@ -4,10 +4,11 @@
 #include <QMainWindow>
 #include <QImage>
 #include <QPainter>
-
+#include <QTimer>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QDebug>
+#include <QButtonGroup>
 
 #include "sprite.h"
 
@@ -31,10 +32,11 @@ public:
 
 
 public slots:
-    void update_editor();
-    void color_palette();
     QIcon createIconFromColor(QColor col);
     void show_current_cell(int x, int y);
+    void color_change_from_palette(int mouse, int color_num);
+
+
 
 private slots:
     void on_checkBox_editor_grid_lines_toggled(bool checked);
@@ -63,12 +65,18 @@ private slots:
     void on_radio_mc1_right_toggled(bool checked);
     void on_radio_mc2_right_toggled(bool checked);
 
+    void on_check_lock_multicolors_toggled(bool checked);
+
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QStringList col_names;
     QList<Sprite> list;
     QList<QColor> col_list;
     bool control_pressed = false;
+    QButtonGroup leftradio;
+    QButtonGroup rightradio;
 
 };
 #endif // MAINWINDOW_H

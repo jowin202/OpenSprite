@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QButtonGroup>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,20 +10,18 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
 
-    Sprite *sprite = new Sprite;
-    this->ui->label_editor->set_sprite(sprite);
 
+    leftradio.addButton(this->ui->radio_transparent_left,0);
+    leftradio.addButton(this->ui->radio_sprite_left,1);
+    leftradio.addButton(this->ui->radio_mc1_left,2);
+    leftradio.addButton(this->ui->radio_mc2_left,3);
+    leftradio.addButton(this->ui->radio_overlay_left,4);
 
-    QButtonGroup *group1 = new QButtonGroup;
-    group1->addButton(this->ui->radio_transparent_left);
-    group1->addButton(this->ui->radio_sprite_left);
-    group1->addButton(this->ui->radio_mc1_left);
-    group1->addButton(this->ui->radio_mc2_left);
-    QButtonGroup *group2 = new QButtonGroup;
-    group2->addButton(this->ui->radio_transparent_right);
-    group2->addButton(this->ui->radio_sprite_right);
-    group2->addButton(this->ui->radio_mc1_right);
-    group2->addButton(this->ui->radio_mc2_right);
+    rightradio.addButton(this->ui->radio_transparent_right,0);
+    rightradio.addButton(this->ui->radio_sprite_right,1);
+    rightradio.addButton(this->ui->radio_mc1_right,2);
+    rightradio.addButton(this->ui->radio_mc2_right,3);
+    rightradio.addButton(this->ui->radio_overlay_right,4);
     this->ui->radio_transparent_right->setChecked(true);
 
     col_list << QColor(0,0,0);
@@ -70,20 +68,34 @@ MainWindow::MainWindow(QWidget *parent)
         this->ui->combo_multicol_1->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
         this->ui->combo_multicol_2->addItem(col_names.at(i));
         this->ui->combo_multicol_2->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
+        this->ui->combo_overlay->addItem(col_names.at(i));
+        this->ui->combo_overlay->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
     }
 
     this->ui->combo_transparent->setCurrentIndex(6);
     this->ui->combo_sprite_col->setCurrentIndex(5);
     this->ui->combo_multicol_1->setCurrentIndex(2);
     this->ui->combo_multicol_2->setCurrentIndex(3);
+    this->ui->combo_overlay->setCurrentIndex(7);
+
+
+
+    this->ui->label_viewer->add_new_sprites(9);
+    this->ui->label_editor->set_sprite(this->ui->label_viewer->sprite_at(0));
+    this->ui->label_editor->updateView();
+    this->ui->label_viewer->update_view();
+
+
+
     connect(this->ui->combo_transparent, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_transparent(int)));
     connect(this->ui->combo_sprite_col, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_sprite_color(int)));
     connect(this->ui->combo_multicol_1, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc1(int)));
     connect(this->ui->combo_multicol_1, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc2(int)));
 
     connect(this->ui->label_editor, SIGNAL(mouse_updated_cell_updated(int,int)), this, SLOT(show_current_cell(int,int)));
-    this->update_editor();
-    this->color_palette();
+
+    connect(this->ui->label_palette, SIGNAL(palette_clicked(int,int)), this, SLOT(color_change_from_palette(int,int)));
+    this->ui->label_palette->showPalette();
 }
 
 MainWindow::~MainWindow()
@@ -115,31 +127,6 @@ void MainWindow::wheelEvent(QWheelEvent *ev)
 }
 
 
-void MainWindow::update_editor()
-{
-
-}
-
-
-
-void MainWindow::color_palette()
-{
-
-
-
-
-    QImage img(176,28,QImage::Format_RGB32);
-    QPainter painter;
-    painter.begin(&img);
-    for (int i = 0; i < 8; i++)
-    {
-        painter.fillRect(22*i,0,22,14, col_list.at(i));
-        painter.fillRect(22*i,14,22,14, col_list.at(8+i));
-    }
-    painter.end();
-
-    this->ui->label_palette->setPixmap(QPixmap::fromImage(img));
-}
 
 QIcon MainWindow::createIconFromColor(QColor col)
 {
@@ -155,6 +142,56 @@ QIcon MainWindow::createIconFromColor(QColor col)
 void MainWindow::show_current_cell(int x, int y)
 {
     this->ui->statusbar->showMessage(QString("Current cell: (%1,%2)").arg(x).arg(y));
+}
+
+void MainWindow::color_change_from_palette(int mouse, int color_num)
+{
+    if (mouse == 0) //Left
+    {
+        if (this->leftradio.checkedId() == 0) // transparent
+        {
+            this->ui->combo_transparent->setCurrentIndex(color_num);
+        }
+        else if (this->leftradio.checkedId() == 1) // sprite color
+        {
+            this->ui->combo_sprite_col->setCurrentIndex(color_num);
+        }
+        else if (this->leftradio.checkedId() == 2) // multi color 1
+        {
+            this->ui->combo_multicol_1->setCurrentIndex(color_num);
+        }
+        else if (this->leftradio.checkedId() == 3) // multi color 2
+        {
+            this->ui->combo_multicol_2->setCurrentIndex(color_num);
+        }
+        else if (this->leftradio.checkedId() == 4) // overlay color
+        {
+            this->ui->combo_overlay->setCurrentIndex(color_num);
+        }
+    }
+    else //Right
+    {
+        if (this->rightradio.checkedId() == 0) // transparent
+        {
+            this->ui->combo_transparent->setCurrentIndex(color_num);
+        }
+        else if (this->rightradio.checkedId() == 1) // sprite color
+        {
+            this->ui->combo_sprite_col->setCurrentIndex(color_num);
+        }
+        else if (this->rightradio.checkedId() == 2) // multi color 1
+        {
+            this->ui->combo_multicol_1->setCurrentIndex(color_num);
+        }
+        else if (this->rightradio.checkedId() == 3) // multi color 2
+        {
+            this->ui->combo_multicol_2->setCurrentIndex(color_num);
+        }
+        else if (this->rightradio.checkedId() == 4) // overlay color
+        {
+            this->ui->combo_overlay->setCurrentIndex(color_num);
+        }
+    }
 }
 
 
@@ -179,7 +216,6 @@ void MainWindow::on_checkbox_multicolor_toggled(bool checked)
         if (this->ui->radio_mc1_right->isChecked() || this->ui->radio_mc2_right->isChecked())
             this->ui->radio_transparent_right->setChecked(true);
     }
-    this->update_editor();
 }
 
 void MainWindow::on_checkBox_expand_x_toggled(bool checked)
@@ -258,4 +294,16 @@ void MainWindow::on_radio_mc2_right_toggled(bool checked)
 {
     if (checked)
         this->ui->label_editor->set_right_button(Editor::MC2);
+}
+
+void MainWindow::on_check_lock_multicolors_toggled(bool checked)
+{
+    this->ui->combo_multicol_1->setEnabled(!checked);
+    this->ui->combo_multicol_2->setEnabled(!checked);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    //delete this as soon as possible
+    this->ui->label_viewer->update_view();
 }

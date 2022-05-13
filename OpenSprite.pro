@@ -19,12 +19,16 @@ SOURCES += \
     editor.cpp \
     main.cpp \
     mainwindow.cpp \
-    sprite.cpp
+    palette.cpp \
+    sprite.cpp \
+    viewer.cpp
 
 HEADERS += \
     editor.h \
     mainwindow.h \
-    sprite.h
+    palette.h \
+    sprite.h \
+    viewer.h
 
 FORMS += \
     mainwindow.ui

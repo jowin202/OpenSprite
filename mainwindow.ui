@@ -6,15 +6,134 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>767</height>
+    <width>1041</width>
+    <height>811</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>OpenSprite</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_6">
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="1">
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <widget class="QScrollArea" name="scrollArea_3">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>190</height>
+        </size>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents_3">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>701</width>
+          <height>351</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_8">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="Editor" name="label_editor">
+           <property name="mouseTracking">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <spacer name="verticalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="1">
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QScrollArea" name="scrollArea">
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>701</width>
+          <height>380</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="1" column="1">
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0">
+          <widget class="Viewer" name="label_viewer">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </widget>
+    </item>
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="3" column="0" colspan="2">
@@ -83,12 +202,85 @@
          <string>Pen</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
+         <item row="5" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_4">
+           <property name="text">
+            <string>Draw sprite overlays</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0" colspan="3">
           <layout class="QGridLayout" name="gridLayout">
-           <item row="4" column="3">
-            <widget class="QRadioButton" name="radio_mc1_right">
+           <item row="8" column="4" colspan="2">
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="4" column="4">
+            <widget class="QLabel" name="label_4">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Multi-Colour 1</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="5">
+            <widget class="QComboBox" name="combo_multicol_2"/>
+           </item>
+           <item row="3" column="5">
+            <widget class="QComboBox" name="combo_sprite_col"/>
+           </item>
+           <item row="4" column="5">
+            <widget class="QComboBox" name="combo_multicol_1"/>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>R</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2">
+            <widget class="QRadioButton" name="radio_mc2_left">
              <property name="text">
               <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2" colspan="2">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Click</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>L</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QRadioButton" name="radio_sprite_left">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -105,41 +297,11 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="2">
-            <widget class="QRadioButton" name="radio_sprite_left">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="5">
             <widget class="QComboBox" name="combo_transparent"/>
            </item>
-           <item row="4" column="4">
-            <widget class="QLabel" name="label_4">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Multi-Colour 1</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>L</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="2">
-            <widget class="QRadioButton" name="radio_mc2_left">
+           <item row="3" column="3">
+            <widget class="QRadioButton" name="radio_sprite_right">
              <property name="text">
               <string/>
              </property>
@@ -152,18 +314,48 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="4" colspan="2">
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item row="4" column="3">
+            <widget class="QRadioButton" name="radio_mc1_right">
+             <property name="text">
+              <string/>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
+            </widget>
+           </item>
+           <item row="2" column="4">
+            <widget class="QLabel" name="label_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-            </spacer>
+             <property name="text">
+              <string>Transparent</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QRadioButton" name="radio_transparent_right">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="4">
+            <widget class="QLabel" name="label_5">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Multi-Colour 2</string>
+             </property>
+            </widget>
            </item>
            <item row="2" column="2">
             <widget class="QRadioButton" name="radio_transparent_left">
@@ -181,19 +373,6 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="5">
-            <widget class="QComboBox" name="combo_sprite_col"/>
-           </item>
-           <item row="2" column="3">
-            <widget class="QRadioButton" name="radio_transparent_right">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
            <item row="5" column="3">
             <widget class="QRadioButton" name="radio_mc2_right">
              <property name="text">
@@ -201,103 +380,57 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="5">
-            <widget class="QComboBox" name="combo_multicol_1"/>
-           </item>
-           <item row="5" column="4">
-            <widget class="QLabel" name="label_5">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Multi-Colour 2</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="5">
-            <widget class="QComboBox" name="combo_multicol_2"/>
-           </item>
-           <item row="2" column="4">
-            <widget class="QLabel" name="label_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Transparent</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="3">
-            <widget class="QRadioButton" name="radio_sprite_right">
+           <item row="6" column="2">
+            <widget class="QRadioButton" name="radio_overlay_left">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
-           <item row="1" column="3">
-            <widget class="QLabel" name="label_7">
+           <item row="6" column="3">
+            <widget class="QRadioButton" name="radio_overlay_right">
              <property name="text">
-              <string>R</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="0" column="2" colspan="2">
-            <widget class="QLabel" name="label_8">
+           <item row="6" column="4">
+            <widget class="QLabel" name="label_9">
              <property name="text">
-              <string>Click</string>
+              <string>Overlay Color</string>
              </property>
             </widget>
+           </item>
+           <item row="6" column="5">
+            <widget class="QComboBox" name="combo_overlay"/>
            </item>
           </layout>
          </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_3">
-           <property name="text">
-            <string>Show palette as luminace pairs</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_8">
-           <property name="text">
-            <string>Show control tips</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_editor_grid_lines">
-           <property name="text">
-            <string>Show editor grid lines</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="0" colspan="2">
+         <item row="11" column="0" colspan="2">
           <widget class="QCheckBox" name="checkBox_10">
            <property name="text">
             <string>Show animation values in hex</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_7">
+         <item row="9" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_8">
            <property name="text">
-            <string>Show browser grid lines</string>
+            <string>Show control tips</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_4">
+         <item row="10" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_9">
            <property name="text">
-            <string>Draw sprite overlays</string>
+            <string>Selecting an animation select it's images</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_7">
+           <property name="text">
+            <string>Show browser grid lines</string>
            </property>
           </widget>
          </item>
@@ -317,7 +450,10 @@
             </spacer>
            </item>
            <item>
-            <widget class="QLabel" name="label_palette">
+            <widget class="Palette" name="label_palette">
+             <property name="mouseTracking">
+              <bool>true</bool>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -338,17 +474,54 @@
            </item>
           </layout>
          </item>
-         <item row="9" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_9">
+         <item row="3" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_3">
            <property name="text">
-            <string>Selecting an animation select it's images</string>
+            <string>Show palette as luminace pairs</string>
            </property>
           </widget>
          </item>
          <item row="6" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_editor_grid_lines">
+           <property name="text">
+            <string>Show editor grid lines</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0" colspan="2">
           <widget class="QCheckBox" name="checkBox_6">
            <property name="text">
             <string>Show editor crosshairs</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="1">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="check_lock_multicolors">
+           <property name="text">
+            <string>Lock Multicolors</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="1">
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>update view</string>
            </property>
           </widget>
          </item>
@@ -364,73 +537,18 @@
       </item>
      </layout>
     </item>
-    <item row="0" column="1">
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
-       <widget class="QScrollArea" name="scrollArea_3">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>190</height>
-         </size>
-        </property>
-        <property name="widgetResizable">
-         <bool>true</bool>
-        </property>
-        <widget class="QWidget" name="scrollAreaWidgetContents_3">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>398</width>
-           <height>696</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_8">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="Editor" name="label_editor">
-            <property name="mouseTracking">
-             <bool>true</bool>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <spacer name="verticalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="1">
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </widget>
-      </item>
-     </layout>
+    <item row="1" column="1">
+     <spacer name="horizontalSpacer_6">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>0</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>
@@ -439,7 +557,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1041</width>
      <height>30</height>
     </rect>
    </property>
@@ -881,6 +999,16 @@
    <class>Editor</class>
    <extends>QLabel</extends>
    <header>editor.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Palette</class>
+   <extends>QLabel</extends>
+   <header>palette.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Viewer</class>
+   <extends>QLabel</extends>
+   <header>viewer.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
