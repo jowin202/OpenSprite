@@ -188,6 +188,8 @@ void Editor::mouseReleaseEvent(QMouseEvent *ev)
         this->left_button_pressed = false;
     if (ev->button() == Qt::RightButton)
         this->right_button_pressed = false;
+
+    emit update_viewer();
 }
 
 

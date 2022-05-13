@@ -41,7 +41,7 @@ public:
         this->multicol = multicol;
         this->updateView();
         if (this->sprite != 0)
-            this->sprite->multi_color_mode = true;
+            this->sprite->multi_color_mode = multicol;
     }
     void set_overlay(bool overlay){
         this->overlay = overlay;
@@ -79,6 +79,8 @@ public slots:
     {
         this->sprite_color = color;
         this->updateView();
+        if (sprite != 0)
+            this->sprite->sprite_color = color;
     }
     void set_mc1(int mc1)
     {
@@ -93,6 +95,7 @@ public slots:
     void set_sprite(Sprite *sprite)
     {
         this->sprite = sprite;
+        this->updateView();
     }
     void set_multiplicator(int m)
     {
@@ -108,6 +111,8 @@ public slots:
 
 signals:
     void mouse_updated_cell_updated(int,int);
+    void update_viewer();
+
 private:
     QPoint curr_pos;
     bool multicol = true;

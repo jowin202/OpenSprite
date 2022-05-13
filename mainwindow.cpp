@@ -80,7 +80,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    this->ui->label_viewer->add_new_sprites(9);
+    this->ui->label_viewer->add_new_sprites(12);
     this->ui->label_editor->set_sprite(this->ui->label_viewer->sprite_at(0));
     this->ui->label_editor->updateView();
     this->ui->label_viewer->update_view();
@@ -90,10 +90,16 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->combo_transparent, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_transparent(int)));
     connect(this->ui->combo_sprite_col, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_sprite_color(int)));
     connect(this->ui->combo_multicol_1, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc1(int)));
-    connect(this->ui->combo_multicol_1, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc2(int)));
+    connect(this->ui->combo_multicol_2, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc2(int)));
+    connect(this->ui->combo_multicol_1, SIGNAL(currentIndexChanged(int)), this->ui->label_viewer, SLOT(set_mc1(int)));
+    connect(this->ui->combo_multicol_2, SIGNAL(currentIndexChanged(int)), this->ui->label_viewer, SLOT(set_mc2(int)));
 
     connect(this->ui->label_editor, SIGNAL(mouse_updated_cell_updated(int,int)), this, SLOT(show_current_cell(int,int)));
+    connect(this->ui->label_editor, SIGNAL(update_viewer()), this->ui->label_viewer, SLOT(update_current_sprite()));
 
+
+    connect(this->ui->label_viewer, SIGNAL(sprite_selected(Sprite*)), this->ui->label_editor, SLOT(set_sprite(Sprite*)));
+    connect(this->ui->label_viewer, SIGNAL(sprite_update_detail_gui(int,bool,bool,bool,bool)), this, SLOT(update_gui(int,bool,bool,bool,bool)));
     connect(this->ui->label_palette, SIGNAL(palette_clicked(int,int)), this, SLOT(color_change_from_palette(int,int)));
     this->ui->label_palette->showPalette();
 }
@@ -194,6 +200,15 @@ void MainWindow::color_change_from_palette(int mouse, int color_num)
     }
 }
 
+void MainWindow::update_gui(int color, bool expand_x, bool expand_y, bool overlay, bool multicolor)
+{
+    this->ui->combo_sprite_col->setCurrentIndex(color);
+    this->ui->checkBox_expand_x->setChecked(expand_x);
+    this->ui->checkBox_expand_y->setChecked(expand_y);
+    this->ui->check_overlay->setChecked(overlay);
+    this->ui->checkbox_multicolor->setChecked(multicolor);
+}
+
 
 void MainWindow::on_checkBox_editor_grid_lines_toggled(bool checked)
 {
@@ -216,6 +231,7 @@ void MainWindow::on_checkbox_multicolor_toggled(bool checked)
         if (this->ui->radio_mc1_right->isChecked() || this->ui->radio_mc2_right->isChecked())
             this->ui->radio_transparent_right->setChecked(true);
     }
+    this->ui->label_viewer->update_view();
 }
 
 void MainWindow::on_checkBox_expand_x_toggled(bool checked)
@@ -302,8 +318,10 @@ void MainWindow::on_check_lock_multicolors_toggled(bool checked)
     this->ui->combo_multicol_2->setEnabled(!checked);
 }
 
-void MainWindow::on_pushButton_clicked()
+
+
+
+void MainWindow::on_checkBox_browser_grid_lines_toggled(bool checked)
 {
-    //delete this as soon as possible
-    this->ui->label_viewer->update_view();
+    this->ui->label_viewer->set_gridlines(checked);
 }

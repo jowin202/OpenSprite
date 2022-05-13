@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1041</width>
-    <height>811</height>
+    <height>851</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,8 +35,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>701</width>
-          <height>351</height>
+          <width>720</width>
+          <height>371</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_8">
@@ -91,8 +91,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>701</width>
-          <height>380</height>
+          <width>720</width>
+          <height>400</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_5">
@@ -161,7 +161,7 @@
        </widget>
       </item>
       <item row="4" column="0" colspan="2">
-       <widget class="QCheckBox" name="checkBox_2">
+       <widget class="QCheckBox" name="check_overlay">
         <property name="text">
          <string>Overlay next sprite</string>
         </property>
@@ -202,10 +202,72 @@
          <string>Pen</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
+         <item row="10" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_9">
+           <property name="text">
+            <string>Selecting an animation select it's images</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_10">
+           <property name="text">
+            <string>Show animation values in hex</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_editor_grid_lines">
+           <property name="text">
+            <string>Show editor grid lines</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_browser_grid_lines">
+           <property name="text">
+            <string>Show browser grid lines</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="check_lock_multicolors">
+           <property name="text">
+            <string>Lock Multicolors</string>
+           </property>
+          </widget>
+         </item>
          <item row="5" column="0" colspan="2">
           <widget class="QCheckBox" name="checkBox_4">
            <property name="text">
             <string>Draw sprite overlays</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_3">
+           <property name="text">
+            <string>Show palette as luminace pairs</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_6">
+           <property name="text">
+            <string>Show editor crosshairs</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_8">
+           <property name="text">
+            <string>Show control tips</string>
            </property>
           </widget>
          </item>
@@ -406,33 +468,18 @@
            </item>
           </layout>
          </item>
-         <item row="11" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_10">
-           <property name="text">
-            <string>Show animation values in hex</string>
+         <item row="12" column="1">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
-          </widget>
-         </item>
-         <item row="9" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_8">
-           <property name="text">
-            <string>Show control tips</string>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
            </property>
-          </widget>
-         </item>
-         <item row="10" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_9">
-           <property name="text">
-            <string>Selecting an animation select it's images</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_7">
-           <property name="text">
-            <string>Show browser grid lines</string>
-           </property>
-          </widget>
+          </spacer>
          </item>
          <item row="1" column="0" colspan="3">
           <layout class="QHBoxLayout" name="horizontalLayout">
@@ -473,57 +520,6 @@
             </spacer>
            </item>
           </layout>
-         </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_3">
-           <property name="text">
-            <string>Show palette as luminace pairs</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_editor_grid_lines">
-           <property name="text">
-            <string>Show editor grid lines</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_6">
-           <property name="text">
-            <string>Show editor crosshairs</string>
-           </property>
-          </widget>
-         </item>
-         <item row="13" column="1">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="4" column="0">
-          <widget class="QCheckBox" name="check_lock_multicolors">
-           <property name="text">
-            <string>Lock Multicolors</string>
-           </property>
-          </widget>
-         </item>
-         <item row="12" column="1">
-          <widget class="QPushButton" name="pushButton">
-           <property name="text">
-            <string>update view</string>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
