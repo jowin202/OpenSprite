@@ -46,6 +46,8 @@ signals:
 public slots:
     void update_view();
     void update_current_sprite();
+    void set_transparent(int col)
+    {this->transparent_color = col; this->update_view(); }
     void set_mc1(int mc1)
     {this->mc1 = mc1; this->update_view(); }
     void set_mc2(int mc2)

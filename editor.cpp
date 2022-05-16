@@ -24,12 +24,13 @@ Editor::Editor(QWidget *parent) : QLabel(parent)
 
 void Editor::mouseMoveEvent(QMouseEvent *ev)
 {
-    if (ev->pos().x() > this->pixmap()->width() || ev->pos().x() < 0)
+    if (ev->pos().x() >= this->pixmap()->width() || ev->pos().x() < 0)
         return;
-    if (ev->pos().y() > this->pixmap()->height() || ev->pos().y() < 0)
+    if (ev->pos().y() >= this->pixmap()->height() || ev->pos().y() < 0)
         return;
 
 
+    qDebug() << this->pixmap()->width() << ev->pos().x();
 
     if (this->multicol)
     {

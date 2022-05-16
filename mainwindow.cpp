@@ -88,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     connect(this->ui->combo_transparent, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_transparent(int)));
+    connect(this->ui->combo_transparent, SIGNAL(currentIndexChanged(int)), this->ui->label_viewer, SLOT(set_transparent(int)));
     connect(this->ui->combo_sprite_col, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_sprite_color(int)));
     connect(this->ui->combo_multicol_1, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc1(int)));
     connect(this->ui->combo_multicol_2, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc2(int)));
