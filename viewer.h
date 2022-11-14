@@ -14,8 +14,7 @@ class Viewer : public QLabel
     Q_OBJECT
 public:
     Viewer(QWidget *parent = 0);
-    void add_new_sprite();
-    void add_new_sprites(int n);
+    void set_sprite_count(int n);
     Sprite *sprite_at(int n)
     {
         return sprite_list.at(n);

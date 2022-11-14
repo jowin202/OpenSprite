@@ -79,11 +79,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->combo_overlay->setCurrentIndex(7);
 
 
+    this->ui->label_viewer->set_sprite_count(12);
 
-    this->ui->label_viewer->add_new_sprites(12);
     this->ui->label_editor->set_sprite(this->ui->label_viewer->sprite_at(0));
-    this->ui->label_editor->updateView();
-    this->ui->label_viewer->update_view();
+    this->ui->label_editor->update_view();
 
 
 
@@ -130,6 +129,21 @@ void MainWindow::wheelEvent(QWheelEvent *ev)
             this->on_actionZoom_In_triggered();
         else if (ev->delta() < -10)
             this->on_actionZoom_Out_triggered();
+    }
+}
+
+
+void MainWindow::open_file(QString file)
+{
+
+    QString extension = file.split(".").last().toLower();
+    if (extension == "spd")
+    {
+        this->import_spritepad_file(file);
+    }
+    else if (extension == "prg")
+    {
+        this->import_prg_file(file);
     }
 }
 
@@ -326,3 +340,85 @@ void MainWindow::on_checkBox_browser_grid_lines_toggled(bool checked)
 {
     this->ui->label_viewer->set_gridlines(checked);
 }
+
+void MainWindow::import_spritepad_file(QString file_path)
+{
+    QFile file(file_path);
+    file.open(QIODevice::ReadOnly);
+
+    QByteArray header = file.read(4);
+    if (header.toHex() != "53504401")
+    {
+        QMessageBox::critical(this, "Invalid SpritePad Format", "Invalid SpritePad Format");
+        file.close();
+        return;
+    }
+
+    int sprites_num = file.read(1).at(0) + 1;
+    this->ui->label_viewer->set_sprite_count(sprites_num);
+
+    int animations_num = file.read(1).at(0) + 1;
+    Q_UNUSED(animations_num)
+
+    int background = file.read(1).at(0);
+    int mc1 = file.read(1).at(0);
+    int mc2 = file.read(1).at(0);
+
+    this->ui->combo_transparent->setCurrentIndex(background);
+    this->ui->combo_multicol_1->setCurrentIndex(mc1);
+    this->ui->combo_multicol_2->setCurrentIndex(mc2);
+
+    for (int i = 0; i < this->ui->label_viewer->sprite_list.length(); i++) //should be the same length as sprites in file
+    {
+        file.read((char*)&this->ui->label_viewer->sprite_list.at(i)->sprite_data, 64);
+    }
+
+    this->ui->label_viewer->update_view();
+    this->ui->label_editor->update_view();
+    file.close();
+}
+
+void MainWindow::import_prg_file(QString file_path)
+{
+    QFile file(file_path);
+    file.open(QIODevice::ReadOnly);
+
+    if (!file.exists() || !file.isOpen())
+        return;
+
+    this->prg_address = 0;
+    this->prg_address = (0xFF && file.read(1).toInt());
+    this->prg_address |= (0xFF && (file.read(1).toInt()) << 8);
+
+
+
+    int sprite_num = (file.size()-2)/64;
+    this->ui->label_viewer->set_sprite_count(sprite_num);
+
+    for (int i = 0; i < sprite_num; i++) //should be the same length as sprites in file
+    {
+        file.read((char*)&this->ui->label_viewer->sprite_list.at(i)->sprite_data, 64);
+    }
+
+
+    this->ui->label_viewer->update_view();
+    this->ui->label_editor->update_view();
+    file.close();
+
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    QSettings settings;
+    QString dir = settings.value("lastopened").toString();
+    if (dir.isEmpty())
+        dir = QDir::homePath();
+
+    QString file_path = QFileDialog::getOpenFileName(this, "Open File", dir);
+    if (file_path != "")
+        settings.setValue("lastopened", file_path);
+
+    this->open_file(file_path);
+
+}
+

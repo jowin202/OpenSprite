@@ -20,16 +20,21 @@ Viewer::Viewer(QWidget *parent)
     col_list << QColor(0xb3,0xb3,0xb3);
 }
 
-void Viewer::add_new_sprite()
+void Viewer::set_sprite_count(int n)
 {
-    this->sprite_list.append(new Sprite());
+    while (this->sprite_list.length() > n)
+    {
+        delete this->sprite_list.last();
+        this->sprite_list.removeLast();
+    }
+
+    while (this->sprite_list.length() < n)
+    {
+        this->sprite_list.append(new Sprite());
+    }
+    this->update_view();
 }
 
-void Viewer::add_new_sprites(int n)
-{
-    for (int i = 0; i < n; i++)
-        this->sprite_list.append(new Sprite());
-}
 
 void Viewer::mousePressEvent(QMouseEvent *ev)
 {

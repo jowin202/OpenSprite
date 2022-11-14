@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     editor.cpp \
+    iodialog.cpp \
     main.cpp \
     mainwindow.cpp \
     palette.cpp \
@@ -25,12 +26,14 @@ SOURCES += \
 
 HEADERS += \
     editor.h \
+    iodialog.h \
     mainwindow.h \
     palette.h \
     sprite.h \
     viewer.h
 
 FORMS += \
+    iodialog.ui \
     mainwindow.ui
 
 # Default rules for deployment.

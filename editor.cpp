@@ -19,7 +19,7 @@ Editor::Editor(QWidget *parent) : QLabel(parent)
     col_list << QColor(0x86,0x7a,0xde);
     col_list << QColor(0xb3,0xb3,0xb3);
 
-    this->updateView();
+    this->update_view();
 }
 
 void Editor::mouseMoveEvent(QMouseEvent *ev)
@@ -30,7 +30,7 @@ void Editor::mouseMoveEvent(QMouseEvent *ev)
         return;
 
 
-    qDebug() << this->pixmap()->width() << ev->pos().x();
+    //qDebug() << this->pixmap()->width() << ev->pos().x();
 
     if (this->multicol)
     {
@@ -59,7 +59,7 @@ void Editor::mouseMoveEvent(QMouseEvent *ev)
                 this->sprite->set_bit(2*curr_pos.x(), curr_pos.y(), true);
                 this->sprite->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
             }
-            this->updateView();
+            this->update_view();
         }
 
         if (right_button_pressed)
@@ -84,7 +84,7 @@ void Editor::mouseMoveEvent(QMouseEvent *ev)
                 this->sprite->set_bit(2*curr_pos.x(), curr_pos.y(), true);
                 this->sprite->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
             }
-            this->updateView();
+            this->update_view();
         }
 
     }
@@ -96,12 +96,12 @@ void Editor::mouseMoveEvent(QMouseEvent *ev)
         if (this->left_button_pressed)
         {
             this->sprite->set_bit(this->curr_pos.x(), this->curr_pos.y(), left_button == COLOR);
-            this->updateView();
+            this->update_view();
         }
         else if (this->right_button_pressed)
         {
             this->sprite->set_bit(this->curr_pos.x(), this->curr_pos.y(), right_button == COLOR);
-            this->updateView();
+            this->update_view();
         }
 
     }
@@ -140,7 +140,7 @@ void Editor::mousePressEvent(QMouseEvent *ev)
                     this->sprite->set_bit(2*curr_pos.x(), curr_pos.y(), true);
                     this->sprite->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
                 }
-                this->updateView();
+                this->update_view();
             }
         }
         else
@@ -174,13 +174,13 @@ void Editor::mousePressEvent(QMouseEvent *ev)
                     this->sprite->set_bit(2*curr_pos.x(), curr_pos.y(), true);
                     this->sprite->set_bit(2*curr_pos.x()+1, curr_pos.y(), true);
                 }
-                this->updateView();
+                this->update_view();
             }
         }
         else
             this->sprite->set_bit(curr_pos.x(), curr_pos.y(), right_button == COLOR);
     }
-        this->updateView();
+        this->update_view();
 }
 
 void Editor::mouseReleaseEvent(QMouseEvent *ev)
@@ -195,7 +195,7 @@ void Editor::mouseReleaseEvent(QMouseEvent *ev)
 
 
 
-void Editor::updateView()
+void Editor::update_view()
 {
     if (this->sprite == 0)
         return;

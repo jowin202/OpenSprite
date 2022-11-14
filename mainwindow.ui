@@ -10,130 +10,14 @@
     <height>851</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>OpenSprite</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_4">
-    <item row="0" column="1">
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <widget class="QScrollArea" name="scrollArea_3">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>190</height>
-        </size>
-       </property>
-       <property name="widgetResizable">
-        <bool>true</bool>
-       </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents_3">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>720</width>
-          <height>371</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_8">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="Editor" name="label_editor">
-           <property name="mouseTracking">
-            <bool>true</bool>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <spacer name="verticalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="1">
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-      <widget class="QScrollArea" name="scrollArea">
-       <property name="widgetResizable">
-        <bool>true</bool>
-       </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>720</width>
-          <height>400</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_5">
-         <item row="1" column="1">
-          <spacer name="horizontalSpacer_5">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="0">
-          <widget class="Viewer" name="label_viewer">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-     </widget>
-    </item>
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="3" column="0" colspan="2">
@@ -533,18 +417,140 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="1">
-     <spacer name="horizontalSpacer_6">
+    <item row="2" column="1">
+     <spacer name="horizontalSpacer_8">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>
         <width>40</width>
-        <height>0</height>
+        <height>20</height>
        </size>
       </property>
      </spacer>
+    </item>
+    <item row="0" column="1" colspan="3">
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <widget class="QScrollArea" name="scrollArea_3">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>190</height>
+        </size>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents_3">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>720</width>
+          <height>355</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_8">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="Editor" name="label_editor">
+           <property name="mouseTracking">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <spacer name="verticalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="1">
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QScrollArea" name="scrollArea">
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>720</width>
+          <height>384</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="1" column="1">
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0">
+          <widget class="Viewer" name="label_viewer">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+    <item row="2" column="2" colspan="2">
+     <widget class="QSpinBox" name="spinBox"/>
     </item>
    </layout>
   </widget>
@@ -561,60 +567,12 @@
     <property name="title">
      <string>File</string>
     </property>
-    <widget class="QMenu" name="menuImport_Export">
-     <property name="title">
-      <string>Import/Export</string>
-     </property>
-     <widget class="QMenu" name="menuRaw_RPG">
-      <property name="title">
-       <string>Raw / RPG</string>
-      </property>
-      <addaction name="separator"/>
-      <addaction name="actionImport_Sprite_Data"/>
-      <addaction name="actionExport_Sprite_Data"/>
-     </widget>
-     <widget class="QMenu" name="menuASCII_Text">
-      <property name="title">
-       <string>ASCII Text</string>
-      </property>
-      <addaction name="actionExport_Sprite_Data_asm_listing"/>
-      <addaction name="actionExport_Animation_Data_asm_listing"/>
-      <addaction name="actionExport_Sprite_Attribute_Data_asm_listing"/>
-     </widget>
-     <widget class="QMenu" name="menuSEUCK">
-      <property name="title">
-       <string>SEUCK</string>
-      </property>
-      <addaction name="actionImport_Sprite_Data_2"/>
-      <addaction name="actionExport_Sprite_Data_2"/>
-     </widget>
-     <widget class="QMenu" name="menuBitmap_Image">
-      <property name="title">
-       <string>Bitmap Image</string>
-      </property>
-      <addaction name="actionImport_Sprite_Sheet"/>
-      <addaction name="actionExport_Sprite_Sheet"/>
-      <addaction name="actionExport_Current_Sprite"/>
-     </widget>
-     <widget class="QMenu" name="menuVice_Snapshot">
-      <property name="title">
-       <string>Vice Snapshot</string>
-      </property>
-      <addaction name="actionImport_Sprite_Data_3"/>
-     </widget>
-     <addaction name="separator"/>
-     <addaction name="menuRaw_RPG"/>
-     <addaction name="menuASCII_Text"/>
-     <addaction name="menuSEUCK"/>
-     <addaction name="menuBitmap_Image"/>
-     <addaction name="menuVice_Snapshot"/>
-    </widget>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave_Project"/>
     <addaction name="actionSave_Project_as"/>
     <addaction name="separator"/>
-    <addaction name="menuImport_Export"/>
+    <addaction name="actionExport_Sprite_Data"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -700,7 +658,7 @@
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>Open Project</string>
+    <string>Open</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
