@@ -23,7 +23,7 @@ public:
     void mousePressEvent(QMouseEvent *ev);
     void mouseReleaseEvent(QMouseEvent *ev);
 
-    enum {TRANSPARENT, COLOR, MC1, MC2 };
+    enum {TRANSPARENT, COLOR, MC1, MC2, OVERLAY };
 
     void update_multiplicator()
     {
@@ -45,6 +45,13 @@ public:
     }
     void set_overlay(bool overlay){
         this->overlay = overlay;
+        if (this->sprite != 0)
+            this->sprite->overlay_next = overlay;
+
+        if (this->overlay_sprite != 0 && overlay == true)
+        {
+            this->overlay_sprite->multi_color_mode = false; // no multicolor if overlay
+        }
         this->update_view();
     }
     void set_expand_x(bool expand_x){
@@ -61,6 +68,7 @@ public:
         this->gridlines = gridlines;
         this->update_view();
     }
+
 
 
 
@@ -92,9 +100,20 @@ public slots:
         this->mc2 = mc2;
         this->update_view();
     }
+    void set_overlay_color(int oc)
+    {
+        if (this->overlay_sprite != 0)
+            this->overlay_sprite->sprite_color = oc;
+        this->update_view();
+    }
     void set_sprite(Sprite *sprite)
     {
         this->sprite = sprite;
+        this->update_view();
+    }
+    void set_overlay_sprite(Sprite *sprite)
+    {
+        this->overlay_sprite = sprite;
         this->update_view();
     }
     void set_multiplicator(int m)
@@ -109,6 +128,7 @@ public slots:
     {this->left_button = v;}
 
 
+
 signals:
     void mouse_updated_cell_updated(int,int);
     void update_viewer();
@@ -116,7 +136,7 @@ signals:
 private:
     QPoint curr_pos;
     bool multicol = true;
-    bool overlay = true;
+    bool overlay = false;
     bool expand_x = false;
     bool expand_y = false;
 
@@ -139,6 +159,7 @@ private:
     bool right_button_pressed = false;
 
     Sprite * sprite = 0;
+    Sprite * overlay_sprite = 0;
 };
 
 #endif // EDITOR_H

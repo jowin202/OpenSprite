@@ -82,6 +82,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->label_viewer->set_sprite_count(12);
 
     this->ui->label_editor->set_sprite(this->ui->label_viewer->sprite_at(0));
+    this->ui->label_editor->set_overlay_sprite(this->ui->label_viewer->sprite_at(1));
     this->ui->label_editor->update_view();
 
 
@@ -93,12 +94,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->combo_multicol_2, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc2(int)));
     connect(this->ui->combo_multicol_1, SIGNAL(currentIndexChanged(int)), this->ui->label_viewer, SLOT(set_mc1(int)));
     connect(this->ui->combo_multicol_2, SIGNAL(currentIndexChanged(int)), this->ui->label_viewer, SLOT(set_mc2(int)));
+    connect(this->ui->combo_overlay, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_overlay_color(int)));
 
     connect(this->ui->label_editor, SIGNAL(mouse_updated_cell_updated(int,int)), this, SLOT(show_current_cell(int,int)));
     connect(this->ui->label_editor, SIGNAL(update_viewer()), this->ui->label_viewer, SLOT(update_current_sprite()));
 
 
     connect(this->ui->label_viewer, SIGNAL(sprite_selected(Sprite*)), this->ui->label_editor, SLOT(set_sprite(Sprite*)));
+    connect(this->ui->label_viewer, SIGNAL(overlay_sprite_selected(Sprite*)), this->ui->label_editor, SLOT(set_overlay_sprite(Sprite*)));
     connect(this->ui->label_viewer, SIGNAL(sprite_update_detail_gui(int,bool,bool,bool,bool)), this, SLOT(update_gui(int,bool,bool,bool,bool)));
     connect(this->ui->label_palette, SIGNAL(palette_clicked(int,int)), this, SLOT(color_change_from_palette(int,int)));
     this->ui->label_palette->showPalette();
@@ -327,6 +330,19 @@ void MainWindow::on_radio_mc2_right_toggled(bool checked)
         this->ui->label_editor->set_right_button(Editor::MC2);
 }
 
+
+void MainWindow::on_radio_overlay_left_toggled(bool checked)
+{
+    if (checked)
+        this->ui->label_editor->set_left_button(Editor::OVERLAY);
+}
+
+void MainWindow::on_radio_overlay_right_toggled(bool checked)
+{
+    if (checked)
+        this->ui->label_editor->set_right_button(Editor::OVERLAY);
+}
+
 void MainWindow::on_check_lock_multicolors_toggled(bool checked)
 {
     this->ui->combo_multicol_1->setEnabled(!checked);
@@ -387,8 +403,8 @@ void MainWindow::import_prg_file(QString file_path)
         return;
 
     this->prg_address = 0;
-    this->prg_address = (0xFF && file.read(1).toInt());
-    this->prg_address |= (0xFF && (file.read(1).toInt()) << 8);
+    this->prg_address = (0xFF & file.read(1).toInt());
+    this->prg_address |= (0xFF & (file.read(1).toInt()) << 8);
 
 
 
@@ -420,5 +436,23 @@ void MainWindow::on_actionOpen_triggered()
 
     this->open_file(file_path);
 
+}
+
+
+
+void MainWindow::on_check_overlay_toggled(bool checked)
+{
+    if (this->ui->radio_overlay_left->isChecked())
+        this->ui->radio_sprite_left->setChecked(true);
+    if (this->ui->radio_overlay_right->isChecked())
+        this->ui->radio_sprite_right->setChecked(true);
+
+    this->ui->label_editor->set_overlay_color(this->ui->combo_overlay->currentIndex());
+
+    this->ui->radio_overlay_left->setEnabled(checked);
+    this->ui->radio_overlay_right->setEnabled(checked);
+    this->ui->combo_overlay->setEnabled(checked);
+
+    this->ui->label_editor->set_overlay(checked);
 }
 

@@ -87,6 +87,14 @@ private slots:
     void on_actionOpen_triggered();
 
 
+
+    void on_check_overlay_toggled(bool checked);
+
+    void on_radio_overlay_left_toggled(bool checked);
+
+    void on_radio_overlay_right_toggled(bool checked);
+
+
 private:
     Ui::MainWindow *ui;
     QStringList col_names;

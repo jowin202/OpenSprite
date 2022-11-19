@@ -36,6 +36,8 @@ FORMS += \
     iodialog.ui \
     mainwindow.ui
 
+RC_ICONS = icons/opensprite96x96.ico
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

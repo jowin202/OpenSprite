@@ -32,7 +32,25 @@ void Editor::mouseMoveEvent(QMouseEvent *ev)
 
     //qDebug() << this->pixmap()->width() << ev->pos().x();
 
-    if (this->multicol)
+
+    //overlay check first
+    if (left_button_pressed && this->left_button == OVERLAY)
+    {
+        this->curr_pos.setX(ev->pos().x()/(multiplikator_x*8));
+        this->curr_pos.setY(ev->pos().y()/(multiplikator_y*8));
+
+        this->overlay_sprite->set_bit(this->curr_pos.x(), this->curr_pos.y(), true);
+        this->update_view();
+    }
+    else if (right_button_pressed && this->right_button == OVERLAY)
+    {
+        this->curr_pos.setX(ev->pos().x()/(multiplikator_x*8));
+        this->curr_pos.setY(ev->pos().y()/(multiplikator_y*8));
+
+        this->overlay_sprite->set_bit(this->curr_pos.x(), this->curr_pos.y(), true);
+        this->update_view();
+    }
+    else if (this->multicol)
     {
         this->curr_pos.setX(ev->pos().x()/(multiplikator_x*16));
         this->curr_pos.setY(ev->pos().y()/(multiplikator_y*8));
@@ -93,18 +111,20 @@ void Editor::mouseMoveEvent(QMouseEvent *ev)
         this->curr_pos.setX(ev->pos().x()/(multiplikator_x*8));
         this->curr_pos.setY(ev->pos().y()/(multiplikator_y*8));
 
-        if (this->left_button_pressed)
+        if (this->left_button_pressed && this->left_button != OVERLAY)
         {
             this->sprite->set_bit(this->curr_pos.x(), this->curr_pos.y(), left_button == COLOR);
             this->update_view();
         }
-        else if (this->right_button_pressed)
+        else if (this->right_button_pressed && this->right_button != OVERLAY)
         {
             this->sprite->set_bit(this->curr_pos.x(), this->curr_pos.y(), right_button == COLOR);
             this->update_view();
         }
 
     }
+
+
     emit mouse_updated_cell_updated(this->curr_pos.x(), this->curr_pos.y());
 }
 
@@ -116,7 +136,17 @@ void Editor::mousePressEvent(QMouseEvent *ev)
     if (ev->button() == Qt::LeftButton)
     {
         this->left_button_pressed = true;
-        if (multicol)
+
+        //overlay check first
+        if (left_button_pressed && this->left_button == OVERLAY)
+        {
+            this->curr_pos.setX(ev->pos().x()/(multiplikator_x*8));
+            this->curr_pos.setY(ev->pos().y()/(multiplikator_y*8));
+
+            this->overlay_sprite->set_bit(this->curr_pos.x(), this->curr_pos.y(), true);
+            this->update_view();
+        }
+        else if (multicol)
         {
             if (left_button_pressed)
             {
@@ -149,7 +179,16 @@ void Editor::mousePressEvent(QMouseEvent *ev)
     else if (ev->button() == Qt::RightButton)
     {
         this->right_button_pressed = true;
-        if (multicol)
+        //overlay check first
+        if (right_button_pressed && this->right_button == OVERLAY)
+        {
+            this->curr_pos.setX(ev->pos().x()/(multiplikator_x*8));
+            this->curr_pos.setY(ev->pos().y()/(multiplikator_y*8));
+
+            this->overlay_sprite->set_bit(this->curr_pos.x(), this->curr_pos.y(), true);
+            this->update_view();
+        }
+        else if (multicol)
         {
 
             if (right_button_pressed)
@@ -247,6 +286,25 @@ void Editor::update_view()
             }
         }
     }
+
+    //if overlay activated
+    if (this->overlay && this->overlay_sprite != 0)
+    {
+        int h = img.height()/21;
+        int w = img.width()/24;
+        for (int y = 0; y < 21; y++)
+        {
+            for (int x = 0; x < 24; x++)
+            {
+                if (this->overlay_sprite->get_bit(x,y) == 1)
+                {
+                    painter.fillRect(x*w,y*h,w,h,this->col_list.at(this->overlay_sprite->sprite_color));
+                }
+            }
+        }
+    }
+
+
 
     if (this->gridlines)
     {

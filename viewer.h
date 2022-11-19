@@ -14,7 +14,6 @@ class Viewer : public QLabel
     Q_OBJECT
 public:
     Viewer(QWidget *parent = 0);
-    void set_sprite_count(int n);
     Sprite *sprite_at(int n)
     {
         return sprite_list.at(n);
@@ -40,9 +39,11 @@ public:
 
 signals:
     void sprite_selected(Sprite *sprite);
+    void overlay_sprite_selected(Sprite *sprite);
     void sprite_update_detail_gui(int,bool,bool,bool,bool);
 
 public slots:
+    void set_sprite_count(int n);
     void update_view();
     void update_current_sprite();
     void set_transparent(int col)

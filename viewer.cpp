@@ -32,6 +32,17 @@ void Viewer::set_sprite_count(int n)
     {
         this->sprite_list.append(new Sprite());
     }
+
+    if (this->sprite_list.length() <= this->current_sprite)
+        this->current_sprite = this->sprite_list.length()-1;
+    emit sprite_selected(this->sprite_list.at(current_sprite));
+
+
+    if (this->sprite_list.length() > this->current_sprite+1)
+        emit overlay_sprite_selected(this->sprite_list.at(current_sprite+1));
+    else
+        emit overlay_sprite_selected(0);
+
     this->update_view();
 }
 
@@ -43,7 +54,6 @@ void Viewer::mousePressEvent(QMouseEvent *ev)
 
     if (ev->pos().x() > 48*horizontal_sprites || ev->pos().y() > 42*((this->sprite_list.length()-1)/horizontal_sprites+1))
         return;
-    qDebug() << ev->pos();
 
     int x = (ev->pos().x()/48) % this->horizontal_sprites;
     int y = (ev->pos().y()/42);
@@ -53,7 +63,11 @@ void Viewer::mousePressEvent(QMouseEvent *ev)
 
     this->current_sprite = x + y*this->horizontal_sprites;
     Sprite *current_sprite_object = this->sprite_list.at(this->current_sprite);
+    Sprite *current_overlay_sprite_object = 0;
+    if (this->sprite_list.length() > this->current_sprite+1)
+        current_overlay_sprite_object = this->sprite_list.at(this->current_sprite + 1);
     emit sprite_selected(current_sprite_object);
+    emit overlay_sprite_selected(current_overlay_sprite_object);
     emit sprite_update_detail_gui(current_sprite_object->sprite_color, current_sprite_object->expand_x, current_sprite_object->expand_y, current_sprite_object->overlay_next, current_sprite_object->multi_color_mode);
     this->update_view();
 }
