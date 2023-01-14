@@ -1,6 +1,7 @@
+#include "fileimport.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include "sprite.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -8,103 +9,75 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    opt.show_grid_lines = true;
+    opt.spriteview = this->ui->graphicsView;
+
+    this->ui->graphicsView->set_opt(&opt);
+    this->ui->label_palette->showPalette(&opt);
 
 
+    leftradio.addButton(this->ui->radio_transparent_left,BUTTONS::TRANSPARENT);
+    leftradio.addButton(this->ui->radio_sprite_left,BUTTONS::COLOR);
+    leftradio.addButton(this->ui->radio_mc1_left,BUTTONS::MC1);
+    leftradio.addButton(this->ui->radio_mc2_left,BUTTONS::MC2);
+    leftradio.addButton(this->ui->radio_overlay_left,BUTTONS::OVERLAY);
 
-    leftradio.addButton(this->ui->radio_transparent_left,0);
-    leftradio.addButton(this->ui->radio_sprite_left,1);
-    leftradio.addButton(this->ui->radio_mc1_left,2);
-    leftradio.addButton(this->ui->radio_mc2_left,3);
-    leftradio.addButton(this->ui->radio_overlay_left,4);
-
-    rightradio.addButton(this->ui->radio_transparent_right,0);
-    rightradio.addButton(this->ui->radio_sprite_right,1);
-    rightradio.addButton(this->ui->radio_mc1_right,2);
-    rightradio.addButton(this->ui->radio_mc2_right,3);
-    rightradio.addButton(this->ui->radio_overlay_right,4);
+    rightradio.addButton(this->ui->radio_transparent_right,BUTTONS::TRANSPARENT);
+    rightradio.addButton(this->ui->radio_sprite_right,BUTTONS::COLOR);
+    rightradio.addButton(this->ui->radio_mc1_right,BUTTONS::MC1);
+    rightradio.addButton(this->ui->radio_mc2_right,BUTTONS::MC2);
+    rightradio.addButton(this->ui->radio_overlay_right,BUTTONS::OVERLAY);
     this->ui->radio_transparent_right->setChecked(true);
 
-    col_list << QColor(0,0,0);
-    col_list << QColor(255,255,255);
-    col_list << QColor(0x92,0x4a,0x40);
-    col_list << QColor(0x84,0xc5,0xcc);
-    col_list << QColor(0x93,0x51,0xb6);
-    col_list << QColor(0x72,0xb1,0x4b);
-    col_list << QColor(0x48,0x3a,0xaa);
-    col_list << QColor(0xd5,0xdf,0x7c);
-    col_list << QColor(0x99,0x69,0x2d);
-    col_list << QColor(0x67,0x52,0x00);
-    col_list << QColor(0xc1,0x81,0x7a);
-    col_list << QColor(0x60,0x60,0x60);
-    col_list << QColor(0x8a,0x8a,0x8a);
-    col_list << QColor(0xb3,0xec,0x91);
-    col_list << QColor(0x86,0x7a,0xde);
-    col_list << QColor(0xb3,0xb3,0xb3);
+    connect(&leftradio,&QButtonGroup::idToggled, this, [=](int id, bool checked){if (checked) this->opt.left_button = id;});
+    connect(&rightradio,&QButtonGroup::idToggled, this, [=](int id, bool checked){if (checked) this->opt.right_button = id;});
 
-    col_names << "Black";
-    col_names << "White";
-    col_names << "Red";
-    col_names << "Cyan";
-    col_names << "Purple";
-    col_names << "Green";
-    col_names << "Blue";
-    col_names << "Yellow";
-    col_names << "Orange";
-    col_names << "Brown";
-    col_names << "Pink";
-    col_names << "Dark Grey";
-    col_names << "Grey";
-    col_names << "Light Green";
-    col_names << "Light Blue";
-    col_names << "Light Grey";
+    connect(this->ui->label_palette, &Palette::palette_clicked, this, [=](int button, int id){
+        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::TRANSPARENT)
+                || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::TRANSPARENT))
+            this->ui->combo_transparent->setCurrentIndex(id);
+
+        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::COLOR)
+                || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::COLOR))
+            this->ui->combo_sprite_col->setCurrentIndex(id);
+
+        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::MC1)
+                || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::MC1))
+            this->ui->combo_multicol_1->setCurrentIndex(id);
+
+        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::MC2)
+                || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::MC2))
+            this->ui->combo_multicol_2->setCurrentIndex(id);
+
+        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::OVERLAY)
+                || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::OVERLAY))
+            this->ui->combo_overlay->setCurrentIndex(id);
+    });
 
     for (int i = 0; i < 16; i++)
     {
-        this->ui->combo_transparent->addItem(col_names.at(i));
-        this->ui->combo_transparent->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
-        this->ui->combo_sprite_col->addItem(col_names.at(i));
-        this->ui->combo_sprite_col->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
-        this->ui->combo_multicol_1->addItem(col_names.at(i));
-        this->ui->combo_multicol_1->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
-        this->ui->combo_multicol_2->addItem(col_names.at(i));
-        this->ui->combo_multicol_2->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
-        this->ui->combo_overlay->addItem(col_names.at(i));
-        this->ui->combo_overlay->setItemIcon(i,this->createIconFromColor(col_list.at(i)));
+        this->ui->combo_transparent->addItem(opt.col_names.at(i));
+        this->ui->combo_transparent->setItemIcon(i,this->createIconFromColor(opt.col_list.at(i)));
+        this->ui->combo_sprite_col->addItem(opt.col_names.at(i));
+        this->ui->combo_sprite_col->setItemIcon(i,this->createIconFromColor(opt.col_list.at(i)));
+        this->ui->combo_multicol_1->addItem(opt.col_names.at(i));
+        this->ui->combo_multicol_1->setItemIcon(i,this->createIconFromColor(opt.col_list.at(i)));
+        this->ui->combo_multicol_2->addItem(opt.col_names.at(i));
+        this->ui->combo_multicol_2->setItemIcon(i,this->createIconFromColor(opt.col_list.at(i)));
+        this->ui->combo_overlay->addItem(opt.col_names.at(i));
+        this->ui->combo_overlay->setItemIcon(i,this->createIconFromColor(opt.col_list.at(i)));
     }
-
-    this->ui->combo_transparent->setCurrentIndex(6);
-    this->ui->combo_sprite_col->setCurrentIndex(5);
-    this->ui->combo_multicol_1->setCurrentIndex(2);
-    this->ui->combo_multicol_2->setCurrentIndex(3);
-    this->ui->combo_overlay->setCurrentIndex(7);
-
-
-    this->ui->label_viewer->set_sprite_count(12);
-
-    this->ui->label_editor->set_sprite(this->ui->label_viewer->sprite_at(0));
-    this->ui->label_editor->set_overlay_sprite(this->ui->label_viewer->sprite_at(1));
-    this->ui->label_editor->update_view();
+    connect(this->ui->combo_transparent, &QComboBox::currentIndexChanged, this, [=](int index){opt.background = index; this->ui->graphicsView->setBackgroundBrush(opt.col_list.at(index));});
+    connect(this->ui->combo_sprite_col, &QComboBox::currentIndexChanged, this, [=](int index){opt.sprite_list.at(current_sprite)->sprite_color = index; this->ui->graphicsView->scene()->update();});
+    connect(this->ui->combo_multicol_1, &QComboBox::currentIndexChanged, this, [=](int index){opt.mc1 = index; this->ui->graphicsView->scene()->update();});
+    connect(this->ui->combo_multicol_2, &QComboBox::currentIndexChanged, this, [=](int index){opt.mc2 = index; this->ui->graphicsView->scene()->update();});
+    //connect(this->ui->combo_overlay, &QComboBox::currentIndexChanged, this, [=](int index){opt.background = index;});
 
 
-
-    connect(this->ui->combo_transparent, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_transparent(int)));
-    connect(this->ui->combo_transparent, SIGNAL(currentIndexChanged(int)), this->ui->label_viewer, SLOT(set_transparent(int)));
-    connect(this->ui->combo_sprite_col, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_sprite_color(int)));
-    connect(this->ui->combo_multicol_1, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc1(int)));
-    connect(this->ui->combo_multicol_2, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_mc2(int)));
-    connect(this->ui->combo_multicol_1, SIGNAL(currentIndexChanged(int)), this->ui->label_viewer, SLOT(set_mc1(int)));
-    connect(this->ui->combo_multicol_2, SIGNAL(currentIndexChanged(int)), this->ui->label_viewer, SLOT(set_mc2(int)));
-    connect(this->ui->combo_overlay, SIGNAL(currentIndexChanged(int)), this->ui->label_editor, SLOT(set_overlay_color(int)));
-
-    connect(this->ui->label_editor, SIGNAL(mouse_updated_cell_updated(int,int)), this, SLOT(show_current_cell(int,int)));
-    connect(this->ui->label_editor, SIGNAL(update_viewer()), this->ui->label_viewer, SLOT(update_current_sprite()));
-
-
-    connect(this->ui->label_viewer, SIGNAL(sprite_selected(Sprite*)), this->ui->label_editor, SLOT(set_sprite(Sprite*)));
-    connect(this->ui->label_viewer, SIGNAL(overlay_sprite_selected(Sprite*)), this->ui->label_editor, SLOT(set_overlay_sprite(Sprite*)));
-    connect(this->ui->label_viewer, SIGNAL(sprite_update_detail_gui(int,bool,bool,bool,bool)), this, SLOT(update_gui(int,bool,bool,bool,bool)));
-    connect(this->ui->label_palette, SIGNAL(palette_clicked(int,int)), this, SLOT(color_change_from_palette(int,int)));
-    this->ui->label_palette->showPalette();
+    connect(this->ui->graphicsView, &SpriteView::current_sprite_changed, this, [=](int id){
+        this->current_sprite = id;
+        this->ui->combo_sprite_col->setCurrentIndex(opt.sprite_list.at(id)->sprite_color);
+    });
 }
 
 MainWindow::~MainWindow()
@@ -112,347 +85,20 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *ev)
-{
-    if (ev->key() == Qt::Key_Control)
-        this->control_pressed = true;
-}
 
-void MainWindow::keyReleaseEvent(QKeyEvent *ev)
-{
-    if (ev->key() == Qt::Key_Control)
-        this->control_pressed = false;
-}
-
-void MainWindow::wheelEvent(QWheelEvent *ev)
-{
-    if (control_pressed)
-    {
-        if (ev->delta() > 10)
-            this->on_actionZoom_In_triggered();
-        else if (ev->delta() < -10)
-            this->on_actionZoom_Out_triggered();
-    }
-}
-
-
-void MainWindow::open_file(QString file)
-{
-
-    QString extension = file.split(".").last().toLower();
-    if (extension == "spd")
-    {
-        this->import_spritepad_file(file);
-    }
-    else if (extension == "prg")
-    {
-        this->import_prg_file(file);
-    }
-}
-
-
-
-QIcon MainWindow::createIconFromColor(QColor col)
-{
-    QImage img(QSize(22,14), QImage::Format_RGB32);
-    QPainter painter;
-    painter.begin(&img);
-    painter.fillRect(0,0,22,14,col);
-    painter.drawRect(0,0,22,14);
-    painter.end();
-    return QIcon(QPixmap::fromImage(img));
-}
-
-void MainWindow::show_current_cell(int x, int y)
-{
-    this->ui->statusbar->showMessage(QString("Current cell: (%1,%2)").arg(x).arg(y));
-}
-
-void MainWindow::color_change_from_palette(int mouse, int color_num)
-{
-    if (mouse == 0) //Left
-    {
-        if (this->leftradio.checkedId() == 0) // transparent
-        {
-            this->ui->combo_transparent->setCurrentIndex(color_num);
-        }
-        else if (this->leftradio.checkedId() == 1) // sprite color
-        {
-            this->ui->combo_sprite_col->setCurrentIndex(color_num);
-        }
-        else if (this->leftradio.checkedId() == 2) // multi color 1
-        {
-            this->ui->combo_multicol_1->setCurrentIndex(color_num);
-        }
-        else if (this->leftradio.checkedId() == 3) // multi color 2
-        {
-            this->ui->combo_multicol_2->setCurrentIndex(color_num);
-        }
-        else if (this->leftradio.checkedId() == 4) // overlay color
-        {
-            this->ui->combo_overlay->setCurrentIndex(color_num);
-        }
-    }
-    else //Right
-    {
-        if (this->rightradio.checkedId() == 0) // transparent
-        {
-            this->ui->combo_transparent->setCurrentIndex(color_num);
-        }
-        else if (this->rightradio.checkedId() == 1) // sprite color
-        {
-            this->ui->combo_sprite_col->setCurrentIndex(color_num);
-        }
-        else if (this->rightradio.checkedId() == 2) // multi color 1
-        {
-            this->ui->combo_multicol_1->setCurrentIndex(color_num);
-        }
-        else if (this->rightradio.checkedId() == 3) // multi color 2
-        {
-            this->ui->combo_multicol_2->setCurrentIndex(color_num);
-        }
-        else if (this->rightradio.checkedId() == 4) // overlay color
-        {
-            this->ui->combo_overlay->setCurrentIndex(color_num);
-        }
-    }
-}
-
-void MainWindow::update_gui(int color, bool expand_x, bool expand_y, bool overlay, bool multicolor)
-{
-    this->ui->combo_sprite_col->setCurrentIndex(color);
-    this->ui->checkBox_expand_x->setChecked(expand_x);
-    this->ui->checkBox_expand_y->setChecked(expand_y);
-    this->ui->check_overlay->setChecked(overlay);
-    this->ui->checkbox_multicolor->setChecked(multicolor);
-}
-
-
-void MainWindow::on_checkBox_editor_grid_lines_toggled(bool checked)
-{
-    this->ui->label_editor->setgridlines(checked);
-}
-
-void MainWindow::on_checkbox_multicolor_toggled(bool checked)
-{
-    this->ui->label_editor->set_multicol(checked);
-    this->ui->radio_mc1_left->setEnabled(checked);
-    this->ui->radio_mc2_left->setEnabled(checked);
-    this->ui->radio_mc1_right->setEnabled(checked);
-    this->ui->radio_mc2_right->setEnabled(checked);
-    this->ui->combo_multicol_1->setEnabled(checked);
-    this->ui->combo_multicol_2->setEnabled(checked);
-    if (!checked)
-    {
-        if (this->ui->radio_mc1_left->isChecked() || this->ui->radio_mc2_left->isChecked())
-            this->ui->radio_sprite_left->setChecked(true);
-        if (this->ui->radio_mc1_right->isChecked() || this->ui->radio_mc2_right->isChecked())
-            this->ui->radio_transparent_right->setChecked(true);
-    }
-    this->ui->label_viewer->update_view();
-}
-
-void MainWindow::on_checkBox_expand_x_toggled(bool checked)
-{
-    this->ui->label_editor->set_expand_x(checked);
-}
-
-void MainWindow::on_checkBox_expand_y_toggled(bool checked)
-{
-    this->ui->label_editor->set_expand_y(checked);
-}
-
-
-void MainWindow::on_combo_zoom_currentIndexChanged(int index)
-{
-    this->ui->label_editor->set_multiplicator(index+1);
-}
-
-void MainWindow::on_actionZoom_In_triggered()
-{
-    if (this->ui->combo_zoom->currentIndex() == 4)
-        return;
-    this->ui->combo_zoom->setCurrentIndex(this->ui->combo_zoom->currentIndex()+1);
-}
-
-void MainWindow::on_actionZoom_Out_triggered()
-{
-    if (this->ui->combo_zoom->currentIndex() == 0)
-        return;
-    this->ui->combo_zoom->setCurrentIndex(this->ui->combo_zoom->currentIndex()-1);
-}
-
-void MainWindow::on_radio_transparent_left_toggled(bool checked)
-{
-    if (checked)
-        this->ui->label_editor->set_left_button(Editor::TRANSPARENT);
-}
-
-void MainWindow::on_radio_sprite_left_toggled(bool checked)
-{
-    if (checked)
-        this->ui->label_editor->set_left_button(Editor::COLOR);
-}
-
-void MainWindow::on_radio_mc1_left_toggled(bool checked)
-{
-    if (checked)
-        this->ui->label_editor->set_left_button(Editor::MC1);
-}
-
-void MainWindow::on_radio_mc2_left_toggled(bool checked)
-{
-    if (checked)
-        this->ui->label_editor->set_left_button(Editor::MC2);
-}
-
-void MainWindow::on_radio_transparent_right_toggled(bool checked)
-{
-    if (checked)
-        this->ui->label_editor->set_right_button(Editor::TRANSPARENT);
-}
-
-void MainWindow::on_radio_sprite_right_toggled(bool checked)
-{
-    if (checked)
-        this->ui->label_editor->set_right_button(Editor::COLOR);
-}
-
-void MainWindow::on_radio_mc1_right_toggled(bool checked)
-{
-    if (checked)
-        this->ui->label_editor->set_right_button(Editor::MC1);
-}
-
-void MainWindow::on_radio_mc2_right_toggled(bool checked)
-{
-    if (checked)
-        this->ui->label_editor->set_right_button(Editor::MC2);
-}
-
-
-void MainWindow::on_radio_overlay_left_toggled(bool checked)
-{
-    if (checked)
-        this->ui->label_editor->set_left_button(Editor::OVERLAY);
-}
-
-void MainWindow::on_radio_overlay_right_toggled(bool checked)
-{
-    if (checked)
-        this->ui->label_editor->set_right_button(Editor::OVERLAY);
-}
-
-void MainWindow::on_check_lock_multicolors_toggled(bool checked)
-{
-    this->ui->combo_multicol_1->setEnabled(!checked);
-    this->ui->combo_multicol_2->setEnabled(!checked);
-}
-
-
-
-
-void MainWindow::on_checkBox_browser_grid_lines_toggled(bool checked)
-{
-    this->ui->label_viewer->set_gridlines(checked);
-}
-
-void MainWindow::import_spritepad_file(QString file_path)
-{
-    QFile file(file_path);
-    file.open(QIODevice::ReadOnly);
-
-    QByteArray header = file.read(4);
-    if (header.toHex() != "53504401")
-    {
-        QMessageBox::critical(this, "Invalid SpritePad Format", "Invalid SpritePad Format");
-        file.close();
-        return;
-    }
-
-    int sprites_num = file.read(1).at(0) + 1;
-    this->ui->label_viewer->set_sprite_count(sprites_num);
-
-    int animations_num = file.read(1).at(0) + 1;
-    Q_UNUSED(animations_num)
-
-    int background = file.read(1).at(0);
-    int mc1 = file.read(1).at(0);
-    int mc2 = file.read(1).at(0);
-
-    this->ui->combo_transparent->setCurrentIndex(background);
-    this->ui->combo_multicol_1->setCurrentIndex(mc1);
-    this->ui->combo_multicol_2->setCurrentIndex(mc2);
-
-    for (int i = 0; i < this->ui->label_viewer->sprite_list.length(); i++) //should be the same length as sprites in file
-    {
-        file.read((char*)&this->ui->label_viewer->sprite_list.at(i)->sprite_data, 64);
-    }
-
-    this->ui->label_viewer->update_view();
-    this->ui->label_editor->update_view();
-    file.close();
-}
-
-void MainWindow::import_prg_file(QString file_path)
-{
-    QFile file(file_path);
-    file.open(QIODevice::ReadOnly);
-
-    if (!file.exists() || !file.isOpen())
-        return;
-
-    this->prg_address = 0;
-    this->prg_address = (0xFF & file.read(1).toInt());
-    this->prg_address |= (0xFF & (file.read(1).toInt()) << 8);
-
-
-
-    int sprite_num = (file.size()-2)/64;
-    this->ui->label_viewer->set_sprite_count(sprite_num);
-
-    for (int i = 0; i < sprite_num; i++) //should be the same length as sprites in file
-    {
-        file.read((char*)&this->ui->label_viewer->sprite_list.at(i)->sprite_data, 64);
-    }
-
-
-    this->ui->label_viewer->update_view();
-    this->ui->label_editor->update_view();
-    file.close();
-
-}
-
-void MainWindow::on_actionOpen_triggered()
+void MainWindow::on_actionImport_triggered()
 {
     QSettings settings;
-    QString dir = settings.value("lastopened").toString();
-    if (dir.isEmpty())
-        dir = QDir::homePath();
-
-    QString file_path = QFileDialog::getOpenFileName(this, "Open File", dir);
-    if (file_path != "")
-        settings.setValue("lastopened", file_path);
-
-    this->open_file(file_path);
-
-}
-
-
-
-void MainWindow::on_check_overlay_toggled(bool checked)
-{
-    if (this->ui->radio_overlay_left->isChecked())
-        this->ui->radio_sprite_left->setChecked(true);
-    if (this->ui->radio_overlay_right->isChecked())
-        this->ui->radio_sprite_right->setChecked(true);
-
-    this->ui->label_editor->set_overlay_color(this->ui->combo_overlay->currentIndex());
-
-    this->ui->radio_overlay_left->setEnabled(checked);
-    this->ui->radio_overlay_right->setEnabled(checked);
-    this->ui->combo_overlay->setEnabled(checked);
-
-    this->ui->label_editor->set_overlay(checked);
+    QString path = QFileDialog::getOpenFileName(this, "File", settings.value("last_file", QVariant()).toString());//, "Sprite Files(*.spd, *.prg)");
+    if (path != "")
+    {
+        FileImport(path, &opt);
+        settings.setValue("last_file", path);
+        this->ui->combo_multicol_1->setCurrentIndex(opt.mc1);
+        this->ui->combo_multicol_2->setCurrentIndex(opt.mc2);
+        this->ui->combo_transparent->setCurrentIndex(opt.background);
+        this->ui->graphicsView->change_current_sprite(0);
+        this->ui->graphicsView->redraw();
+    }
 }
 
