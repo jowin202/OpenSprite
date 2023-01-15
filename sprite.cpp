@@ -154,7 +154,6 @@ void Sprite::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
     else if (ev->button() == Qt::RightButton)
         this->right_pressed = false;
 
-    this->change_tile(ev->pos());
 }
 
 

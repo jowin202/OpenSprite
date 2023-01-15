@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>949</width>
-    <height>669</height>
+    <height>690</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -375,7 +375,7 @@
           </widget>
          </item>
          <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBox">
+          <widget class="QCheckBox" name="check_multicolor">
            <property name="text">
             <string>Multicolor</string>
            </property>
@@ -420,7 +420,7 @@
            <x>0</x>
            <y>0</y>
            <width>532</width>
-           <height>563</height>
+           <height>584</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">

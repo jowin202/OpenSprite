@@ -77,7 +77,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->graphicsView, &SpriteView::current_sprite_changed, this, [=](int id){
         this->current_sprite = id;
         this->ui->combo_sprite_col->setCurrentIndex(opt.sprite_list.at(id)->sprite_color);
+        this->ui->check_multicolor->setChecked(opt.sprite_list.at(id)->multi_color_mode);
     });
+
+
+    connect(this->ui->check_multicolor, &QCheckBox::toggled, this, [=](bool val){opt.sprite_list.at(this->current_sprite)->multi_color_mode = val; this->ui->graphicsView->scene()->update();});
+
 }
 
 MainWindow::~MainWindow()
