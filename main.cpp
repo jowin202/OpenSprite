@@ -9,7 +9,12 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationDomain("github.com/jowin202");
     QCoreApplication::setApplicationName("OpenSprite");
 
+
     MainWindow w;
+    if (argc > 1)
+    {
+        w.import(QString(argv[1]));
+    }
     w.show();
     return a.exec();
 }

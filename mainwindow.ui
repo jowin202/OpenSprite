@@ -10,6 +10,9 @@
     <height>754</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>OpenSprite</string>
   </property>
@@ -463,7 +466,7 @@
            <x>0</x>
            <y>0</y>
            <width>532</width>
-           <height>647</height>
+           <height>648</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -528,6 +531,9 @@
     <addaction name="actionSlide_Down"/>
     <addaction name="actionSlide_Left"/>
     <addaction name="actionSlide_Right"/>
+    <addaction name="separator"/>
+    <addaction name="actionFlip_Top_to_Bottom"/>
+    <addaction name="actionFlip_Left_to_Right"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -611,6 +617,22 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionFlip_Top_to_Bottom">
+   <property name="text">
+    <string>Flip Top to Bottom</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionFlip_Left_to_Right">
+   <property name="text">
+    <string>Flip Left to Right</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
  </widget>

@@ -122,11 +122,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-void MainWindow::on_actionImport_triggered()
+void MainWindow::import(QString path)
 {
     QSettings settings;
-    QString path = QFileDialog::getOpenFileName(this, "File", settings.value("last_file", QVariant()).toString());//, "Sprite Files(*.spd, *.prg)");
     if (path != "")
     {
         FileImport(path, &opt);
@@ -137,6 +135,14 @@ void MainWindow::on_actionImport_triggered()
         this->ui->graphicsView->change_current_sprite(0);
         this->ui->graphicsView->redraw();
     }
+}
+
+
+void MainWindow::on_actionImport_triggered()
+{
+    QSettings settings;
+    QString path = QFileDialog::getOpenFileName(this, "File", settings.value("last_file", QVariant()).toString());//, "Sprite Files(*.spd, *.prg)");
+    this->import(path);
 }
 
 
@@ -220,5 +226,19 @@ void MainWindow::on_slider_scale_valueChanged(int value)
     QTransform matrix;
     matrix.scale(scale,scale);
     this->ui->graphicsView->setTransform(matrix);
+}
+
+
+void MainWindow::on_actionFlip_Top_to_Bottom_triggered()
+{
+    this->opt.sprite_list.at(current_sprite)->flip_top();
+    this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_actionFlip_Left_to_Right_triggered()
+{
+    this->opt.sprite_list.at(current_sprite)->flip_left();
+    this->ui->graphicsView->scene()->update();
 }
 

@@ -5,6 +5,9 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QButtonGroup>
+#include <QDragEnterEvent>
+#include <QMimeData>
+
 #include "sprite.h"
 
 QT_BEGIN_NAMESPACE
@@ -30,6 +33,18 @@ public slots:
          painter.end();
          return QIcon(QPixmap::fromImage(img));}
 
+    void dragEnterEvent(QDragEnterEvent *event) {
+            event->acceptProposedAction();
+    }
+    void dropEvent(QDropEvent *event){
+        const QMimeData* mimeData = event->mimeData();
+        if (mimeData->hasUrls() && mimeData->urls().length() == 1)
+            this->import(mimeData->urls().at(0).toLocalFile());
+    }
+
+public slots:
+    void import(QString path);
+
 private slots:
     void on_actionImport_triggered();
     void on_actionCut_triggered();
@@ -43,6 +58,9 @@ private slots:
     void on_actionSlide_Right_triggered();
 
     void on_slider_scale_valueChanged(int value);
+
+    void on_actionFlip_Top_to_Bottom_triggered();
+    void on_actionFlip_Left_to_Right_triggered();
 
 private:
     Ui::MainWindow *ui;

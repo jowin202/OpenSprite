@@ -123,6 +123,50 @@ public:
         for (int y = 0; y < 21; y++)
             this->set_bit(0,y, tmp[y] != 0);
     }
+    void flip_left()
+    {
+        bool tmp, tmp2;
+        if (this->multi_color_mode)
+        {
+            for (int x = 0; x < 6; x++)
+            {
+                for (int y = 0; y < 21; y++)
+                {
+                    tmp = (this->get_bit(2*x,y) != 0);
+                    tmp2 = (this->get_bit(2*x+1,y) != 0);
+                    this->set_bit(2*x+1,y, this->get_bit(23-2*x,y));
+                    this->set_bit(2*x,y, this->get_bit(23-2*x-1,y));
+                    this->set_bit(23-2*x,y,tmp2);
+                    this->set_bit(23-2*x-1,y,tmp);
+                }
+            }
+        }
+        else
+        {
+            for (int x = 0; x < 12; x++)
+            {
+                for (int y = 0; y < 20; y++)
+                {
+                    tmp = (this->get_bit(x,y) != 0);
+                    this->set_bit(x,y, this->get_bit(23-x,y));
+                    this->set_bit(23-x,y,tmp);
+                }
+            }
+        }
+    }
+    void flip_top()
+    {
+        bool tmp;
+        for (int y = 0; y < 10; y++)
+        {
+            for (int x = 0; x < 24; x++)
+            {
+                tmp = (this->get_bit(x,y) != 0);
+                this->set_bit(x,y, this->get_bit(x,20-y));
+                this->set_bit(x,20-y,tmp);
+            }
+        }
+    }
 
 
     int id;
