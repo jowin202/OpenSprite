@@ -3,6 +3,7 @@
 
 #include <QGraphicsView>
 #include <QWidget>
+#include <QWheelEvent>
 
 struct options;
 
@@ -16,14 +17,13 @@ public:
 
     void change_current_sprite(int id) { emit current_sprite_changed(id); }
 
-    void clear();
-    void cut();
-    void copy();
-    void paste();
-    void paste_into();
+    void wheelEvent(QWheelEvent *event) override;
+
 
 signals:
     void current_sprite_changed(int id);
+    void zoom_in();
+    void zoom_out();
 
 private:
     options *opt;

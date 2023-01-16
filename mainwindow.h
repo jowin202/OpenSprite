@@ -42,6 +42,8 @@ private slots:
     void on_actionSlide_Left_triggered();
     void on_actionSlide_Right_triggered();
 
+    void on_slider_scale_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
     int current_sprite;

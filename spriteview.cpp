@@ -21,27 +21,18 @@ void SpriteView::redraw()
 
 }
 
-void SpriteView::clear()
+void SpriteView::wheelEvent(QWheelEvent *event)
 {
+    if ((event->modifiers() & Qt::Modifier::CTRL) != 0)
+    {
+        if (event->angleDelta().y() > 0)
+            emit zoom_in();
+        else
+            emit zoom_out();
 
+        return;
+    }
+    event->accept();
+    QGraphicsView::wheelEvent(event);
 }
 
-void SpriteView::cut()
-{
-
-}
-
-void SpriteView::copy()
-{
-
-}
-
-void SpriteView::paste()
-{
-
-}
-
-void SpriteView::paste_into()
-{
-
-}

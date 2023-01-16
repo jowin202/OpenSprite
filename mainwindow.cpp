@@ -15,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->graphicsView->set_opt(&opt);
     this->ui->label_palette->showPalette(&opt);
 
+    connect(this->ui->graphicsView, &SpriteView::zoom_in, this, [=](){ this->ui->slider_scale->setValue(this->ui->slider_scale->value()+10);});
+    connect(this->ui->graphicsView, &SpriteView::zoom_out, this, [=](){ this->ui->slider_scale->setValue(this->ui->slider_scale->value()-10);});
+
 
     leftradio.addButton(this->ui->radio_transparent_left,BUTTONS::TRANSPARENT);
     leftradio.addButton(this->ui->radio_sprite_left,BUTTONS::COLOR);
@@ -77,7 +80,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->combo_sprite_col, &QComboBox::currentIndexChanged, this, [=](int index){opt.sprite_list.at(current_sprite)->sprite_color = index; this->ui->graphicsView->scene()->update();});
     connect(this->ui->combo_multicol_1, &QComboBox::currentIndexChanged, this, [=](int index){opt.mc1 = index; this->ui->graphicsView->scene()->update();});
     connect(this->ui->combo_multicol_2, &QComboBox::currentIndexChanged, this, [=](int index){opt.mc2 = index; this->ui->graphicsView->scene()->update();});
-    //connect(this->ui->combo_overlay, &QComboBox::currentIndexChanged, this, [=](int index){opt.background = index;});
+    connect(this->ui->combo_overlay_color, &QComboBox::currentIndexChanged, this, [=](int index){
+        if (this->opt.sprite_list.length() > current_sprite+1)
+            this->opt.sprite_list.at(current_sprite+1)->sprite_color = index;
+        this->ui->graphicsView->scene()->update();
+    });
 
 
     connect(this->ui->graphicsView, &SpriteView::current_sprite_changed, this, [=](int id){
@@ -85,6 +92,10 @@ MainWindow::MainWindow(QWidget *parent)
         this->ui->combo_sprite_col->setCurrentIndex(opt.sprite_list.at(id)->sprite_color);
         this->ui->check_multicolor->setChecked(opt.sprite_list.at(id)->multi_color_mode);
         this->ui->check_overlay->setChecked(opt.sprite_list.at(id)->overlay_next);
+
+        if (opt.sprite_list.at(id)->overlay_next && this->opt.sprite_list.length() > id+1)
+            this->ui->combo_overlay_color->setCurrentIndex(opt.sprite_list.at(id+1)->sprite_color);
+
 
         if (leftradio.checkedId() == BUTTONS::OVERLAY_COLOR || leftradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT)
             this->ui->radio_sprite_left->setChecked(true);
@@ -199,5 +210,15 @@ void MainWindow::on_actionSlide_Right_triggered()
     if (this->opt.sprite_list.at(current_sprite)->multi_color_mode)
         this->opt.sprite_list.at(current_sprite)->slide_right();
     this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_slider_scale_valueChanged(int value)
+{
+    qreal scale = qPow(qreal(2), (value - 250) / qreal(50));
+
+    QTransform matrix;
+    matrix.scale(scale,scale);
+    this->ui->graphicsView->setTransform(matrix);
 }
 
