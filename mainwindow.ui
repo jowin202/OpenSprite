@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>949</width>
-    <height>690</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,6 +41,43 @@
          <string>Options</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_4">
+         <item row="12" column="1">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="checkBox_2">
+           <property name="text">
+            <string>Expand X</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_editor_grid_lines">
+           <property name="text">
+            <string>Show editor grid lines</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_8">
+           <property name="text">
+            <string>Show control tips</string>
+           </property>
+          </widget>
+         </item>
          <item row="7" column="0">
           <widget class="QCheckBox" name="check_lock_multicolors">
            <property name="text">
@@ -48,27 +85,24 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QCheckBox" name="checkBox_3">
+         <item row="11" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_10">
            <property name="text">
-            <string>Expand Y</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_browser_grid_lines">
-           <property name="text">
-            <string>Show browser grid lines</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
+            <string>Show animation values in hex</string>
            </property>
           </widget>
          </item>
          <item row="10" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_8">
+          <widget class="QCheckBox" name="checkBox_9">
            <property name="text">
-            <string>Show control tips</string>
+            <string>Selecting an animation select it's images</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="check_overlay">
+           <property name="text">
+            <string>Overlay next sprite</string>
            </property>
           </widget>
          </item>
@@ -92,10 +126,31 @@
            </item>
           </layout>
          </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="check_multicolor">
+           <property name="text">
+            <string>Multicolor</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="checkBox_3">
+           <property name="text">
+            <string>Expand Y</string>
+           </property>
+          </widget>
+         </item>
          <item row="4" column="0" colspan="3">
           <layout class="QGridLayout" name="gridLayout_5">
-           <item row="4" column="4">
-            <widget class="QLabel" name="label_4">
+           <item row="4" column="3">
+            <widget class="QRadioButton" name="radio_mc1_right">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="4">
+            <widget class="QLabel" name="label_5">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -103,23 +158,17 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Multi-Colour 1</string>
+              <string>Multi-Colour 2</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
-            <widget class="QRadioButton" name="radio_transparent_left">
+           <item row="3" column="5">
+            <widget class="QComboBox" name="combo_sprite_col">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -139,10 +188,16 @@
              </property>
             </widget>
            </item>
-           <item row="5" column="3">
-            <widget class="QRadioButton" name="radio_mc2_right">
+           <item row="2" column="4">
+            <widget class="QLabel" name="label_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
-              <string/>
+              <string>Transparent</string>
              </property>
             </widget>
            </item>
@@ -156,6 +211,112 @@
              </property>
              <property name="text">
               <string>Overlay Color</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLabel" name="label_7">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>R</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="5">
+            <widget class="QComboBox" name="combo_transparent">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="2">
+            <widget class="QRadioButton" name="radio_overlay_color_left">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="5">
+            <widget class="QComboBox" name="combo_overlay_color">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <widget class="QRadioButton" name="radio_mc1_left">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QRadioButton" name="radio_sprite_right">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="3">
+            <widget class="QRadioButton" name="radio_mc2_right">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QRadioButton" name="radio_transparent_left">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="3">
+            <widget class="QRadioButton" name="radio_overlay_color_right">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="4">
+            <widget class="QLabel" name="label_4">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Multi-Colour 1</string>
              </property>
             </widget>
            </item>
@@ -179,6 +340,13 @@
              </property>
             </widget>
            </item>
+           <item row="5" column="2">
+            <widget class="QRadioButton" name="radio_mc2_left">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="2">
             <widget class="QLabel" name="label_6">
              <property name="sizePolicy">
@@ -192,45 +360,8 @@
              </property>
             </widget>
            </item>
-           <item row="5" column="2">
-            <widget class="QRadioButton" name="radio_mc2_left">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="5">
-            <widget class="QComboBox" name="combo_sprite_col">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="2">
-            <widget class="QRadioButton" name="radio_overlay_left">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="5">
-            <widget class="QComboBox" name="combo_transparent">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QLabel" name="label_7">
+           <item row="0" column="2" colspan="2">
+            <widget class="QLabel" name="label_8">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -238,7 +369,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>R</string>
+              <string>Click</string>
              </property>
             </widget>
            </item>
@@ -265,15 +396,8 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="2">
-            <widget class="QRadioButton" name="radio_mc1_left">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="3">
-            <widget class="QRadioButton" name="radio_overlay_right">
+           <item row="7" column="2">
+            <widget class="QRadioButton" name="radio_overlay_transparent_left">
              <property name="enabled">
               <bool>false</bool>
              </property>
@@ -282,61 +406,18 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="4">
-            <widget class="QLabel" name="label_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Transparent</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="3">
-            <widget class="QRadioButton" name="radio_mc1_right">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="5">
-            <widget class="QComboBox" name="combo_overlay">
+           <item row="7" column="3">
+            <widget class="QRadioButton" name="radio_overlay_transparent_right">
              <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2" colspan="2">
-            <widget class="QLabel" name="label_8">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Click</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="3">
-            <widget class="QRadioButton" name="radio_sprite_right">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
-           <item row="5" column="4">
-            <widget class="QLabel" name="label_5">
+           <item row="7" column="4">
+            <widget class="QLabel" name="label_10">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -344,69 +425,11 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Multi-Colour 2</string>
+              <string>Overlay Transparent</string>
              </property>
             </widget>
            </item>
           </layout>
-         </item>
-         <item row="12" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_10">
-           <property name="text">
-            <string>Show animation values in hex</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="checkBox_2">
-           <property name="text">
-            <string>Expand X</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_editor_grid_lines">
-           <property name="text">
-            <string>Show editor grid lines</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="check_multicolor">
-           <property name="text">
-            <string>Multicolor</string>
-           </property>
-          </widget>
-         </item>
-         <item row="11" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_9">
-           <property name="text">
-            <string>Selecting an animation select it's images</string>
-           </property>
-          </widget>
-         </item>
-         <item row="13" column="1">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="3" column="0">
-          <widget class="QCheckBox" name="checkBox_4">
-           <property name="text">
-            <string>Overlay next sprite</string>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
@@ -420,7 +443,7 @@
            <x>0</x>
            <y>0</y>
            <width>532</width>
-           <height>584</height>
+           <height>594</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -471,7 +494,23 @@
     </property>
     <addaction name="actionImport"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionClear"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="actionPaste_Into"/>
+    <addaction name="separator"/>
+    <addaction name="actionSlide_Up"/>
+    <addaction name="actionSlide_Down"/>
+    <addaction name="actionSlide_Left"/>
+    <addaction name="actionSlide_Right"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionImport">
@@ -480,6 +519,78 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="text">
+    <string>Cut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="text">
+    <string>Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="text">
+    <string>Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionPaste_Into">
+   <property name="text">
+    <string>Paste Into</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="text">
+    <string>Clear</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionSlide_Up">
+   <property name="text">
+    <string>Slide Up</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+  </action>
+  <action name="actionSlide_Down">
+   <property name="text">
+    <string>Slide Down</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionSlide_Left">
+   <property name="text">
+    <string>Slide Left</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionSlide_Right">
+   <property name="text">
+    <string>Slide Right</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
  </widget>

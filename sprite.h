@@ -8,7 +8,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 
-enum BUTTONS {TRANSPARENT, COLOR, MC1, MC2, OVERLAY };
+enum BUTTONS {TRANSPARENT, COLOR, MC1, MC2, OVERLAY_COLOR, OVERLAY_TRANSPARENT };
 
 class SpriteView;
 class Sprite;
@@ -62,6 +62,68 @@ public:
 
     char get_bit(int x, int y);
     void set_bit(int x, int y, bool value);
+
+    void slide_up(){
+        bool tmp[24];
+
+        for (int x = 0; x < 24; x++)
+            tmp[x] = (0 != this->get_bit(x,0));
+        for (int y = 0; y < 20; y++)
+        {
+            for (int x = 0; x < 24; x++)
+            {
+                this->set_bit(x,y, (0 != this->get_bit(x,y+1)));
+            }
+        }
+        for (int x = 0; x < 24; x++)
+            this->set_bit(x,20, tmp[x] != 0);
+    }
+    void slide_down(){
+        bool tmp[24];
+
+        for (int x = 0; x < 24; x++)
+            tmp[x] = (0 != this->get_bit(x,20));
+        for (int y = 20; y > 0; y--)
+        {
+            for (int x = 0; x < 24; x++)
+            {
+                this->set_bit(x,y, (0 != this->get_bit(x,y-1)));
+            }
+        }
+        for (int x = 0; x < 24; x++)
+            this->set_bit(x,0, tmp[x] != 0);
+    }
+    void slide_left(){
+        bool tmp[21];
+
+        for (int y = 0; y < 21; y++)
+            tmp[y] = (0 != this->get_bit(0,y));
+        for (int x = 0; x < 23; x++)
+        {
+            for (int y = 0; y < 20; y++)
+            {
+                this->set_bit(x,y, (0 != this->get_bit(x+1,y)));
+            }
+        }
+        for (int y = 0; y < 21; y++)
+            this->set_bit(23,y, tmp[y] != 0);
+    }
+    void slide_right(){
+        bool tmp[21];
+
+        for (int y = 0; y < 21; y++)
+            tmp[y] = (0 != this->get_bit(23,y));
+        for (int x = 23; x > 0; x--)
+        {
+            for (int y = 0; y < 21; y++)
+            {
+                this->set_bit(x,y, (0 != this->get_bit(x-1,y)));
+            }
+        }
+        for (int y = 0; y < 21; y++)
+            this->set_bit(0,y, tmp[y] != 0);
+    }
+
 
     int id;
     int sprite_color = 5;

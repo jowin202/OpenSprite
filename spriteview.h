@@ -16,6 +16,12 @@ public:
 
     void change_current_sprite(int id) { emit current_sprite_changed(id); }
 
+    void clear();
+    void cut();
+    void copy();
+    void paste();
+    void paste_into();
+
 signals:
     void current_sprite_changed(int id);
 

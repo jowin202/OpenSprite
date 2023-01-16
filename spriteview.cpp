@@ -20,3 +20,28 @@ void SpriteView::redraw()
     }
 
 }
+
+void SpriteView::clear()
+{
+
+}
+
+void SpriteView::cut()
+{
+
+}
+
+void SpriteView::copy()
+{
+
+}
+
+void SpriteView::paste()
+{
+
+}
+
+void SpriteView::paste_into()
+{
+
+}

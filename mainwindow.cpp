@@ -20,13 +20,15 @@ MainWindow::MainWindow(QWidget *parent)
     leftradio.addButton(this->ui->radio_sprite_left,BUTTONS::COLOR);
     leftradio.addButton(this->ui->radio_mc1_left,BUTTONS::MC1);
     leftradio.addButton(this->ui->radio_mc2_left,BUTTONS::MC2);
-    leftradio.addButton(this->ui->radio_overlay_left,BUTTONS::OVERLAY);
+    leftradio.addButton(this->ui->radio_overlay_color_left,BUTTONS::OVERLAY_COLOR);
+    leftradio.addButton(this->ui->radio_overlay_transparent_left,BUTTONS::OVERLAY_TRANSPARENT);
 
     rightradio.addButton(this->ui->radio_transparent_right,BUTTONS::TRANSPARENT);
     rightradio.addButton(this->ui->radio_sprite_right,BUTTONS::COLOR);
     rightradio.addButton(this->ui->radio_mc1_right,BUTTONS::MC1);
     rightradio.addButton(this->ui->radio_mc2_right,BUTTONS::MC2);
-    rightradio.addButton(this->ui->radio_overlay_right,BUTTONS::OVERLAY);
+    rightradio.addButton(this->ui->radio_overlay_color_right,BUTTONS::OVERLAY_COLOR);
+    rightradio.addButton(this->ui->radio_overlay_transparent_right,BUTTONS::OVERLAY_TRANSPARENT);
     this->ui->radio_transparent_right->setChecked(true);
 
     connect(&leftradio,&QButtonGroup::idToggled, this, [=](int id, bool checked){if (checked) this->opt.left_button = id;});
@@ -49,9 +51,13 @@ MainWindow::MainWindow(QWidget *parent)
                 || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::MC2))
             this->ui->combo_multicol_2->setCurrentIndex(id);
 
-        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::OVERLAY)
-                || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::OVERLAY))
-            this->ui->combo_overlay->setCurrentIndex(id);
+        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::OVERLAY_COLOR)
+                || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::OVERLAY_COLOR))
+            this->ui->combo_overlay_color->setCurrentIndex(id);
+
+        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT)
+                || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT))
+            this->ui->combo_transparent->setCurrentIndex(id);
     });
 
     for (int i = 0; i < 16; i++)
@@ -64,8 +70,8 @@ MainWindow::MainWindow(QWidget *parent)
         this->ui->combo_multicol_1->setItemIcon(i,this->createIconFromColor(opt.col_list.at(i)));
         this->ui->combo_multicol_2->addItem(opt.col_names.at(i));
         this->ui->combo_multicol_2->setItemIcon(i,this->createIconFromColor(opt.col_list.at(i)));
-        this->ui->combo_overlay->addItem(opt.col_names.at(i));
-        this->ui->combo_overlay->setItemIcon(i,this->createIconFromColor(opt.col_list.at(i)));
+        this->ui->combo_overlay_color->addItem(opt.col_names.at(i));
+        this->ui->combo_overlay_color->setItemIcon(i,this->createIconFromColor(opt.col_list.at(i)));
     }
     connect(this->ui->combo_transparent, &QComboBox::currentIndexChanged, this, [=](int index){opt.background = index; this->ui->graphicsView->setBackgroundBrush(opt.col_list.at(index));});
     connect(this->ui->combo_sprite_col, &QComboBox::currentIndexChanged, this, [=](int index){opt.sprite_list.at(current_sprite)->sprite_color = index; this->ui->graphicsView->scene()->update();});
@@ -78,11 +84,26 @@ MainWindow::MainWindow(QWidget *parent)
         this->current_sprite = id;
         this->ui->combo_sprite_col->setCurrentIndex(opt.sprite_list.at(id)->sprite_color);
         this->ui->check_multicolor->setChecked(opt.sprite_list.at(id)->multi_color_mode);
+        this->ui->check_overlay->setChecked(opt.sprite_list.at(id)->overlay_next);
+
+        if (leftradio.checkedId() == BUTTONS::OVERLAY_COLOR || leftradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT)
+            this->ui->radio_sprite_left->setChecked(true);
+        if (rightradio.checkedId() == BUTTONS::OVERLAY_COLOR || rightradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT)
+            this->ui->radio_transparent_right->setChecked(true);
     });
 
 
     connect(this->ui->check_multicolor, &QCheckBox::toggled, this, [=](bool val){opt.sprite_list.at(this->current_sprite)->multi_color_mode = val; this->ui->graphicsView->scene()->update();});
+    connect(this->ui->check_overlay, &QCheckBox::toggled, this, [=](bool val) {
+        this->ui->radio_overlay_color_left->setEnabled(val);
+        this->ui->radio_overlay_color_right->setEnabled(val);
+        this->ui->radio_overlay_transparent_left->setEnabled(val);
+        this->ui->radio_overlay_transparent_right->setEnabled(val);
+        this->ui->combo_overlay_color->setEnabled(val);
+        opt.sprite_list.at(this->current_sprite)->overlay_next = val;
+        this->ui->graphicsView->scene()->update();});
 
+    connect(this->ui->checkBox_editor_grid_lines, &QCheckBox::toggled, this, [=](bool val){ opt.show_grid_lines = val; this->ui->graphicsView->scene()->update();});
 }
 
 MainWindow::~MainWindow()
@@ -105,5 +126,78 @@ void MainWindow::on_actionImport_triggered()
         this->ui->graphicsView->change_current_sprite(0);
         this->ui->graphicsView->redraw();
     }
+}
+
+
+void MainWindow::on_actionCut_triggered()
+{
+    this->on_actionCopy_triggered();
+    this->on_actionClear_triggered();
+}
+
+
+void MainWindow::on_actionCopy_triggered()
+{
+    for (int i = 0; i < 64; i++)
+        this->copied_sprite_data[i] = this->opt.sprite_list.at(current_sprite)->sprite_data[i];
+}
+
+
+void MainWindow::on_actionPaste_triggered()
+{
+    for (int i = 0; i < 64; i++)
+        this->opt.sprite_list.at(current_sprite)->sprite_data[i] = this->copied_sprite_data[i];
+    this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_actionPaste_Into_triggered()
+{
+    for (int i = 0; i < 64; i++)
+    {
+        if (this->copied_sprite_data[i] != 0)
+            this->opt.sprite_list.at(current_sprite)->sprite_data[i] = this->copied_sprite_data[i];
+    }
+    this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_actionClear_triggered()
+{
+    for (int i = 0; i < 64; i++)
+        this->opt.sprite_list.at(current_sprite)->sprite_data[i] = 0;
+    this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_actionSlide_Up_triggered()
+{
+    this->opt.sprite_list.at(current_sprite)->slide_up();
+    this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_actionSlide_Down_triggered()
+{
+    this->opt.sprite_list.at(current_sprite)->slide_down();
+    this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_actionSlide_Left_triggered()
+{
+    this->opt.sprite_list.at(current_sprite)->slide_left();
+    if (this->opt.sprite_list.at(current_sprite)->multi_color_mode)
+        this->opt.sprite_list.at(current_sprite)->slide_left();
+    this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_actionSlide_Right_triggered()
+{
+    this->opt.sprite_list.at(current_sprite)->slide_right();
+    if (this->opt.sprite_list.at(current_sprite)->multi_color_mode)
+        this->opt.sprite_list.at(current_sprite)->slide_right();
+    this->ui->graphicsView->scene()->update();
 }
 

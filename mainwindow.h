@@ -32,6 +32,15 @@ public slots:
 
 private slots:
     void on_actionImport_triggered();
+    void on_actionCut_triggered();
+    void on_actionCopy_triggered();
+    void on_actionPaste_triggered();
+    void on_actionPaste_Into_triggered();
+    void on_actionClear_triggered();
+    void on_actionSlide_Up_triggered();
+    void on_actionSlide_Down_triggered();
+    void on_actionSlide_Left_triggered();
+    void on_actionSlide_Right_triggered();
 
 private:
     Ui::MainWindow *ui;
@@ -39,5 +48,8 @@ private:
 
     QButtonGroup leftradio;
     QButtonGroup rightradio;
+
+
+    unsigned char copied_sprite_data[64];
 };
 #endif // MAINWINDOW_H
