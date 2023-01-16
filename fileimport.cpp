@@ -38,6 +38,7 @@ FileImport::FileImport(QString path, options *opt)
         opt->sprite_list.append(new Sprite(opt));
         file.read((char*)(&opt->sprite_list.at(i)->sprite_data), 64);
         opt->sprite_list.at(i)->multi_color_mode = (opt->sprite_list.at(i)->sprite_data[63] & (2 << 6)) > 0;
+        opt->sprite_list.at(i)->sprite_color = (opt->sprite_list.at(i)->sprite_data[63] & 0xF);
     }
 
     file.close();
