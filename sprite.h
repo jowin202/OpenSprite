@@ -6,7 +6,10 @@
 #include <QPainter>
 #include <QList>
 #include <QGraphicsSceneMouseEvent>
+#include <QJsonObject>
+#include <QJsonArray>
 
+#include <QSettings>
 
 enum BUTTONS {TRANSPARENT, COLOR, MC1, MC2, OVERLAY_COLOR, OVERLAY_TRANSPARENT };
 
@@ -15,13 +18,9 @@ class Sprite;
 struct options {
     int left_button = BUTTONS::COLOR;
     int right_button = BUTTONS::TRANSPARENT;
-    int mc1;
-    int mc2;
-    int background;
+    QJsonObject data;
     int current_sprite = 0;
-    int animations_num;
     QList<Sprite*> sprite_list;
-    bool show_grid_lines;
     SpriteView *spriteview;
     QStringList col_names = {"Black","White","Red","Cyan","Purple","Green","Blue","Yellow","Orange","Brown",
                              "Pink", "Dark Grey", "Grey","Light Green","Light Blue","Light Grey"};
@@ -59,80 +58,80 @@ public:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *ev) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *ev) override;
 
-    char get_bit(int x, int y);
+    bool get_bit(int x, int y);
     void set_bit(int x, int y, bool value);
 
     void slide_up(){
         bool tmp[24];
 
         for (int x = 0; x < 24; x++)
-            tmp[x] = (0 != this->get_bit(x,0));
+            tmp[x] = this->get_bit(x,0);
         for (int y = 0; y < 20; y++)
         {
             for (int x = 0; x < 24; x++)
             {
-                this->set_bit(x,y, (0 != this->get_bit(x,y+1)));
+                this->set_bit(x,y, this->get_bit(x,y+1));
             }
         }
         for (int x = 0; x < 24; x++)
-            this->set_bit(x,20, tmp[x] != 0);
+            this->set_bit(x,20, tmp[x]);
     }
     void slide_down(){
         bool tmp[24];
 
         for (int x = 0; x < 24; x++)
-            tmp[x] = (0 != this->get_bit(x,20));
+            tmp[x] = this->get_bit(x,20);
         for (int y = 20; y > 0; y--)
         {
             for (int x = 0; x < 24; x++)
             {
-                this->set_bit(x,y, (0 != this->get_bit(x,y-1)));
+                this->set_bit(x,y, this->get_bit(x,y-1));
             }
         }
         for (int x = 0; x < 24; x++)
-            this->set_bit(x,0, tmp[x] != 0);
+            this->set_bit(x,0, tmp[x]);
     }
     void slide_left(){
         bool tmp[21];
 
         for (int y = 0; y < 21; y++)
-            tmp[y] = (0 != this->get_bit(0,y));
+            tmp[y] = this->get_bit(0,y);
         for (int x = 0; x < 23; x++)
         {
             for (int y = 0; y < 20; y++)
             {
-                this->set_bit(x,y, (0 != this->get_bit(x+1,y)));
+                this->set_bit(x,y, this->get_bit(x+1,y));
             }
         }
         for (int y = 0; y < 21; y++)
-            this->set_bit(23,y, tmp[y] != 0);
+            this->set_bit(23,y, tmp[y]);
     }
     void slide_right(){
         bool tmp[21];
 
         for (int y = 0; y < 21; y++)
-            tmp[y] = (0 != this->get_bit(23,y));
+            tmp[y] = this->get_bit(23,y);
         for (int x = 23; x > 0; x--)
         {
             for (int y = 0; y < 21; y++)
             {
-                this->set_bit(x,y, (0 != this->get_bit(x-1,y)));
+                this->set_bit(x,y, this->get_bit(x-1,y));
             }
         }
         for (int y = 0; y < 21; y++)
-            this->set_bit(0,y, tmp[y] != 0);
+            this->set_bit(0,y, tmp[y]);
     }
     void flip_left()
     {
         bool tmp, tmp2;
-        if (this->multi_color_mode)
+        if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
         {
             for (int x = 0; x < 6; x++)
             {
                 for (int y = 0; y < 21; y++)
                 {
-                    tmp = (this->get_bit(2*x,y) != 0);
-                    tmp2 = (this->get_bit(2*x+1,y) != 0);
+                    tmp = this->get_bit(2*x,y);
+                    tmp2 = this->get_bit(2*x+1,y);
                     this->set_bit(2*x+1,y, this->get_bit(23-2*x,y));
                     this->set_bit(2*x,y, this->get_bit(23-2*x-1,y));
                     this->set_bit(23-2*x,y,tmp2);
@@ -146,7 +145,7 @@ public:
             {
                 for (int y = 0; y < 20; y++)
                 {
-                    tmp = (this->get_bit(x,y) != 0);
+                    tmp = this->get_bit(x,y);
                     this->set_bit(x,y, this->get_bit(23-x,y));
                     this->set_bit(23-x,y,tmp);
                 }
@@ -160,7 +159,7 @@ public:
         {
             for (int x = 0; x < 24; x++)
             {
-                tmp = (this->get_bit(x,y) != 0);
+                tmp = this->get_bit(x,y);
                 this->set_bit(x,y, this->get_bit(x,20-y));
                 this->set_bit(x,20-y,tmp);
             }
@@ -169,12 +168,11 @@ public:
 
 
     int id;
-    int sprite_color = 5;
-    unsigned char sprite_data[64];
+    //unsigned char sprite_data[64];
     bool expand_x = false;
     bool expand_y = false;
     bool overlay_next = false;
-    bool multi_color_mode = true;
+    //bool multi_color_mode = true;
 
 
     bool left_pressed = false;

@@ -4,8 +4,10 @@
 Sprite::Sprite(options *opt)
 {
     this->opt = opt;
+    /*
     for (int i = 0; i < 64; i++)
         this->sprite_data[i] = 0;
+        */
 }
 
 void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -15,7 +17,7 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 
     painter->drawRect(QRectF(0,0,10*24 *(expand_x ? 2 : 1), 10*21 *(expand_y ? 2 : 1)));
-    if (this->multi_color_mode)
+    if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
     {
         int w = 20;
         int h = 10;
@@ -25,15 +27,15 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
             {
                 if (this->get_bit(2*x,y)== 1 && this->get_bit(2*x+1,y) == 0)
                 {
-                    painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->sprite_color));
+                    painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
                 }
                 else if (this->get_bit(2*x,y) == 0 && this->get_bit(2*x+1,y) == 1)
                 {
-                    painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->mc1));
+                    painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("mc1").toInt()));
                 }
                 else if (this->get_bit(2*x,y) == 1 && this->get_bit(2*x+1,y) == 1)
                 {
-                    painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->mc2));
+                    painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("mc2").toInt()));
                 }
 
             }
@@ -47,16 +49,16 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
             {
                 if (this->get_bit(x,y) == 1)
                 {
-                    painter->fillRect(10*x,10*y,10,10,this->opt->col_list.at(this->sprite_color));
+                    painter->fillRect(10*x,10*y,10,10,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
                 }
             }
         }
     }
 
 
-    if (this->overlay_next && opt->sprite_list.length() > this->id+1)
+    if (this->opt->data.value("sprites").toArray().at(id).toObject().value("overlay_next").toBool() && opt->sprite_list.length() > this->id+1)
     {
-        if (opt->sprite_list.at(id+1)->multi_color_mode)
+        if (this->opt->data.value("sprites").toArray().at(id+1).toObject().value("mc_mode").toBool())
         {
             int w = 20;
             int h = 10;
@@ -66,15 +68,15 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                 {
                     if (opt->sprite_list.at(id+1)->get_bit(2*x,y)== 1 && opt->sprite_list.at(id+1)->get_bit(2*x+1,y) == 0)
                     {
-                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(opt->sprite_list.at(id+1)->sprite_color));
+                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
                     }
                     else if (opt->sprite_list.at(id+1)->get_bit(2*x,y) == 0 && opt->sprite_list.at(id+1)->get_bit(2*x+1,y) == 1)
                     {
-                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->mc1));
+                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("mc1").toInt()));
                     }
                     else if (opt->sprite_list.at(id+1)->get_bit(2*x,y) == 1 && opt->sprite_list.at(id+1)->get_bit(2*x+1,y) == 1)
                     {
-                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->mc2));
+                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("mc2").toInt()));
                     }
 
                 }
@@ -88,21 +90,21 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                 {
                     if (opt->sprite_list.at(id+1)->get_bit(x,y) == 1)
                     {
-                        painter->fillRect(10*x,10*y,10,10,this->opt->col_list.at(opt->sprite_list.at(id+1)->sprite_color));
+                        painter->fillRect(10*x,10*y,10,10,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
                     }
                 }
             }
         }
     }
 
-    if (opt->show_grid_lines)
+    if (QSettings().value("show_grid_lines").toBool())
     {
         for (int y = 0; y < 21; y++)
             painter->drawLine(0, 10*y, 24*10, 10*y);
         for (int x = 0; x < 24; x+=2)
             painter->drawLine(10*x, 0, 10*x, 10*21);
 
-        if (!this->multi_color_mode)
+        if (!this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
             for (int x = 1; x < 24; x+=2)
                 painter->drawLine(10*x, 0, 10*x, 10*21);
     }
@@ -126,7 +128,7 @@ QRectF Sprite::boundingRect() const
 
 void Sprite::change_tile(QPointF pos)
 {
-    if (this->multi_color_mode)
+    if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
     {
         int x = pos.x()/20;
         int y = pos.y()/10;
@@ -223,20 +225,28 @@ void Sprite::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
 }
 
 
-char Sprite::get_bit(int x, int y)
+bool Sprite::get_bit(int x, int y)
 {
-    char val = sprite_data[3*y + x/8];
-    int pos = x%8;
-    return (val&(0x01 << (7-pos))) >> (7-pos);
+    if (x >= 24 || y >= 21) return false;
+    return opt->data.value("sprites").toArray().at(id).toObject().value("sprite_data").toArray().at(y).toArray().at(x).toInt() > 0;
 }
 
 void Sprite::set_bit(int x, int y, bool value)
 {
     if (x >= 24 || y >= 21) return;
 
-    int pos = x%8;
-    if (value)
-        sprite_data[3*y + x/8] |= (0x01 << (7-pos));
-    else
-        sprite_data[3*y + x/8] &= ~(0x01 << (7-pos));
+    QJsonObject current_sprite_obj = opt->data.value("sprites").toArray().at(id).toObject();
+    QJsonArray array_y = current_sprite_obj.value("sprite_data").toArray();
+    QJsonArray array_x = array_y.at(y).toArray();
+    array_x.removeAt(x);
+    array_x.insert(x, value ? 1 : 0);
+
+    array_y.removeAt(y);
+    array_y.insert(y, array_x);
+    current_sprite_obj.insert("sprite_data", array_y);
+
+    QJsonArray sprites_array = opt->data.value("sprites").toArray();
+    sprites_array.removeAt(id);
+    sprites_array.insert(id, current_sprite_obj);
+    opt->data.insert("sprites", sprites_array);
 }

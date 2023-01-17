@@ -7,7 +7,9 @@
 #include <QButtonGroup>
 #include <QDragEnterEvent>
 #include <QMimeData>
+#include <QSettings>
 
+#include <QCryptographicHash>
 #include <QJsonDocument>
 
 #include "sprite.h"
@@ -48,7 +50,7 @@ public slots:
     void import(QString path);
 
 private slots:
-    void on_actionImport_triggered();
+    void on_actionOpenProject_triggered();
     void on_actionCut_triggered();
     void on_actionCopy_triggered();
     void on_actionPaste_triggered();
@@ -64,6 +66,11 @@ private slots:
     void on_actionFlip_Top_to_Bottom_triggered();
     void on_actionFlip_Left_to_Right_triggered();
 
+
+    void on_actionSave_Project_triggered();
+
+    void on_actionSave_Project_As_triggered();
+
 private:
     Ui::MainWindow *ui;
     int current_sprite;
@@ -72,6 +79,6 @@ private:
     QButtonGroup rightradio;
 
 
-    unsigned char copied_sprite_data[64];
+    QJsonObject copied_sprite;
 };
 #endif // MAINWINDOW_H

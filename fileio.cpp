@@ -60,8 +60,9 @@ QJsonObject FileIO::read_spd(QString path)
         }
 
         sprite.insert("sprite_data", array_rows);
-        int options = file.read(1).at(0);
-        sprite.insert("mc_mode", (options & (2 << 6)) > 0);
+        int options = (0xFF & file.read(1).at(0));
+        sprite.insert("mc_mode", (0x1 & (options >> 7)) != 0);
+        sprite.insert("overlay_next", (0x1 & (options >> 4)) != 0);
         sprite.insert("sprite_color", options & 0xF);
         sprites.append(sprite);
     }
@@ -144,7 +145,9 @@ void FileIO::write_spd(QString path, QJsonObject file_obj)
         }
         sprite_data[63] = 0;
         if (file_obj.value("sprites").toArray().at(i).toObject().value("mc_mode").toBool())
-            sprite_data[63] |=  ((2 << 6));
+            sprite_data[63] |=  ((1 << 7));
+        if (file_obj.value("sprites").toArray().at(i).toObject().value("overlay_next").toBool())
+            sprite_data[63] |=  ((1 << 4));
         sprite_data[63] |= file_obj.value("sprites").toArray().at(i).toObject().value("sprite_color").toInt();
         file.write(sprite_data,64);
     }

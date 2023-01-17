@@ -9,14 +9,16 @@ SpriteView::SpriteView(QWidget *parent) : QGraphicsView(parent)
 
 void SpriteView::redraw()
 {
-    this->setBackgroundBrush(opt->col_list.at(opt->background));
+    this->setBackgroundBrush(opt->col_list.at(opt->data.value("background").toInt()));
 
 
-    for (int i = 0; i < opt->sprite_list.length(); i++)
+    for (int i = 0; i < opt->data.value("sprites").toArray().count(); i++)
     {
-        opt->sprite_list.at(i)->id = i;
-        opt->sprite_list.at(i)->setPos(30+(10*24+30)*(i%8),30+(10*21+30)*(i/8));
-        this->scene()->addItem(opt->sprite_list.at(i));
+        Sprite *sprite = new Sprite(opt);
+        sprite->id = i;
+        sprite->setPos(30+(10*24+30)*(i%8),30+(10*21+30)*(i/8));
+        this->scene()->addItem(sprite);
+        opt->sprite_list.append(sprite);
     }
 
 }

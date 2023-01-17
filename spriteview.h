@@ -5,6 +5,10 @@
 #include <QWidget>
 #include <QWheelEvent>
 
+#include <QJsonObject>
+#include <QJsonArray>
+
+
 struct options;
 
 class SpriteView : public QGraphicsView
