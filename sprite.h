@@ -19,7 +19,6 @@ struct options {
     int mc2;
     int background;
     int current_sprite = 0;
-    int sprite_num;
     int animations_num;
     QList<Sprite*> sprite_list;
     bool show_grid_lines;

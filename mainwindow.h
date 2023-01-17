@@ -8,6 +8,8 @@
 #include <QDragEnterEvent>
 #include <QMimeData>
 
+#include <QJsonDocument>
+
 #include "sprite.h"
 
 QT_BEGIN_NAMESPACE

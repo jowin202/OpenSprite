@@ -1,4 +1,5 @@
 #include "fileimport.h"
+#include "fileio.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "sprite.h"
@@ -134,6 +135,9 @@ void MainWindow::import(QString path)
         this->ui->combo_transparent->setCurrentIndex(opt.background);
         this->ui->graphicsView->change_current_sprite(0);
         this->ui->graphicsView->redraw();
+
+        QJsonObject file = FileIO().read_spd(path);
+        FileIO().write_spd("/tmp/test.bin", file);
     }
 }
 

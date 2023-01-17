@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     fileimport.cpp \
+    fileio.cpp \
     main.cpp \
     mainwindow.cpp \
     palette.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     fileimport.h \
+    fileio.h \
     mainwindow.h \
     palette.h \
     sprite.h \

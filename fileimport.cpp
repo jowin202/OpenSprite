@@ -17,7 +17,7 @@ FileImport::FileImport(QString path, options *opt)
     int vers = file.read(1).at(0);
     Q_UNUSED(vers);
 
-    opt->sprite_num = file.read(1).at(0) + 1;
+    int sprite_num = file.read(1).at(0) + 1;
     //this->ui->label_viewer->set_sprite_count(sprites_num);
 
     opt->animations_num = file.read(1).at(0) + 1;
@@ -33,13 +33,14 @@ FileImport::FileImport(QString path, options *opt)
 
 
     opt->sprite_list.clear();
-    for (int i = 0; i < opt->sprite_num; i++) //should be the same length as sprites in file
+    for (int i = 0; i < sprite_num; i++) //should be the same length as sprites in file
     {
         opt->sprite_list.append(new Sprite(opt));
         file.read((char*)(&opt->sprite_list.at(i)->sprite_data), 64);
         opt->sprite_list.at(i)->multi_color_mode = (opt->sprite_list.at(i)->sprite_data[63] & (2 << 6)) > 0;
         opt->sprite_list.at(i)->sprite_color = (opt->sprite_list.at(i)->sprite_data[63] & 0xF);
     }
+
 
     file.close();
 }

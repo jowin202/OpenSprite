@@ -225,7 +225,6 @@ void Sprite::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
 
 char Sprite::get_bit(int x, int y)
 {
-
     char val = sprite_data[3*y + x/8];
     int pos = x%8;
     return (val&(0x01 << (7-pos))) >> (7-pos);
