@@ -119,9 +119,15 @@ MainWindow::MainWindow(QWidget *parent)
         this->ui->graphicsView->scene()->update();
     });
     connect(this->ui->combo_overlay_color, &QComboBox::currentIndexChanged, this, [=](int index){
-        if (this->opt.sprite_list.length() > current_sprite+1)
-            //TODO
-            //this->opt.sprite_list.at(current_sprite+1)->sprite_color = index;
+        if (this->opt.data.value("sprites").toArray().count() > current_sprite+1)
+        {
+            QJsonObject current_sprite_obj = opt.data.value("sprites").toArray().at(current_sprite+1).toObject();
+            current_sprite_obj.insert("sprite_color", index);
+            QJsonArray sprites_array = opt.data.value("sprites").toArray();
+            sprites_array.removeAt(current_sprite+1);
+            sprites_array.insert(current_sprite+1, current_sprite_obj);
+            opt.data.insert("sprites", sprites_array);
+        }
         this->ui->graphicsView->scene()->update();
     });
 
@@ -149,6 +155,8 @@ MainWindow::MainWindow(QWidget *parent)
         sprites_array.removeAt(current_sprite);
         sprites_array.insert(current_sprite, current_sprite_obj);
         opt.data.insert("sprites", sprites_array);
+
+        this->ui->combo_overlay_color->setCurrentIndex(opt.data.value("sprites").toArray().at(current_sprite+1).toObject().value("sprite_color").toInt());
 
         this->ui->graphicsView->scene()->update();});
 
