@@ -7,7 +7,7 @@
 
 #include <QJsonObject>
 #include <QJsonArray>
-
+#include <QJsonDocument>
 
 struct options;
 

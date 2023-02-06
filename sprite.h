@@ -22,6 +22,10 @@ struct options {
     int current_sprite = 0;
     QList<Sprite*> sprite_list;
     SpriteView *spriteview;
+    bool show_grid_lines = true;
+    int sprite_spacing_x = 30;
+    int sprite_spacing_y = 30;
+    int sprites_per_row = 8;
     QStringList col_names = {"Black","White","Red","Cyan","Purple","Green","Blue","Yellow","Orange","Brown",
                              "Pink", "Dark Grey", "Grey","Light Green","Light Blue","Light Grey"};
     QList<QColor> col_list = { QColor(0,0,0),

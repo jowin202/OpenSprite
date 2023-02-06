@@ -158,10 +158,17 @@ MainWindow::MainWindow(QWidget *parent)
 
         this->ui->combo_overlay_color->setCurrentIndex(opt.data.value("sprites").toArray().at(current_sprite+1).toObject().value("sprite_color").toInt());
 
+        if (this->ui->check_force_single_color->isChecked())
+        {
+            //TODO
+        }
+
         this->ui->graphicsView->scene()->update();});
 
-    this->ui->checkBox_editor_grid_lines->setChecked(QSettings().value("show_grid_lines").toBool());
-    connect(this->ui->checkBox_editor_grid_lines, &QCheckBox::toggled, this, [=](bool val){ QSettings().setValue("show_grid_lines", val); this->ui->graphicsView->scene()->update();});
+    connect(this->ui->checkBox_editor_grid_lines, &QCheckBox::toggled, [=](bool val){ this->opt.show_grid_lines = val; this->ui->graphicsView->scene()->update();});
+    connect(this->ui->spin_horizontal_spacing, &QSpinBox::valueChanged, [=](int val){ this->opt.sprite_spacing_x = val; this->ui->graphicsView->redraw();});
+    connect(this->ui->spin_vertical_spacing, &QSpinBox::valueChanged, [=](int val){ this->opt.sprite_spacing_y = val; this->ui->graphicsView->redraw();});
+    connect(this->ui->spin_sprites_per_line, &QSpinBox::valueChanged, [=](int val){ this->opt.sprites_per_row = val; this->ui->graphicsView->redraw();});
 }
 
 MainWindow::~MainWindow()
@@ -220,12 +227,18 @@ void MainWindow::on_actionCut_triggered()
 
 void MainWindow::on_actionCopy_triggered()
 {
-    this->copied_sprite = this->opt.data.value("sprites").toArray().at(current_sprite).toObject();
+    QSettings settings;
+    settings.setValue("copied_sprite",QJsonDocument(this->opt.data.value("sprites").toArray().at(current_sprite).toObject()).toJson(QJsonDocument::Compact));
 }
 
 
 void MainWindow::on_actionPaste_triggered()
 {
+    QJsonParseError error;
+    QSettings settings;
+    QJsonObject copied_sprite = QJsonDocument::fromJson(settings.value("copied_sprite").toString().toUtf8(), &error).object();
+    if (error.error != QJsonParseError::NoError) return;
+
     QJsonArray sprite_array = this->opt.data.value("sprites").toArray();
     sprite_array.removeAt(current_sprite);
     sprite_array.insert(current_sprite, copied_sprite);
@@ -346,4 +359,3 @@ void MainWindow::on_actionSave_Project_As_triggered()
     if (path != "")
         FileIO().write_spd(path, opt.data);
 }
-

@@ -7,7 +7,6 @@
 #include <QButtonGroup>
 #include <QDragEnterEvent>
 #include <QMimeData>
-#include <QSettings>
 
 #include <QCryptographicHash>
 #include <QJsonDocument>
@@ -71,14 +70,15 @@ private slots:
 
     void on_actionSave_Project_As_triggered();
 
+
 private:
     Ui::MainWindow *ui;
-    int current_sprite;
+    int current_sprite = 0;
 
     QButtonGroup leftradio;
     QButtonGroup rightradio;
 
 
-    QJsonObject copied_sprite;
+    //QJsonObject copied_sprite;
 };
 #endif // MAINWINDOW_H

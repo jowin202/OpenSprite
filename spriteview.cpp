@@ -11,16 +11,18 @@ void SpriteView::redraw()
 {
     this->setBackgroundBrush(opt->col_list.at(opt->data.value("background").toInt()));
 
+    this->scene()->clear();
+    this->opt->sprite_list.clear();
+    this->update();
 
     for (int i = 0; i < opt->data.value("sprites").toArray().count(); i++)
     {
         Sprite *sprite = new Sprite(opt);
         sprite->id = i;
-        sprite->setPos(30+(10*24+30)*(i%8),30+(10*21+30)*(i/8));
+        sprite->setPos(opt->sprite_spacing_x+(10*24+opt->sprite_spacing_x)*(i% opt->sprites_per_row),opt->sprite_spacing_y+(10*21+opt->sprite_spacing_y)*(i/opt->sprites_per_row));
         this->scene()->addItem(sprite);
         opt->sprite_list.append(sprite);
     }
-
 }
 
 void SpriteView::wheelEvent(QWheelEvent *event)

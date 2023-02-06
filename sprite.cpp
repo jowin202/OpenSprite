@@ -4,10 +4,6 @@
 Sprite::Sprite(options *opt)
 {
     this->opt = opt;
-    /*
-    for (int i = 0; i < 64; i++)
-        this->sprite_data[i] = 0;
-        */
 }
 
 void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -97,7 +93,7 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
         }
     }
 
-    if (QSettings().value("show_grid_lines").toBool())
+    if (opt->show_grid_lines)
     {
         for (int y = 0; y < 21; y++)
             painter->drawLine(0, 10*y, 24*10, 10*y);
@@ -228,6 +224,7 @@ void Sprite::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
 bool Sprite::get_bit(int x, int y)
 {
     if (x >= 24 || y >= 21) return false;
+    if (opt->data.value("sprites").toArray().count() <= id) return false;
     return opt->data.value("sprites").toArray().at(id).toObject().value("sprite_data").toArray().at(y).toArray().at(x).toInt() > 0;
 }
 
