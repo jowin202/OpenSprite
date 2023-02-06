@@ -183,7 +183,7 @@ void MainWindow::import(QString path)
     if (path != "")
     {
         opt.data = FileIO().read_spd(path);
-        FileIO().write_spd("/tmp/test.bin", opt.data);
+        //FileIO().write_spd("/tmp/test.bin", opt.data);
 
         QFile f1(path);
         f1.open(QIODevice::ReadOnly);
