@@ -21,7 +21,11 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
         {
             for (int x = 0; x < 12; x++)
             {
-                if (this->get_bit(2*x,y)== 1 && this->get_bit(2*x+1,y) == 0)
+                if (this->get_bit(2*x,y)== 0 && this->get_bit(2*x+1,y) == 0)
+                {
+                    painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(opt->data.value("background").toInt()));
+                }
+                else if (this->get_bit(2*x,y)== 1 && this->get_bit(2*x+1,y) == 0)
                 {
                     painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
                 }
@@ -46,6 +50,10 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                 if (this->get_bit(x,y) == 1)
                 {
                     painter->fillRect(10*x,10*y,10,10,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
+                }
+                else
+                {
+                    painter->fillRect(10*x,10*y,10,10,this->opt->col_list.at(opt->data.value("background").toInt()));
                 }
             }
         }

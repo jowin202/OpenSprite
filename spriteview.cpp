@@ -9,7 +9,8 @@ SpriteView::SpriteView(QWidget *parent) : QGraphicsView(parent)
 
 void SpriteView::redraw()
 {
-    this->setBackgroundBrush(opt->col_list.at(opt->data.value("background").toInt()));
+    //this->setBackgroundBrush(opt->col_list.at(opt->data.value("background").toInt()));
+    this->setBackgroundBrush(opt->background);
 
     this->scene()->clear();
     this->opt->sprite_list.clear();

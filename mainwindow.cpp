@@ -169,6 +169,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->spin_horizontal_spacing, &QSpinBox::valueChanged, [=](int val){ this->opt.sprite_spacing_x = val; this->ui->graphicsView->redraw();});
     connect(this->ui->spin_vertical_spacing, &QSpinBox::valueChanged, [=](int val){ this->opt.sprite_spacing_y = val; this->ui->graphicsView->redraw();});
     connect(this->ui->spin_sprites_per_line, &QSpinBox::valueChanged, [=](int val){ this->opt.sprites_per_row = val; this->ui->graphicsView->redraw();});
+    connect(this->ui->button_spacing_color, &QPushButton::clicked, [=](){ QColor col = QColorDialog::getColor(opt.background, 0, "Background Color"); if (col.isValid()) this->opt.background = col; this->ui->graphicsView->redraw();});
 }
 
 MainWindow::~MainWindow()
@@ -186,17 +187,18 @@ void MainWindow::import(QString path)
 
         QFile f1(path);
         f1.open(QIODevice::ReadOnly);
-        QFile f2("/tmp/test.bin");
-        f2.open(QIODevice::ReadOnly);
+        //QFile f2("/tmp/test.bin");
+        //f2.open(QIODevice::ReadOnly);
         QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
         hash1.addData(f1.readAll());
-        QCryptographicHash hash2(QCryptographicHash::Algorithm::Sha256);
-        hash2.addData(f2.readAll());
+        //QCryptographicHash hash2(QCryptographicHash::Algorithm::Sha256);
+        //hash2.addData(f2.readAll());
         f1.close();
-        f2.close();
-        if (hash1.result() == hash2.result())
-            qDebug() << "hash ok" << hash1.result().toHex();
-        else qDebug() << "hash_fail";
+        //f2.close();
+        //if (hash1.result() == hash2.result())
+        //    qDebug() << "hash ok" << hash1.result().toHex();
+        //else qDebug() << "hash_fail";
+
 
 
         settings.setValue("last_file", path);

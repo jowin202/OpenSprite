@@ -7,9 +7,11 @@
 #include <QButtonGroup>
 #include <QDragEnterEvent>
 #include <QMimeData>
+#include <QColorDialog>
 
 #include <QCryptographicHash>
 #include <QJsonDocument>
+
 
 #include "sprite.h"
 
