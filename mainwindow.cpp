@@ -98,7 +98,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
     connect(this->ui->combo_transparent, &QComboBox::currentIndexChanged, this, [=](int index){
         opt.data.insert("background", index);
-        this->ui->graphicsView->setBackgroundBrush(opt.col_list.at(index));
+        this->ui->graphicsView->redraw();
     });
     connect(this->ui->combo_sprite_col, &QComboBox::currentIndexChanged, this, [=](int index){
         QJsonObject current_sprite_obj = opt.data.value("sprites").toArray().at(current_sprite).toObject();
