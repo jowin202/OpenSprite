@@ -11,7 +11,6 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     Q_UNUSED(widget);
     Q_UNUSED(option);
 
-
     painter->drawRect(QRectF(0,0,10*24 *(expand_x ? 2 : 1), 10*21 *(expand_y ? 2 : 1)));
     if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
     {

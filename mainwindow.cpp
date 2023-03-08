@@ -361,3 +361,37 @@ void MainWindow::on_actionSave_Project_As_triggered()
     if (path != "")
         FileIO().write_spd(path, opt.data);
 }
+
+void MainWindow::on_actionDelete_Sprite_triggered()
+{
+    QJsonArray sprites_array = opt.data.value("sprites").toArray();
+    sprites_array.removeAt(current_sprite);
+    opt.data.insert("sprites", sprites_array);
+    this->ui->graphicsView->redraw();
+}
+
+
+void MainWindow::on_actionAdd_Sprite_triggered()
+{
+    QJsonArray sprites_array = opt.data.value("sprites").toArray();
+
+    QJsonObject sprite;
+    QJsonArray array_rows;
+    for (int y = 0; y < 21; y++)
+    {
+        QJsonArray array_row;
+        for (int x = 0; x < 24; x++)
+        {
+            array_row.append( 0 );
+        }
+        array_rows.append(array_row);
+    }
+    sprite.insert("sprite_data", array_rows);
+    sprite.insert("mc_mode", true);
+    sprite.insert("overlay_next", false);
+    sprite.insert("sprite_color", 5);
+    sprites_array.insert(current_sprite, sprite);
+    opt.data.insert("sprites", sprites_array);
+    this->ui->graphicsView->redraw();
+}
+

@@ -3,6 +3,7 @@
 
 SpriteView::SpriteView(QWidget *parent) : QGraphicsView(parent)
 {
+    this->setRenderHint(QPainter::Antialiasing, true);
     this->setScene(new QGraphicsScene);
     this->scene()->setSceneRect(0,0,2200,1000);
 }

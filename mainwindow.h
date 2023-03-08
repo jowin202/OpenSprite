@@ -73,6 +73,10 @@ private slots:
     void on_actionSave_Project_As_triggered();
 
 
+    void on_actionDelete_Sprite_triggered();
+
+    void on_actionAdd_Sprite_triggered();
+
 private:
     Ui::MainWindow *ui;
     int current_sprite = 0;

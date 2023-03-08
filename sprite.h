@@ -27,7 +27,7 @@ struct options {
     int sprite_spacing_x = 30;
     int sprite_spacing_y = 30;
     int sprites_per_row = 8;
-    QColor background = QColor(0,0,255);
+    QColor background = QColor(0xd9,0xd6,0xc8);
     QStringList col_names = {"Black","White","Red","Cyan","Purple","Green","Blue","Yellow","Orange","Brown",
                              "Pink", "Dark Grey", "Grey","Light Green","Light Blue","Light Grey"};
     QList<QColor> col_list = { QColor(0,0,0),

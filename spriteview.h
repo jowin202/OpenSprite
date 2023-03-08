@@ -4,10 +4,13 @@
 #include <QGraphicsView>
 #include <QWidget>
 #include <QWheelEvent>
+#include <QPainter>
 
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
+
+#include "mainwindow.h"
 
 struct options;
 
@@ -22,6 +25,21 @@ public:
     void change_current_sprite(int id) { emit current_sprite_changed(id); }
 
     void wheelEvent(QWheelEvent *event) override;
+
+    void dragEnterEvent(QDragEnterEvent *event) override {
+            event->acceptProposedAction();
+    }
+    void dragMoveEvent(QDragMoveEvent *event) override {
+        event->acceptProposedAction();
+    }
+    void dragLeaveEvent(QDragLeaveEvent *event) override {
+        event->accept();
+    }
+    void dropEvent(QDropEvent *event) override {
+        const QMimeData* mimeData = event->mimeData();
+        if (mimeData->hasUrls() && mimeData->urls().length() == 1)
+            ((MainWindow*)this->parentWidget())->import(mimeData->urls().at(0).toLocalFile());
+    }
 
 
 signals:

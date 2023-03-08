@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>949</width>
-    <height>930</height>
+    <width>1026</width>
+    <height>866</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -579,8 +579,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>532</width>
-           <height>823</height>
+           <width>609</width>
+           <height>797</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -601,17 +601,6 @@
         </widget>
        </widget>
       </widget>
-      <widget class="QWidget" name="gridLayoutWidget_2">
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>PushButton</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -621,7 +610,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>949</width>
+     <width>1026</width>
      <height>30</height>
     </rect>
    </property>
@@ -642,6 +631,9 @@
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
     <addaction name="actionPaste_Into"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_Sprite"/>
+    <addaction name="actionDelete_Sprite"/>
     <addaction name="separator"/>
     <addaction name="actionSlide_Up"/>
     <addaction name="actionSlide_Down"/>
@@ -698,9 +690,6 @@
   <action name="actionClear">
    <property name="text">
     <string>Clear</string>
-   </property>
-   <property name="shortcut">
-    <string>Del</string>
    </property>
   </action>
   <action name="actionSlide_Up">
@@ -765,6 +754,22 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionDelete_Sprite">
+   <property name="text">
+    <string>Delete Sprite</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionAdd_Sprite">
+   <property name="text">
+    <string>Add Sprite</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
  </widget>
