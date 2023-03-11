@@ -10,7 +10,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
-#include "mainwindow.h"
+#include <QMimeData>
 
 struct options;
 
@@ -38,7 +38,7 @@ public:
     void dropEvent(QDropEvent *event) override {
         const QMimeData* mimeData = event->mimeData();
         if (mimeData->hasUrls() && mimeData->urls().length() == 1)
-            ((MainWindow*)this->parentWidget())->import(mimeData->urls().at(0).toLocalFile());
+            emit droppedFile(mimeData->urls().at(0).toLocalFile());
     }
 
 
@@ -46,6 +46,7 @@ signals:
     void current_sprite_changed(int id);
     void zoom_in();
     void zoom_out();
+    void droppedFile(QString file);
 
 private:
     options *opt;

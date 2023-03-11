@@ -100,8 +100,13 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
         }
     }
 
+
+
     if (opt->show_grid_lines)
     {
+        QPen pen;
+        pen.setColor(Qt::gray);
+        painter->setPen(pen);
         for (int y = 0; y < 21; y++)
             painter->drawLine(0, 10*y, 24*10, 10*y);
         for (int x = 0; x < 24; x+=2)

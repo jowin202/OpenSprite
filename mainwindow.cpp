@@ -82,6 +82,9 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
 
+
+    connect(this->ui->graphicsView, &SpriteView::droppedFile, [=](QString file) { this->import(file); });
+
     //combos
     for (int i = 0; i < 16; i++)
     {
@@ -140,6 +143,23 @@ MainWindow::MainWindow(QWidget *parent)
         sprites_array.insert(current_sprite, current_sprite_obj);
         opt.data.insert("sprites", sprites_array);
 
+        this->ui->radio_mc1_left->setEnabled(val);
+        this->ui->radio_mc1_right->setEnabled(val);
+        this->ui->radio_mc2_left->setEnabled(val);
+        this->ui->radio_mc2_right->setEnabled(val);
+        this->ui->combo_multicol_1->setEnabled(val);
+        this->ui->combo_multicol_2->setEnabled(val);
+
+        if (!val && this->ui->radio_mc1_left->isChecked())
+            this->ui->radio_sprite_left->setChecked(true);
+        if (!val && this->ui->radio_mc1_right->isChecked())
+            this->ui->radio_transparent_right->setChecked(true);
+
+        if (!val && this->ui->radio_mc2_left->isChecked())
+            this->ui->radio_sprite_left->setChecked(true);
+        if (!val && this->ui->radio_mc2_right->isChecked())
+            this->ui->radio_transparent_right->setChecked(true);
+
         this->ui->graphicsView->scene()->update();
     });
     connect(this->ui->check_overlay, &QCheckBox::toggled, this, [=](bool val) {
@@ -148,6 +168,20 @@ MainWindow::MainWindow(QWidget *parent)
         this->ui->radio_overlay_transparent_left->setEnabled(val);
         this->ui->radio_overlay_transparent_right->setEnabled(val);
         this->ui->combo_overlay_color->setEnabled(val);
+
+
+
+        if (!val && this->ui->radio_overlay_color_left->isChecked())
+            this->ui->radio_sprite_left->setChecked(true);
+        if (!val && this->ui->radio_overlay_color_right->isChecked())
+            this->ui->radio_sprite_right->setChecked(true);
+
+        if (!val && this->ui->radio_overlay_transparent_left->isChecked())
+            this->ui->radio_transparent_left->setChecked(true);
+        if (!val && this->ui->radio_overlay_transparent_right->isChecked())
+            this->ui->radio_transparent_right->setChecked(true);
+
+
 
         QJsonObject current_sprite_obj = opt.data.value("sprites").toArray().at(current_sprite).toObject();
         current_sprite_obj.insert("overlay_next", val);
@@ -223,7 +257,7 @@ void MainWindow::on_actionOpenProject_triggered()
 void MainWindow::on_actionCut_triggered()
 {
     this->on_actionCopy_triggered();
-    this->on_actionClear_triggered();
+    this->on_actionDelete_Sprite_triggered();
 }
 
 
@@ -242,10 +276,10 @@ void MainWindow::on_actionPaste_triggered()
     if (error.error != QJsonParseError::NoError) return;
 
     QJsonArray sprite_array = this->opt.data.value("sprites").toArray();
-    sprite_array.removeAt(current_sprite);
+    //sprite_array.removeAt(current_sprite);
     sprite_array.insert(current_sprite, copied_sprite);
     this->opt.data.insert("sprites", sprite_array);
-    this->ui->graphicsView->scene()->update();
+    this->ui->graphicsView->redraw();
 }
 
 

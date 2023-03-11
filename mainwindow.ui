@@ -680,6 +680,9 @@
    </property>
   </action>
   <action name="actionPaste_Into">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Paste Into</string>
    </property>
