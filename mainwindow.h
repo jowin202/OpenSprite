@@ -77,6 +77,8 @@ private slots:
 
     void on_actionAdd_Sprite_triggered();
 
+    void on_actionAbout_triggered();
+
 private:
     Ui::MainWindow *ui;
     int current_sprite = 0;

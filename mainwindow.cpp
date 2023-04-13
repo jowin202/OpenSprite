@@ -188,14 +188,18 @@ MainWindow::MainWindow(QWidget *parent)
         QJsonArray sprites_array = opt.data.value("sprites").toArray();
         sprites_array.removeAt(current_sprite);
         sprites_array.insert(current_sprite, current_sprite_obj);
+        //next sprite should be single color
+        if (val && this->ui->check_force_single_color->isChecked() && current_sprite+1 < opt.data.value("sprites").toArray().count())
+        {
+            QJsonObject next_sprite_obj = opt.data.value("sprites").toArray().at(current_sprite+1).toObject();
+            next_sprite_obj.insert("mc_mode", false);
+            sprites_array.removeAt(current_sprite+1);
+            sprites_array.insert(current_sprite+1, next_sprite_obj);
+        }
         opt.data.insert("sprites", sprites_array);
 
         this->ui->combo_overlay_color->setCurrentIndex(opt.data.value("sprites").toArray().at(current_sprite+1).toObject().value("sprite_color").toInt());
 
-        if (this->ui->check_force_single_color->isChecked())
-        {
-            //TODO
-        }
 
         this->ui->graphicsView->scene()->update();});
 
@@ -249,7 +253,7 @@ void MainWindow::import(QString path)
 void MainWindow::on_actionOpenProject_triggered()
 {
     QSettings settings;
-    QString path = QFileDialog::getOpenFileName(this, "File", settings.value("last_file", QVariant()).toString());//, "Sprite Files(*.spd, *.prg)");
+    QString path = QFileDialog::getOpenFileName(this, "File", settings.value("last_file", QVariant()).toString(), "All Files (*);;Sprite Files(*.spd *.prg)");
     this->import(path);
 }
 
@@ -427,5 +431,16 @@ void MainWindow::on_actionAdd_Sprite_triggered()
     sprites_array.insert(current_sprite, sprite);
     opt.data.insert("sprites", sprites_array);
     this->ui->graphicsView->redraw();
+}
+
+
+void MainWindow::on_actionAbout_triggered()
+{
+
+    QMessageBox msgBox(this);
+    msgBox.setTextFormat(Qt::RichText);
+    msgBox.setText("Author: Johannes Winkler<br>License: GNU GPL License<br><a href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.exec();
 }
 
