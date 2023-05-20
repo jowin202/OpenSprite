@@ -177,3 +177,38 @@ void FileIO::write_spd(QString path, QJsonObject file_obj)
 
     file.close();
 }
+
+void FileIO::write_prg(QString path, QJsonObject file_obj, int address)
+{
+    QFile file(path);
+    file.open(QIODevice::WriteOnly);
+
+    file.write( QByteArray(1, address & 0xFF)  );
+    file.write( QByteArray(1, address >> 8)  );
+
+    for (int i = 0; i < file_obj.value("sprites").toArray().count(); i++)
+    {
+        char sprite_data[64];
+        for (int i = 0; i < 64; i++) sprite_data[i] = 0;
+
+        for (int y = 0; y < 21; y++)
+        {
+            for (int x = 0; x < 24; x++)
+            {
+                if (file_obj.value("sprites").toArray().at(i).toObject().value("sprite_data").toArray().at(y).toArray().at(x).toInt() == 1)
+                    sprite_data[3*y + x/8] |= (0x01 << (7-(x%8)));
+                else
+                    sprite_data[3*y + x/8] &= ~(0x01 << (7-(x%8)));
+            }
+        }
+        sprite_data[63] = 0;
+        if (file_obj.value("sprites").toArray().at(i).toObject().value("mc_mode").toBool())
+            sprite_data[63] |=  ((1 << 7));
+        if (file_obj.value("sprites").toArray().at(i).toObject().value("overlay_next").toBool())
+            sprite_data[63] |=  ((1 << 4));
+        sprite_data[63] |= file_obj.value("sprites").toArray().at(i).toObject().value("sprite_color").toInt();
+        file.write(sprite_data,64);
+    }
+
+    file.close();
+}

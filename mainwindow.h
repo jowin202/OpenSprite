@@ -8,6 +8,7 @@
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include <QColorDialog>
+#include <QInputDialog>
 
 #include <QCryptographicHash>
 #include <QJsonDocument>
@@ -78,6 +79,8 @@ private slots:
     void on_actionAdd_Sprite_triggered();
 
     void on_actionAbout_triggered();
+
+    void on_actionExport_as_triggered();
 
 private:
     Ui::MainWindow *ui;
