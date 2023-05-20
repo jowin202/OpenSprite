@@ -791,7 +791,7 @@
   </action>
   <action name="actionExport_as">
    <property name="text">
-    <string>Export as </string>
+    <string>Export As </string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+E</string>

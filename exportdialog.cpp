@@ -25,9 +25,9 @@ void ExportDialog::on_button_export_clicked()
 
 
     int attribute = 0; //0=empty
-    if (this->ui->radio_seuck)
+    if (this->ui->radio_seuck->isChecked())
         attribute = 2; //2=seuck
-    else if (this->ui->radio_spritepad)
+    else if (this->ui->radio_spritepad->isChecked())
         attribute = 1; //1=spritepad
 
 
