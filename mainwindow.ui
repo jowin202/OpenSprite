@@ -621,6 +621,7 @@
     <addaction name="actionOpenProject"/>
     <addaction name="actionSave_Project"/>
     <addaction name="actionSave_Project_As"/>
+    <addaction name="actionExport"/>
     <addaction name="actionExport_as"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -791,6 +792,14 @@
   <action name="actionExport_as">
    <property name="text">
     <string>Export as </string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+E</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>Export</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+E</string>

@@ -449,6 +449,13 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionExport_as_triggered()
 {
+    ExportDialog *d = new ExportDialog(&opt);
+    d->show();
+}
+
+
+void MainWindow::on_actionExport_triggered()
+{
     if (opt.last_exported_file == "")
     {
         ExportDialog *d = new ExportDialog(&opt);

@@ -82,6 +82,8 @@ private slots:
 
     void on_actionExport_as_triggered();
 
+    void on_actionExport_triggered();
+
 private:
     Ui::MainWindow *ui;
     int current_sprite = 0;
