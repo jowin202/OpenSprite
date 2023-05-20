@@ -154,7 +154,7 @@ public:
         {
             for (int x = 0; x < 12; x++)
             {
-                for (int y = 0; y < 20; y++)
+                for (int y = 0; y < 21; y++)
                 {
                     tmp = this->get_bit(x,y);
                     this->set_bit(x,y, this->get_bit(23-x,y));
