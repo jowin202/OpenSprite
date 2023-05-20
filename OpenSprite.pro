@@ -9,6 +9,7 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    exportdialog.cpp \
     fileio.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -17,6 +18,7 @@ SOURCES += \
     spriteview.cpp
 
 HEADERS += \
+    exportdialog.h \
     fileio.h \
     mainwindow.h \
     palette.h \
@@ -24,6 +26,7 @@ HEADERS += \
     spriteview.h
 
 FORMS += \
+    exportdialog.ui \
     mainwindow.ui
 
 

@@ -27,6 +27,11 @@ struct options {
     int sprite_spacing_x = 30;
     int sprite_spacing_y = 30;
     int sprites_per_row = 8;
+    //auto export
+    QString last_exported_file;
+    int export_address;
+    int export_file_format;
+    int export_attribute_format;
     QColor background = QColor(0xd9,0xd6,0xc8);
     QStringList col_names = {"Black","White","Red","Cyan","Purple","Green","Blue","Yellow","Orange","Brown",
                              "Pink", "Dark Grey", "Grey","Light Green","Light Blue","Light Grey"};

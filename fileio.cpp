@@ -178,13 +178,16 @@ void FileIO::write_spd(QString path, QJsonObject file_obj)
     file.close();
 }
 
-void FileIO::write_prg(QString path, QJsonObject file_obj, int address)
+void FileIO::write_prg(QString path, QJsonObject file_obj, int address, int attribute)
 {
     QFile file(path);
     file.open(QIODevice::WriteOnly);
 
-    file.write( QByteArray(1, address & 0xFF)  );
-    file.write( QByteArray(1, address >> 8)  );
+    if (address >= 0)
+    {
+        file.write( QByteArray(1, address & 0xFF)  );
+        file.write( QByteArray(1, address >> 8)  );
+    }
 
     for (int i = 0; i < file_obj.value("sprites").toArray().count(); i++)
     {
@@ -202,11 +205,22 @@ void FileIO::write_prg(QString path, QJsonObject file_obj, int address)
             }
         }
         sprite_data[63] = 0;
-        if (file_obj.value("sprites").toArray().at(i).toObject().value("mc_mode").toBool())
-            sprite_data[63] |=  ((1 << 7));
-        if (file_obj.value("sprites").toArray().at(i).toObject().value("overlay_next").toBool())
-            sprite_data[63] |=  ((1 << 4));
-        sprite_data[63] |= file_obj.value("sprites").toArray().at(i).toObject().value("sprite_color").toInt();
+        if (attribute == 1)
+        {
+            //attribute spritepad
+            if (file_obj.value("sprites").toArray().at(i).toObject().value("mc_mode").toBool())
+                sprite_data[63] |=  ((1 << 7));
+            if (file_obj.value("sprites").toArray().at(i).toObject().value("overlay_next").toBool())
+                sprite_data[63] |=  ((1 << 4));
+            sprite_data[63] |= file_obj.value("sprites").toArray().at(i).toObject().value("sprite_color").toInt();
+        }
+        else if (attribute == 2)
+        {
+            //seuck
+            if (file_obj.value("sprites").toArray().at(i).toObject().value("mc_mode").toBool())
+                sprite_data[63] |=  ((1 << 4));
+            sprite_data[63] |= file_obj.value("sprites").toArray().at(i).toObject().value("sprite_color").toInt();
+        }
         file.write(sprite_data,64);
     }
 

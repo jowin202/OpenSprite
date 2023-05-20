@@ -3,6 +3,8 @@
 #include "ui_mainwindow.h"
 #include "sprite.h"
 
+#include "exportdialog.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -447,11 +449,14 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionExport_as_triggered()
 {
-    QString last_file = QSettings().value("last_file").toString();
-    last_file.chop(4);
-    int address = QInputDialog::getInt(this, "Address", "Load Address:", 0x3000, 0, 0xFFFF,1);
-    QString path = QFileDialog::getSaveFileName(this, "Export As", last_file + ".prg", "PRG File (*.prg)");
-    if (path != "")
-        FileIO().write_prg(path, opt.data, address);
+    if (opt.last_exported_file == "")
+    {
+        ExportDialog *d = new ExportDialog(&opt);
+        d->show();
+    }
+    else
+    { //auto export
+        FileIO().write_prg(opt.last_exported_file, opt.data, opt.export_address, opt.export_attribute_format);
+    }
 }
 

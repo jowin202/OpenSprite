@@ -17,7 +17,7 @@ public:
     void write_spd(QString path, QJsonObject file_obj);
 
 
-    void write_prg(QString path, QJsonObject file_obj, int address);
+    void write_prg(QString path, QJsonObject file_obj, int address, int attribute);
 
 signals:
 
