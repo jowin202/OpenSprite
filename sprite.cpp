@@ -22,19 +22,19 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
             {
                 if (this->get_bit(2*x,y)== 0 && this->get_bit(2*x+1,y) == 0)
                 {
-                    painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(opt->data.value("background").toInt()));
+                    painter->fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(opt->data.value("background").toInt()));
                 }
                 else if (this->get_bit(2*x,y)== 1 && this->get_bit(2*x+1,y) == 0)
                 {
-                    painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
+                    painter->fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
                 }
                 else if (this->get_bit(2*x,y) == 0 && this->get_bit(2*x+1,y) == 1)
                 {
-                    painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("mc1").toInt()));
+                    painter->fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc1").toInt()));
                 }
                 else if (this->get_bit(2*x,y) == 1 && this->get_bit(2*x+1,y) == 1)
                 {
-                    painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("mc2").toInt()));
+                    painter->fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc2").toInt()));
                 }
 
             }
@@ -48,11 +48,11 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
             {
                 if (this->get_bit(x,y) == 1)
                 {
-                    painter->fillRect(10*x,10*y,10,10,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
+                    painter->fillRect(10*x,10*y,11,11,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
                 }
                 else
                 {
-                    painter->fillRect(10*x,10*y,10,10,this->opt->col_list.at(opt->data.value("background").toInt()));
+                    painter->fillRect(10*x,10*y,11,11,this->opt->col_list.at(opt->data.value("background").toInt()));
                 }
             }
         }
@@ -71,15 +71,15 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                 {
                     if (opt->sprite_list.at(id+1)->get_bit(2*x,y)== 1 && opt->sprite_list.at(id+1)->get_bit(2*x+1,y) == 0)
                     {
-                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
+                        painter->fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
                     }
                     else if (opt->sprite_list.at(id+1)->get_bit(2*x,y) == 0 && opt->sprite_list.at(id+1)->get_bit(2*x+1,y) == 1)
                     {
-                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("mc1").toInt()));
+                        painter->fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc1").toInt()));
                     }
                     else if (opt->sprite_list.at(id+1)->get_bit(2*x,y) == 1 && opt->sprite_list.at(id+1)->get_bit(2*x+1,y) == 1)
                     {
-                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("mc2").toInt()));
+                        painter->fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc2").toInt()));
                     }
 
                 }
@@ -93,7 +93,7 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                 {
                     if (opt->sprite_list.at(id+1)->get_bit(x,y) == 1)
                     {
-                        painter->fillRect(10*x,10*y,10,10,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
+                        painter->fillRect(10*x,10*y,11,11,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
                     }
                 }
             }
@@ -106,6 +106,7 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     {
         QPen pen;
         pen.setColor(Qt::gray);
+        pen.setWidthF(0.5);
         painter->setPen(pen);
         for (int y = 0; y < 21; y++)
             painter->drawLine(0, 10*y, 24*10, 10*y);
