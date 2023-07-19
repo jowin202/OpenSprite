@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/copy.svg</file>
+        <file>icons/paste.svg</file>
+        <file>icons/move-up.svg</file>
+        <file>icons/move-right.svg</file>
+        <file>icons/move-left.svg</file>
+        <file>icons/move-down.svg</file>
+        <file>icons/thin_pen.svg</file>
+        <file>icons/thick_pen.svg</file>
+        <file>icons/rotate.svg</file>
+        <file>icons/to_animation.svg</file>
+        <file>icons/reflect_top_to_bottom.svg</file>
+        <file>icons/flip_top-bottom.svg</file>
+        <file>icons/reflect_left_to_right.svg</file>
+        <file>icons/flip_left-right.svg</file>
+        <file>icons/save.svg</file>
+        <file>icons/cut.svg</file>
+        <file>icons/sprite.png</file>
+        <file>icons/opensprite96x96.png</file>
+        <file>icons/sprite.ico</file>
+        <file>icons/opensprite96x96.ico</file>
+    </qresource>
+</RCC>

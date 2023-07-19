@@ -16,6 +16,10 @@
   <property name="windowTitle">
    <string>OpenSprite</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/icons/opensprite96x96.png</normaloff>:/icons/opensprite96x96.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
@@ -580,7 +584,7 @@
            <x>0</x>
            <y>0</y>
            <width>609</width>
-           <height>797</height>
+           <height>761</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -656,6 +660,32 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionCut"/>
+   <addaction name="actionCopy"/>
+   <addaction name="actionPaste"/>
+   <addaction name="separator"/>
+   <addaction name="actionSlide_Up"/>
+   <addaction name="actionSlide_Down"/>
+   <addaction name="actionSlide_Left"/>
+   <addaction name="actionSlide_Right"/>
+   <addaction name="separator"/>
+   <addaction name="actionFlip_Top_to_Bottom"/>
+   <addaction name="actionFlip_Left_to_Right"/>
+   <addaction name="separator"/>
+  </widget>
   <action name="actionOpenProject">
    <property name="text">
     <string>Open Project</string>
@@ -665,6 +695,10 @@
    </property>
   </action>
   <action name="actionCut">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/cut.svg</normaloff>:/icons/cut.svg</iconset>
+   </property>
    <property name="text">
     <string>Cut</string>
    </property>
@@ -673,6 +707,10 @@
    </property>
   </action>
   <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/copy.svg</normaloff>:/icons/copy.svg</iconset>
+   </property>
    <property name="text">
     <string>Copy</string>
    </property>
@@ -681,6 +719,10 @@
    </property>
   </action>
   <action name="actionPaste">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/paste.svg</normaloff>:/icons/paste.svg</iconset>
+   </property>
    <property name="text">
     <string>Paste</string>
    </property>
@@ -691,6 +733,10 @@
   <action name="actionPaste_Into">
    <property name="enabled">
     <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/paste.svg</normaloff>:/icons/paste.svg</iconset>
    </property>
    <property name="text">
     <string>Paste Into</string>
@@ -705,6 +751,10 @@
    </property>
   </action>
   <action name="actionSlide_Up">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/move-up.svg</normaloff>:/icons/move-up.svg</iconset>
+   </property>
    <property name="text">
     <string>Slide Up</string>
    </property>
@@ -713,6 +763,10 @@
    </property>
   </action>
   <action name="actionSlide_Down">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/move-down.svg</normaloff>:/icons/move-down.svg</iconset>
+   </property>
    <property name="text">
     <string>Slide Down</string>
    </property>
@@ -721,6 +775,10 @@
    </property>
   </action>
   <action name="actionSlide_Left">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/move-left.svg</normaloff>:/icons/move-left.svg</iconset>
+   </property>
    <property name="text">
     <string>Slide Left</string>
    </property>
@@ -729,6 +787,10 @@
    </property>
   </action>
   <action name="actionSlide_Right">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/move-right.svg</normaloff>:/icons/move-right.svg</iconset>
+   </property>
    <property name="text">
     <string>Slide Right</string>
    </property>
@@ -737,6 +799,10 @@
    </property>
   </action>
   <action name="actionFlip_Top_to_Bottom">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/flip_top-bottom.svg</normaloff>:/icons/flip_top-bottom.svg</iconset>
+   </property>
    <property name="text">
     <string>Flip Top to Bottom</string>
    </property>
@@ -745,6 +811,10 @@
    </property>
   </action>
   <action name="actionFlip_Left_to_Right">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/flip_left-right.svg</normaloff>:/icons/flip_left-right.svg</iconset>
+   </property>
    <property name="text">
     <string>Flip Left to Right</string>
    </property>
@@ -753,6 +823,10 @@
    </property>
   </action>
   <action name="actionSave_Project">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/save.svg</normaloff>:/icons/save.svg</iconset>
+   </property>
    <property name="text">
     <string>Save Project</string>
    </property>
@@ -761,6 +835,10 @@
    </property>
   </action>
   <action name="actionSave_Project_As">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/save.svg</normaloff>:/icons/save.svg</iconset>
+   </property>
    <property name="text">
     <string>Save Project As</string>
    </property>
@@ -818,6 +896,8 @@
    <header>palette.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
