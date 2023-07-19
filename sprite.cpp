@@ -204,9 +204,12 @@ void Sprite::mousePressEvent(QGraphicsSceneMouseEvent *ev)
 {
     if (this->opt->current_sprite != id)
     {
-        Sprite *old = opt->sprite_list.at(this->opt->current_sprite);
+        if ( this->opt->current_sprite < opt->sprite_list.count() )
+        {
+            Sprite *old = opt->sprite_list.at(this->opt->current_sprite);
+            old->update();
+        }
         this->opt->current_sprite = id;
-        old->update();
         opt->spriteview->change_current_sprite(id);
         this->update();
         return; //dont do anything else when switching sprite

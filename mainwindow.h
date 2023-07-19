@@ -62,31 +62,20 @@ private slots:
     void on_actionSlide_Down_triggered();
     void on_actionSlide_Left_triggered();
     void on_actionSlide_Right_triggered();
-
     void on_slider_scale_valueChanged(int value);
-
     void on_actionFlip_Top_to_Bottom_triggered();
     void on_actionFlip_Left_to_Right_triggered();
-
-
     void on_actionSave_Project_triggered();
-
     void on_actionSave_Project_As_triggered();
-
-
     void on_actionDelete_Sprite_triggered();
-
     void on_actionAdd_Sprite_triggered();
-
     void on_actionAbout_triggered();
-
     void on_actionExport_as_triggered();
-
     void on_actionExport_triggered();
+
 
 private:
     Ui::MainWindow *ui;
-    int current_sprite = 0;
 
     QButtonGroup leftradio;
     QButtonGroup rightradio;

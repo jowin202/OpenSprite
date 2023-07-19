@@ -11,12 +11,10 @@ SpriteView::SpriteView(QWidget *parent) : QGraphicsView(parent)
 
 void SpriteView::redraw()
 {
-    //this->setBackgroundBrush(opt->col_list.at(opt->data.value("background").toInt()));
     this->setBackgroundBrush(opt->background);
 
     this->scene()->clear();
     this->opt->sprite_list.clear();
-    this->update();
 
     for (int i = 0; i < opt->data.value("sprites").toArray().count(); i++)
     {
@@ -26,6 +24,7 @@ void SpriteView::redraw()
         this->scene()->addItem(sprite);
         opt->sprite_list.append(sprite);
     }
+    this->update();
 }
 
 void SpriteView::wheelEvent(QWheelEvent *event)
