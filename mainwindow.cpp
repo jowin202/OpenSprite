@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent)
         this->ui->combo_sprite_col->setCurrentIndex(opt.data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt());
         this->ui->check_multicolor->setChecked(opt.data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool());
         this->ui->check_overlay->setChecked(opt.data.value("sprites").toArray().at(id).toObject().value("overlay_next").toBool());
+        this->ui->check_exp_x->setChecked(opt.data.value("sprites").toArray().at(id).toObject().value("exp_x").toBool());
+        this->ui->check_exp_y->setChecked(opt.data.value("sprites").toArray().at(id).toObject().value("exp_y").toBool());
 
         if (opt.data.value("sprites").toArray().at(id).toObject().value("overlay_next").toBool() &&
                 this->opt.data.value("sprites").toArray().count() > id+1)
@@ -164,6 +166,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         this->ui->graphicsView->scene()->update();
     });
+
     connect(this->ui->check_overlay, &QCheckBox::toggled, this, [=](bool val) {
         this->ui->radio_overlay_color_left->setEnabled(val);
         this->ui->radio_overlay_color_right->setEnabled(val);
@@ -203,7 +206,35 @@ MainWindow::MainWindow(QWidget *parent)
         this->ui->combo_overlay_color->setCurrentIndex(opt.data.value("sprites").toArray().at(opt.current_sprite+1).toObject().value("sprite_color").toInt());
 
 
-        this->ui->graphicsView->scene()->update();});
+        this->ui->graphicsView->scene()->update();
+    });
+
+
+
+
+    connect(this->ui->check_exp_x, &QCheckBox::toggled, this, [=](bool val){
+        QJsonObject current_sprite_obj = opt.data.value("sprites").toArray().at(opt.current_sprite).toObject();
+        current_sprite_obj.insert("exp_x", val);
+        QJsonArray sprites_array = opt.data.value("sprites").toArray();
+        sprites_array.removeAt(opt.current_sprite);
+        sprites_array.insert(opt.current_sprite, current_sprite_obj);
+        opt.data.insert("sprites", sprites_array);
+        this->ui->graphicsView->scene()->update();
+    });
+    connect(this->ui->check_exp_y, &QCheckBox::toggled, this, [=](bool val){
+        QJsonObject current_sprite_obj = opt.data.value("sprites").toArray().at(opt.current_sprite).toObject();
+        current_sprite_obj.insert("exp_y", val);
+        QJsonArray sprites_array = opt.data.value("sprites").toArray();
+        sprites_array.removeAt(opt.current_sprite);
+        sprites_array.insert(opt.current_sprite, current_sprite_obj);
+        opt.data.insert("sprites", sprites_array);
+        this->ui->graphicsView->scene()->update();
+    });
+
+
+
+
+
 
     connect(this->ui->checkBox_editor_grid_lines, &QCheckBox::toggled, [=](bool val){ this->opt.show_grid_lines = val; this->ui->graphicsView->scene()->update();});
     connect(this->ui->spin_horizontal_spacing, &QSpinBox::valueChanged, [=](int val){ this->opt.sprite_spacing_x = val; this->ui->graphicsView->redraw();});
@@ -222,22 +253,22 @@ void MainWindow::import(QString path)
     QSettings settings;
     if (path != "")
     {
-        opt.data = FileIO().read_spd(path);
-        //FileIO().write_spd("/tmp/test.bin", opt.data);
+        int address = 0;
+        if (path.endsWith(".spd",Qt::CaseInsensitive))
+            opt.data = FileIO().read_spd(path);
+        else if (path.endsWith(".bin",Qt::CaseInsensitive) || path.endsWith(".prg",Qt::CaseInsensitive))
+            opt.data = FileIO().read_prg_bin(path, &address);
 
+        if (address != 0)
+            opt.export_address = address;
+
+        /*
         QFile f1(path);
         f1.open(QIODevice::ReadOnly);
-        //QFile f2("/tmp/test.bin");
-        //f2.open(QIODevice::ReadOnly);
         QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
         hash1.addData(f1.readAll());
-        //QCryptographicHash hash2(QCryptographicHash::Algorithm::Sha256);
-        //hash2.addData(f2.readAll());
         f1.close();
-        //f2.close();
-        //if (hash1.result() == hash2.result())
-        //    qDebug() << "hash ok" << hash1.result().toHex();
-        //else qDebug() << "hash_fail";
+        */
 
 
 
@@ -414,26 +445,7 @@ void MainWindow::on_actionDelete_Sprite_triggered()
 
 void MainWindow::on_actionAdd_Sprite_triggered()
 {
-    QJsonArray sprites_array = opt.data.value("sprites").toArray();
-
-    QJsonObject sprite;
-    QJsonArray array_rows;
-    for (int y = 0; y < 21; y++)
-    {
-        QJsonArray array_row;
-        for (int x = 0; x < 24; x++)
-        {
-            array_row.append( 0 );
-        }
-        array_rows.append(array_row);
-    }
-    sprite.insert("sprite_data", array_rows);
-    sprite.insert("mc_mode", true);
-    sprite.insert("overlay_next", false);
-    sprite.insert("sprite_color", 5);
-    sprites_array.insert(opt.current_sprite, sprite);
-    opt.data.insert("sprites", sprites_array);
-    this->ui->graphicsView->redraw();
+    this->ui->graphicsView->add_new_sprite();
 }
 
 
@@ -467,4 +479,19 @@ void MainWindow::on_actionExport_triggered()
         FileIO().write_prg(opt.last_exported_file, opt.data, opt.export_address, opt.export_attribute_format);
     }
 }
+
+
+void MainWindow::on_actionReflect_Left_To_Right_triggered()
+{
+    this->opt.sprite_list.at(opt.current_sprite)->reflect_left();
+    this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_actionReflect_Top_to_Bottom_triggered()
+{
+    this->opt.sprite_list.at(opt.current_sprite)->reflect_top();
+    this->ui->graphicsView->scene()->update();
+}
+
 

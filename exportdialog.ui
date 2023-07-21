@@ -80,9 +80,6 @@
           <property name="singleStep">
            <number>64</number>
           </property>
-          <property name="value">
-           <number>12288</number>
-          </property>
           <property name="displayIntegerBase">
            <number>16</number>
           </property>

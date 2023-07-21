@@ -18,6 +18,7 @@ public:
 
 
     void write_prg(QString path, QJsonObject file_obj, int address, int attribute);
+    QJsonObject read_prg_bin(QString path, int *address);
 
 signals:
 

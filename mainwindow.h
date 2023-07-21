@@ -74,6 +74,11 @@ private slots:
     void on_actionExport_triggered();
 
 
+    void on_actionReflect_Left_To_Right_triggered();
+
+    void on_actionReflect_Top_to_Bottom_triggered();
+
+
 private:
     Ui::MainWindow *ui;
 

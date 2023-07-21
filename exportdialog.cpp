@@ -10,6 +10,7 @@ ExportDialog::ExportDialog(options *opt, QWidget *parent) :
 {
     ui->setupUi(this);
     this->opt = opt;
+    this->ui->address->setValue(opt->export_address);
 }
 
 ExportDialog::~ExportDialog()

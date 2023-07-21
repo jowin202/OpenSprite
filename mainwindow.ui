@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1026</width>
-    <height>866</height>
+    <height>871</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -56,7 +56,7 @@
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QCheckBox" name="checkBox_3">
+          <widget class="QCheckBox" name="check_exp_y">
            <property name="text">
             <string>Expand Y</string>
            </property>
@@ -114,7 +114,7 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QCheckBox" name="checkBox_2">
+          <widget class="QCheckBox" name="check_exp_x">
            <property name="text">
             <string>Expand X</string>
            </property>
@@ -584,7 +584,7 @@
            <x>0</x>
            <y>0</y>
            <width>609</width>
-           <height>751</height>
+           <height>746</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -648,6 +648,8 @@
     <addaction name="separator"/>
     <addaction name="actionFlip_Top_to_Bottom"/>
     <addaction name="actionFlip_Left_to_Right"/>
+    <addaction name="actionReflect_Left_To_Right"/>
+    <addaction name="actionReflect_Top_to_Bottom"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -679,6 +681,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionExport"/>
    <addaction name="actionSave_Project"/>
    <addaction name="separator"/>
    <addaction name="actionCut"/>
@@ -692,6 +695,8 @@
    <addaction name="separator"/>
    <addaction name="actionFlip_Top_to_Bottom"/>
    <addaction name="actionFlip_Left_to_Right"/>
+   <addaction name="actionReflect_Top_to_Bottom"/>
+   <addaction name="actionReflect_Left_To_Right"/>
    <addaction name="separator"/>
   </widget>
   <action name="actionOpenProject">
@@ -876,6 +881,10 @@
    </property>
   </action>
   <action name="actionExport_as">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/save_exp.svg</normaloff>:/icons/save_exp.svg</iconset>
+   </property>
    <property name="text">
     <string>Export As </string>
    </property>
@@ -884,11 +893,33 @@
    </property>
   </action>
   <action name="actionExport">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/save_exp.svg</normaloff>:/icons/save_exp.svg</iconset>
+   </property>
    <property name="text">
     <string>Export</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionReflect_Left_To_Right">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/reflect_left_to_right.svg</normaloff>:/icons/reflect_left_to_right.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reflect Left To Right</string>
+   </property>
+  </action>
+  <action name="actionReflect_Top_to_Bottom">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/reflect_top_to_bottom.svg</normaloff>:/icons/reflect_top_to_bottom.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reflect Top to Bottom</string>
    </property>
   </action>
  </widget>

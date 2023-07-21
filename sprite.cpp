@@ -1,9 +1,10 @@
 #include "sprite.h"
 #include "spriteview.h"
 
-Sprite::Sprite(options *opt)
+Sprite::Sprite(options *opt, int id)
 {
     this->opt = opt;
+    this->id = id;
 }
 
 void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -11,11 +12,15 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     Q_UNUSED(widget);
     Q_UNUSED(option);
 
-    painter->drawRect(QRectF(0,0,10*24 *(expand_x ? 2 : 1), 10*21 *(expand_y ? 2 : 1)));
+
+    bool expand_x = this->opt->data.value("sprites").toArray().at(id).toObject().value("exp_x").toBool();
+    bool expand_y = this->opt->data.value("sprites").toArray().at(id).toObject().value("exp_y").toBool();
+
+
     if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
     {
-        int w = 20;
-        int h = 10;
+        int w = 20 * (expand_y ? 0.5 : 1);
+        int h = 10 * (expand_x ? 0.5 : 1);
         for (int y = 0; y < 21; y++)
         {
             for (int x = 0; x < 12; x++)
@@ -42,17 +47,19 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     }
     else //not multicol
     {
+        int w = 10 * (expand_y ? 0.5 : 1);
+        int h = 10 * (expand_x ? 0.5 : 1);
         for (int y = 0; y < 21; y++)
         {
             for (int x = 0; x < 24; x++)
             {
                 if (this->get_bit(x,y) == 1)
                 {
-                    painter->fillRect(10*x,10*y,11,11,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
+                    painter->fillRect(w*x,h*y,11,11,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
                 }
                 else
                 {
-                    painter->fillRect(10*x,10*y,11,11,this->opt->col_list.at(opt->data.value("background").toInt()));
+                    painter->fillRect(w*x,h*y,11,11,this->opt->col_list.at(opt->data.value("background").toInt()));
                 }
             }
         }
@@ -63,8 +70,8 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     {
         if (this->opt->data.value("sprites").toArray().at(id+1).toObject().value("mc_mode").toBool())
         {
-            int w = 20;
-            int h = 10;
+            int w = 20 * (expand_y ? 0.5 : 1);
+            int h = 10 * (expand_x ? 0.5 : 1);
             for (int y = 0; y < 21; y++)
             {
                 for (int x = 0; x < 12; x++)
@@ -87,13 +94,15 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
         }
         else
         {
+            int w = 10 * (expand_y ? 0.5 : 1);
+            int h = 10 * (expand_x ? 0.5 : 1);
             for (int y = 0; y < 21; y++)
             {
                 for (int x = 0; x < 24; x++)
                 {
                     if (opt->sprite_list.at(id+1)->get_bit(x,y) == 1)
                     {
-                        painter->fillRect(10*x,10*y,11,11,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
+                        painter->fillRect(w*x,h*y,11,11,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
                     }
                 }
             }
@@ -132,15 +141,22 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 QRectF Sprite::boundingRect() const
 {
-    return QRectF(0,0,10*24 *(expand_x ? 2 : 1), 10*21 *(expand_y ? 2 : 1));
+    bool expand_x = this->opt->data.value("sprites").toArray().at(id).toObject().value("exp_x").toBool();
+    bool expand_y = this->opt->data.value("sprites").toArray().at(id).toObject().value("exp_y").toBool();
+    return QRectF(0,0,10*24 *(expand_y ? 0.5 : 1), 10*21 *(expand_x ? 0.5 : 1));
 }
 
 void Sprite::change_tile(QPointF pos)
 {
+    bool expand_x = this->opt->data.value("sprites").toArray().at(id).toObject().value("exp_x").toBool();
+    bool expand_y = this->opt->data.value("sprites").toArray().at(id).toObject().value("exp_y").toBool();
     if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
     {
-        int x = pos.x()/20;
-        int y = pos.y()/10;
+        int w = 20 * (expand_y ? 0.5 : 1);
+        int h = 10 * (expand_x ? 0.5 : 1);
+
+        int x = pos.x()/w;
+        int y = pos.y()/h;
 
         if ((left_pressed && opt->left_button == TRANSPARENT) ||
                 (right_pressed && opt->right_button == TRANSPARENT))
@@ -169,8 +185,11 @@ void Sprite::change_tile(QPointF pos)
     }
     else //singlecolor
     {
-        int x = pos.x()/10;
-        int y = pos.y()/10;
+        int w = 10 * (expand_y ? 0.5 : 1);
+        int h = 10 * (expand_x ? 0.5 : 1);
+
+        int x = pos.x()/w;
+        int y = pos.y()/h;
 
         this->set_bit(x, y, (right_pressed && opt->right_button == COLOR) ||
                       (left_pressed && opt->left_button == COLOR));
@@ -239,7 +258,7 @@ void Sprite::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
 
 bool Sprite::get_bit(int x, int y)
 {
-    if (x >= 24 || y >= 21) return false;
+    if (x < 0 || y < 0 || x >= 24 || y >= 21) return false;
     if (opt->data.value("sprites").toArray().count() <= id) return false;
     return opt->data.value("sprites").toArray().at(id).toObject().value("sprite_data").toArray().at(y).toArray().at(x).toInt() > 0;
 }

@@ -22,6 +22,7 @@ public:
     void set_opt(options *opt) { this->opt = opt; }
     void redraw();
 
+
     void change_current_sprite(int id) { emit current_sprite_changed(id); }
 
     void wheelEvent(QWheelEvent *event) override;
@@ -41,6 +42,8 @@ public:
             emit droppedFile(mimeData->urls().at(0).toLocalFile());
     }
 
+public slots:
+    void add_new_sprite();
 
 signals:
     void current_sprite_changed(int id);

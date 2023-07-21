@@ -29,7 +29,7 @@ struct options {
     int sprites_per_row = 8;
     //auto export
     QString last_exported_file;
-    int export_address;
+    int export_address = 0x3000;
     int export_file_format;
     int export_attribute_format;
     QColor background = QColor(0xd9,0xd6,0xc8);
@@ -56,7 +56,7 @@ struct options {
 class Sprite : public QGraphicsItem
 {
 public:
-    Sprite(options *opt);
+    Sprite(options *opt, int id);
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
     QRectF boundingRect() const override;
@@ -178,10 +178,47 @@ public:
     }
 
 
+
+
+    void reflect_top()
+    {
+        for (int y = 11; y <= 20; y++)
+        {
+            for (int x = 0; x < 24; x++)
+            {
+                this->set_bit(x,y, this->get_bit(x,20-y));
+            }
+        }
+    }
+    void reflect_left()
+    {
+        if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
+        {
+            for (int x = 6; x < 12; x++)
+            {
+                for (int y = 0; y < 21; y++)
+                {
+                    this->set_bit(2*x+1,y, this->get_bit(23-2*x,y));
+                    this->set_bit(2*x,y, this->get_bit(23-2*x-1,y));
+                }
+            }
+        }
+        else
+        {
+            for (int x = 12; x <= 23; x++)
+            {
+                for (int y = 0; y < 21; y++)
+                {
+                    this->set_bit(x,y, this->get_bit(23-x,y));
+                }
+            }
+        }
+    }
+
+
+private:
     int id;
     //unsigned char sprite_data[64];
-    bool expand_x = false;
-    bool expand_y = false;
     bool overlay_next = false;
     //bool multi_color_mode = true;
 

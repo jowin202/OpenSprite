@@ -20,5 +20,7 @@
         <file>icons/opensprite96x96.png</file>
         <file>icons/sprite.ico</file>
         <file>icons/opensprite96x96.ico</file>
+        <file>icons/plus.svg</file>
+        <file>icons/save_exp.svg</file>
     </qresource>
 </RCC>
