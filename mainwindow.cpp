@@ -288,6 +288,7 @@ void MainWindow::import(QString path)
 void MainWindow::new_project()
 {
     this->on_actionAdd_Sprite_triggered();
+    this->ui->combo_transparent->setCurrentIndex(6);
 }
 
 

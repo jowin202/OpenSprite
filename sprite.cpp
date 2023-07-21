@@ -195,23 +195,35 @@ void Sprite::change_tile(QPointF pos)
         int x = pos.x()/w;
         int y = pos.y()/h;
 
-        this->set_bit(x, y, (right_pressed && opt->right_button == COLOR) ||
-                      (left_pressed && opt->left_button == COLOR));
+
+        if ((left_pressed && opt->left_button == TRANSPARENT) ||
+                (right_pressed && opt->right_button == TRANSPARENT))
+        {
+            this->set_bit(x, y, false);
+        }
+        else if ((left_pressed && opt->left_button == COLOR) ||
+                (right_pressed && opt->right_button == COLOR))
+        {
+            this->set_bit(x, y, true);
+        }
     }
 
+
+    int w = 10 * (expand_y ? 0.5 : 1);
+    int h = 10 * (expand_x ? 0.5 : 1);
 
     if (((left_pressed && opt->left_button == OVERLAY_COLOR) ||
             (right_pressed && opt->right_button == OVERLAY_COLOR))
             && opt->sprite_list.length() > this->id+1)
     {
-        this->opt->sprite_list.at(id+1)->set_bit(pos.x()/10, pos.y()/10, true);
+        this->opt->sprite_list.at(id+1)->set_bit(pos.x()/w, pos.y()/h, true);
         this->opt->sprite_list.at(id+1)->update();
     }
     else if (((left_pressed && opt->left_button == OVERLAY_TRANSPARENT) ||
                 (right_pressed && opt->right_button == OVERLAY_TRANSPARENT))
                 && opt->sprite_list.length() > this->id+1)
     {
-        this->opt->sprite_list.at(id+1)->set_bit(pos.x()/10, pos.y()/10, false);
+        this->opt->sprite_list.at(id+1)->set_bit(pos.x()/w, pos.y()/h, false);
         this->opt->sprite_list.at(id+1)->update();
     }
 

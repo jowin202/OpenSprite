@@ -65,7 +65,7 @@ void SpriteView::add_new_sprite()
     sprite.insert("sprite_data", array_rows);
     sprite.insert("mc_mode", true);
     sprite.insert("overlay_next", false);
-    sprite.insert("sprite_color", 1);
+    sprite.insert("sprite_color", 5);
     QJsonArray sprites = opt->data.value("sprites").toArray();
     sprites.append(sprite);
     opt->data.insert("sprites", sprites);
