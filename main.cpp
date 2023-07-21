@@ -15,6 +15,10 @@ int main(int argc, char *argv[])
     {
         w.import(QString(argv[1]));
     }
+    else
+    {
+        w.new_project();
+    }
     w.show();
     return a.exec();
 }

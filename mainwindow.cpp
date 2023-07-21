@@ -273,12 +273,21 @@ void MainWindow::import(QString path)
 
 
         settings.setValue("last_file", path);
-        this->ui->combo_multicol_1->setCurrentIndex(opt.data.value("mc1").toInt());
-        this->ui->combo_multicol_2->setCurrentIndex(opt.data.value("mc2").toInt());
-        this->ui->combo_transparent->setCurrentIndex(opt.data.value("background").toInt());
+
+        if (path.endsWith(".spd",Qt::CaseInsensitive)) //only changes preset when spd
+        {
+            this->ui->combo_multicol_1->setCurrentIndex(opt.data.value("mc1").toInt());
+            this->ui->combo_multicol_2->setCurrentIndex(opt.data.value("mc2").toInt());
+            this->ui->combo_transparent->setCurrentIndex(opt.data.value("background").toInt());
+        }
         this->ui->graphicsView->change_current_sprite(0);
         this->ui->graphicsView->redraw();
     }
+}
+
+void MainWindow::new_project()
+{
+    this->on_actionAdd_Sprite_triggered();
 }
 
 
@@ -494,4 +503,10 @@ void MainWindow::on_actionReflect_Top_to_Bottom_triggered()
     this->ui->graphicsView->scene()->update();
 }
 
+
+
+void MainWindow::on_actionNew_triggered()
+{
+    this->new_project();
+}
 

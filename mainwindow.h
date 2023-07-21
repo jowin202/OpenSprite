@@ -50,6 +50,7 @@ public slots:
 
 public slots:
     void import(QString path);
+    void new_project();
 
 private slots:
     void on_actionOpenProject_triggered();
@@ -78,6 +79,8 @@ private slots:
 
     void on_actionReflect_Top_to_Bottom_triggered();
 
+
+    void on_actionNew_triggered();
 
 private:
     Ui::MainWindow *ui;

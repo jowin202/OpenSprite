@@ -55,11 +55,11 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
             {
                 if (this->get_bit(x,y) == 1)
                 {
-                    painter->fillRect(w*x,h*y,11,11,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
+                    painter->fillRect(w*x,h*y,w+1,h+1,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt()));
                 }
                 else
                 {
-                    painter->fillRect(w*x,h*y,11,11,this->opt->col_list.at(opt->data.value("background").toInt()));
+                    painter->fillRect(w*x,h*y,w+1,h+1,this->opt->col_list.at(opt->data.value("background").toInt()));
                 }
             }
         }
@@ -102,7 +102,7 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                 {
                     if (opt->sprite_list.at(id+1)->get_bit(x,y) == 1)
                     {
-                        painter->fillRect(w*x,h*y,11,11,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
+                        painter->fillRect(w*x,h*y,w+1,h+1,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
                     }
                 }
             }
@@ -113,18 +113,22 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     if (opt->show_grid_lines)
     {
+
+        int w = 10 * (expand_y ? 0.5 : 1);
+        int h = 10 * (expand_x ? 0.5 : 1);
+
         QPen pen;
         pen.setColor(Qt::gray);
         pen.setWidthF(0.5);
         painter->setPen(pen);
         for (int y = 0; y < 21; y++)
-            painter->drawLine(0, 10*y, 24*10, 10*y);
+            painter->drawLine(0, h*y, 24*w, h*y);
         for (int x = 0; x < 24; x+=2)
-            painter->drawLine(10*x, 0, 10*x, 10*21);
+            painter->drawLine(w*x, 0, w*x, h*21);
 
         if (!this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
             for (int x = 1; x < 24; x+=2)
-                painter->drawLine(10*x, 0, 10*x, 10*21);
+                painter->drawLine(w*x, 0, w*x, h*21);
     }
 
 

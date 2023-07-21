@@ -622,6 +622,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew"/>
     <addaction name="actionOpenProject"/>
     <addaction name="actionSave_Project"/>
     <addaction name="actionSave_Project_As"/>
@@ -871,9 +872,6 @@
    <property name="text">
     <string>Add Sprite</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
-   </property>
   </action>
   <action name="actionAbout">
    <property name="text">
@@ -920,6 +918,14 @@
    </property>
    <property name="text">
     <string>Reflect Top to Bottom</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
  </widget>

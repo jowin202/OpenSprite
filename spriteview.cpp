@@ -71,5 +71,6 @@ void SpriteView::add_new_sprite()
     opt->data.insert("sprites", sprites);
     opt->current_sprite = sprites.count()-1;
     this->redraw();
+    emit current_sprite_changed(opt->current_sprite);
 }
 
