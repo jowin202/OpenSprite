@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
             this->ui->radio_sprite_left->setChecked(true);
         if (rightradio.checkedId() == BUTTONS::OVERLAY_COLOR || rightradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT)
             this->ui->radio_transparent_right->setChecked(true);
+        this->ui->statusbar->showMessage(QString("Current Sprite: %1").arg(id));
     });
 
 
@@ -280,6 +281,12 @@ void MainWindow::import(QString path)
             this->ui->combo_multicol_2->setCurrentIndex(opt.data.value("mc2").toInt());
             this->ui->combo_transparent->setCurrentIndex(opt.data.value("background").toInt());
         }
+        else
+        {
+            opt.data.insert("background", this->ui->combo_transparent->currentIndex());
+            opt.data.insert("mc1", this->ui->combo_multicol_1->currentIndex());
+            opt.data.insert("mc2", this->ui->combo_multicol_2->currentIndex());
+        }
         this->ui->graphicsView->change_current_sprite(0);
         this->ui->graphicsView->redraw();
     }
@@ -287,8 +294,10 @@ void MainWindow::import(QString path)
 
 void MainWindow::new_project()
 {
+    opt.data.insert("sprites", QJsonArray());
     this->on_actionAdd_Sprite_triggered();
     this->ui->combo_transparent->setCurrentIndex(6);
+    this->ui->combo_multicol_2->setCurrentIndex(1);
 }
 
 
