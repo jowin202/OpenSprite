@@ -3,7 +3,7 @@
 
 #include <QGraphicsView>
 #include <QWidget>
-
+#include <QAction>
 
 struct options;
 
@@ -21,6 +21,7 @@ public slots:
 
 private:
 
+    QAction action_del;
     options *opt;
 };
 

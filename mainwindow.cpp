@@ -317,7 +317,7 @@ void MainWindow::new_project()
 void MainWindow::on_actionOpenProject_triggered()
 {
     QSettings settings;
-    QString path = QFileDialog::getOpenFileName(this, "File", settings.value("last_file", QVariant()).toString(), "All Files (*);;Sprite Files(*.spd *.prg)");
+    QString path = QFileDialog::getOpenFileName(this, "File", settings.value("last_file", QVariant()).toString(), "Sprite Files(*.spd *.prg);;All Files (*)");
     this->import(path);
 }
 

@@ -43,7 +43,7 @@ void AnimationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->drawText(QRect(10*24+10,0,2*10*24,10*21), Qt::AlignLeft | Qt::AlignVCenter, QString("From: %1\nTo: %2\nDelay: %3\nOverlay: %4\nPing-Pong: %5")
                       .arg(this->from).arg(this->to).arg(this->timer).arg(this->overlay).arg(this->pingpong));
 
-    if (this->animation_id == opt->current_sprite)
+    if (this->animation_id == opt->current_animation)
     {
         QPen pen;
         pen.setWidth(2);
@@ -58,6 +58,16 @@ void AnimationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 QRectF AnimationItem::boundingRect() const
 {
     return QRectF(0,0,10*24 * 3, 10*21 );
+}
+
+void AnimationItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    Q_UNUSED(event);
+    if (opt->current_animation != this->animation_id)
+    {
+        opt->current_animation = this->animation_id;
+        emit trigger_redraw();
+    }
 }
 
 void AnimationItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)

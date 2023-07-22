@@ -41,6 +41,7 @@ void AnimationPropertiesDialog::on_button_ok_clicked()
 
     current.insert("from", this->ui->spin_from->value());
     current.insert("to", this->ui->spin_to->value());
+    current.insert("valid", this->ui->spin_from->value() <= this->ui->spin_to->value());
     current.insert("timer", this->ui->spin_timer->value());
 
     current.insert("overlay", this->ui->check_overlay->isChecked());

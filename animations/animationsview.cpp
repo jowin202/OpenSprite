@@ -1,6 +1,7 @@
 #include "animationsview.h"
 #include "../sprite.h"
 #include "../addbutton.h"
+#include "animationpropertiesdialog.h"
 #include "animationitem.h"
 
 
@@ -9,6 +10,16 @@ AnimationsView::AnimationsView(QWidget *parent) : QGraphicsView(parent)
     this->setRenderHint(QPainter::Antialiasing, true);
     this->setScene(new QGraphicsScene);
     this->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
+
+    this->action_del.setShortcut(Qt::Key_Delete);
+    connect(&this->action_del, &QAction::triggered, [=](){
+        QJsonArray array = opt->data.value("animations").toArray();
+        array.removeAt(opt->current_animation);
+        opt->data.insert("animations", array);
+        this->opt->current_animation = qMin(this->opt->current_animation, array.count()-1);
+        this->redraw();
+    });
+    this->addAction(&this->action_del);
 }
 
 void AnimationsView::redraw()
@@ -48,5 +59,16 @@ void AnimationsView::redraw()
 
 void AnimationsView::add_new_animation()
 {
-    qDebug() << opt->data.value("animations").toArray().first();
+    QJsonArray array = opt->data.value("animations").toArray();
+    QJsonObject obj;
+    obj.insert("from", 0);
+    obj.insert("to", 0);
+    obj.insert("timer", 3);
+    obj.insert("pingpong", false);
+    obj.insert("valid", true);
+    obj.insert("overlay", false);
+    array.append(obj);
+    opt->data.insert("animations",array);
+    this->opt->current_animation = array.count()-1;
+    this->redraw();
 }
