@@ -23,14 +23,13 @@ public:
 
 public slots:
     void update_animation();
+    void reload_images();
 
 
 private slots:
     void on_button_delete_clicked();
 
     void on_button_play_clicked();
-
-    void on_button_stop_clicked();
 
 private:
     Ui::AnimationForm *ui;

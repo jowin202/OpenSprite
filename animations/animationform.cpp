@@ -25,14 +25,10 @@ AnimationForm::AnimationForm(options *opt, int animation_id) :
     this->timer.setInterval(opt->data.value("animations").toArray().at(animation_id).toObject().value("timer").toInt() * 20);
     connect(&this->timer, &QTimer::timeout, [=](){
         this->ui->label_img->setPixmap(QPixmap::fromImage(this->animation_images.at(current_pic)));
-        current_pic = (current_pic+1) % this->animation_images.count();
+        current_pic = (current_pic+1) % (this->ui->check_pingpong->isChecked() ? this->animation_images.count() : 1+( this->animation_images.count()>>1));
     });
 
-    for (int i = this->ui->spin_from->value(); i <= this->ui->spin_to->value(); i++)
-    {
-        this->animation_images.append(this->draw_sprite(i));
-    }
-    this->ui->label_img->setPixmap(QPixmap::fromImage(this->animation_images.first()));
+    this->reload_images();
 
     connect(this->ui->spin_from, &QSpinBox::valueChanged, [=](){ this->update_animation(); });
     connect(this->ui->spin_to, &QSpinBox::valueChanged, [=](){ this->update_animation(); });
@@ -66,6 +62,21 @@ void AnimationForm::update_animation()
     anim_array.removeAt(current_id);
     anim_array.insert(current_id, current);
     this->opt->data.insert("animations", anim_array);
+}
+
+void AnimationForm::reload_images()
+{
+    this->animation_images.clear();
+    for (int i = this->ui->spin_from->value(); i <= this->ui->spin_to->value(); i++)
+    {
+        this->animation_images.append(this->draw_sprite(i));
+    }
+
+    for (int i = this->ui->spin_to->value()-1; i >= this->ui->spin_from->value(); i--)
+    {
+        this->animation_images.append(this->draw_sprite(i));
+    }
+    this->ui->label_img->setPixmap(QPixmap::fromImage(this->animation_images.first()));
 }
 
 QImage AnimationForm::draw_sprite(int sprite_id)
@@ -212,12 +223,17 @@ void AnimationForm::on_button_delete_clicked()
 
 void AnimationForm::on_button_play_clicked()
 {
-    this->timer.start();
+    if (this->timer.isActive())
+    {
+        this->timer.stop();
+        this->ui->button_play->setText("Play");
+    }
+    else
+    {
+        this->timer.start();
+        this->ui->button_play->setText("Stop");
+    }
 }
 
 
-void AnimationForm::on_button_stop_clicked()
-{
-    this->timer.stop();
-}
 
