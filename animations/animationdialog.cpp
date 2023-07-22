@@ -17,15 +17,3 @@ AnimationDialog::~AnimationDialog()
     delete ui;
 }
 
-void AnimationDialog::on_button_cancel_clicked()
-{
-    this->close();
-}
-
-
-void AnimationDialog::on_button_ok_clicked()
-{
-    //TODO: Save
-    this->close();
-}
-

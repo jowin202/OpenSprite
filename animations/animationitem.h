@@ -35,6 +35,9 @@ public:
     bool pingpong = false;
 
     QList<QImage> animation_images;
+
+signals:
+    void trigger_redraw();
 };
 
 #endif // ANIMATIONITEM_H

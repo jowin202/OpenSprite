@@ -27,9 +27,21 @@ void AnimationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    if (valid)
-        painter->drawImage(this->boundingRect(),this->animation_images.at(0));
 
+    QFont font = painter->font();
+    font.setPixelSize(16);
+    painter->setFont(font);
+
+    if (valid)
+        painter->drawImage(this->boundingRect().x(), this->boundingRect().y(), this->animation_images.at(0));
+
+    /*
+    QPen pen;
+    pen.setColor(Qt::white);
+    painter->setPen(pen);
+    */
+    painter->drawText(QRect(10*24+10,0,2*10*24,10*21), Qt::AlignLeft | Qt::AlignVCenter, QString("From: %1\nTo: %2\nDelay: %3\nOverlay: %4\nPing-Pong: %5")
+                      .arg(this->from).arg(this->to).arg(this->timer).arg(this->overlay).arg(this->pingpong));
 
     if (this->animation_id == opt->current_sprite)
     {
@@ -45,20 +57,21 @@ void AnimationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 QRectF AnimationItem::boundingRect() const
 {
-    return QRectF(0,0,10*24, 10*21 );
+    return QRectF(0,0,10*24 * 3, 10*21 );
 }
 
 void AnimationItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
     AnimationPropertiesDialog *dialog = new AnimationPropertiesDialog(opt, animation_id);
+    connect(dialog, &AnimationPropertiesDialog::finished, [=](){ emit trigger_redraw(); });
     dialog->show();
 }
 
 QImage AnimationItem::draw_sprite(int sprite_id)
 {
     QPainter painter;
-    QImage img(this->boundingRect().width(), this->boundingRect().height(), QImage::Format_RGB16);
+    QImage img(10*24, 10*21, QImage::Format_RGB16);
     painter.begin(&img);
     bool expand_x = this->opt->data.value("sprites").toArray().at(sprite_id).toObject().value("exp_x").toBool();
     bool expand_y = this->opt->data.value("sprites").toArray().at(sprite_id).toObject().value("exp_y").toBool();

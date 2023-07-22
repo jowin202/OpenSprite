@@ -16,6 +16,11 @@ public:
     void redraw();
 
 
+public slots:
+    void add_new_animation();
+
+private:
+
     options *opt;
 };
 
