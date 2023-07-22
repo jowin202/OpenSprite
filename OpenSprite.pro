@@ -11,9 +11,7 @@ CONFIG += c++11
 SOURCES += \
     addbutton.cpp \
     animations/animationdialog.cpp \
-    animations/animationitem.cpp \
-    animations/animationpropertiesdialog.cpp \
-    animations/animationsview.cpp \
+    animations/animationform.cpp \
     exportdialog.cpp \
     fileio.cpp \
     main.cpp \
@@ -25,9 +23,7 @@ SOURCES += \
 HEADERS += \
     addbutton.h \
     animations/animationdialog.h \
-    animations/animationitem.h \
-    animations/animationpropertiesdialog.h \
-    animations/animationsview.h \
+    animations/animationform.h \
     exportdialog.h \
     fileio.h \
     mainwindow.h \
@@ -37,7 +33,7 @@ HEADERS += \
 
 FORMS += \
     animations/animationdialog.ui \
-    animations/animationpropertiesdialog.ui \
+    animations/animationform.ui \
     exportdialog.ui \
     mainwindow.ui
 

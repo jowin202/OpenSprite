@@ -1,84 +1,74 @@
-#include "animationitem.h"
-#include "animationpropertiesdialog.h"
+#include "animationform.h"
+#include "ui_animationform.h"
+
 #include "../sprite.h"
 
-AnimationItem::AnimationItem(options *opt, int id)
+AnimationForm::AnimationForm(options *opt, int animation_id) :
+    QWidget(),
+    ui(new Ui::AnimationForm)
 {
+    ui->setupUi(this);
+
     this->opt = opt;
-    this->animation_id = id;
+    this->current_id = animation_id;
+    this->ui->spin_from->setMaximum(opt->data.value("sprites").toArray().count()-1);
+    this->ui->spin_to->setMaximum(opt->data.value("sprites").toArray().count()-1);
 
-    this->from = opt->data.value("animations").toArray().at(id).toObject().value("from").toInt();
-    this->to = opt->data.value("animations").toArray().at(id).toObject().value("to").toInt();
-    this->timer = opt->data.value("animations").toArray().at(id).toObject().value("timer").toInt();
+    this->ui->spin_from->setValue(opt->data.value("animations").toArray().at(animation_id).toObject().value("from").toInt());
+    this->ui->spin_to->setValue(opt->data.value("animations").toArray().at(animation_id).toObject().value("to").toInt());
+    this->ui->spin_timer->setValue(opt->data.value("animations").toArray().at(animation_id).toObject().value("timer").toInt());
 
-    this->overlay = opt->data.value("animations").toArray().at(id).toObject().value("overlay").toBool();
-    this->pingpong = opt->data.value("animations").toArray().at(id).toObject().value("pingpong").toBool();
-    this->valid = opt->data.value("animations").toArray().at(id).toObject().value("valid").toBool();
+    this->ui->check_overlay->setChecked(opt->data.value("animations").toArray().at(animation_id).toObject().value("overlay").toBool());
+    this->ui->check_pingpong->setChecked(opt->data.value("animations").toArray().at(animation_id).toObject().value("pingpong").toBool());
 
-    for (int i = this->from; i <= this->to; i++)
+
+    this->timer.setInterval(opt->data.value("animations").toArray().at(animation_id).toObject().value("timer").toInt() * 20);
+    connect(&this->timer, &QTimer::timeout, [=](){
+        this->ui->label_img->setPixmap(QPixmap::fromImage(this->animation_images.at(current_pic)));
+        current_pic = (current_pic+1) % this->animation_images.count();
+    });
+
+    for (int i = this->ui->spin_from->value(); i <= this->ui->spin_to->value(); i++)
     {
         this->animation_images.append(this->draw_sprite(i));
     }
+    this->ui->label_img->setPixmap(QPixmap::fromImage(this->animation_images.first()));
 
+    connect(this->ui->spin_from, &QSpinBox::valueChanged, [=](){ this->update_animation(); });
+    connect(this->ui->spin_to, &QSpinBox::valueChanged, [=](){ this->update_animation(); });
+    connect(this->ui->spin_timer, &QSpinBox::valueChanged, [=](){ this->update_animation(); });
+
+
+    connect(this->ui->check_overlay, &QCheckBox::toggled, [=](){ this->update_animation(); });
+    connect(this->ui->check_pingpong, &QCheckBox::toggled, [=](){ this->update_animation(); });
 }
 
-void AnimationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+AnimationForm::~AnimationForm()
 {
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-
-
-    QFont font = painter->font();
-    font.setPixelSize(16);
-    painter->setFont(font);
-
-    if (valid)
-        painter->drawImage(this->boundingRect().x(), this->boundingRect().y(), this->animation_images.at(0));
-
-    /*
-    QPen pen;
-    pen.setColor(Qt::white);
-    painter->setPen(pen);
-    */
-    painter->drawText(QRect(10*24+10,0,2*10*24,10*21), Qt::AlignLeft | Qt::AlignVCenter, QString("From: %1\nTo: %2\nDelay: %3\nOverlay: %4\nPing-Pong: %5")
-                      .arg(this->from).arg(this->to).arg(this->timer).arg(this->overlay).arg(this->pingpong));
-
-    if (this->animation_id == opt->current_animation)
-    {
-        QPen pen;
-        pen.setWidth(2);
-        pen.setColor(Qt::green);
-        painter->setPen(pen);
-        painter->setOpacity(1);
-        painter->drawRect(this->boundingRect());
-    }
-
+    delete ui;
 }
 
-QRectF AnimationItem::boundingRect() const
+void AnimationForm::update_animation()
 {
-    return QRectF(0,0,10*24 * 3, 10*21 );
+    QJsonArray anim_array = this->opt->data.value("animations").toArray();
+    QJsonObject current = anim_array.at(current_id).toObject();
+
+    current.insert("from", this->ui->spin_from->value());
+    current.insert("to", this->ui->spin_to->value());
+    current.insert("valid", this->ui->spin_from->value() <= this->ui->spin_to->value());
+    current.insert("timer", this->ui->spin_timer->value());
+
+    current.insert("overlay", this->ui->check_overlay->isChecked());
+    current.insert("pingpong", this->ui->check_pingpong->isChecked());
+
+    timer.setInterval(this->ui->spin_timer->value()*20);
+
+    anim_array.removeAt(current_id);
+    anim_array.insert(current_id, current);
+    this->opt->data.insert("animations", anim_array);
 }
 
-void AnimationItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    Q_UNUSED(event);
-    if (opt->current_animation != this->animation_id)
-    {
-        opt->current_animation = this->animation_id;
-        emit trigger_redraw();
-    }
-}
-
-void AnimationItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-    Q_UNUSED(event);
-    AnimationPropertiesDialog *dialog = new AnimationPropertiesDialog(opt, animation_id);
-    connect(dialog, &AnimationPropertiesDialog::finished, [=](){ emit trigger_redraw(); });
-    dialog->show();
-}
-
-QImage AnimationItem::draw_sprite(int sprite_id)
+QImage AnimationForm::draw_sprite(int sprite_id)
 {
     QPainter painter;
     QImage img(10*24, 10*21, QImage::Format_RGB16);
@@ -200,15 +190,34 @@ QImage AnimationItem::draw_sprite(int sprite_id)
             for (int x = 1; x < 24; x+=2)
                 painter.drawLine(w*x, 0, w*x, h*21);
     }
-
-
-
     return img;
 }
 
-int AnimationItem::get_sprite_bit(int sprite_id, int x, int y)
+int AnimationForm::get_sprite_bit(int sprite_id, int x, int y)
 {
     if (x < 0 || y < 0 || x >= 24 || y >= 21) return false;
     if (opt->data.value("sprites").toArray().count() <= sprite_id) return false;
     return opt->data.value("sprites").toArray().at(sprite_id).toObject().value("sprite_data").toArray().at(y).toArray().at(x).toInt() > 0;
 }
+
+void AnimationForm::on_button_delete_clicked()
+{
+    QJsonArray array = opt->data.value("animations").toArray();
+    array.removeAt(current_id);
+    opt->data.insert("animations", array);
+
+    delete this;
+}
+
+
+void AnimationForm::on_button_play_clicked()
+{
+    this->timer.start();
+}
+
+
+void AnimationForm::on_button_stop_clicked()
+{
+    this->timer.stop();
+}
+
