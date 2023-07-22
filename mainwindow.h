@@ -9,6 +9,7 @@
 #include <QMimeData>
 #include <QColorDialog>
 #include <QInputDialog>
+#include <QAction>
 
 #include <QCryptographicHash>
 #include <QJsonDocument>
@@ -91,6 +92,13 @@ private:
 
     QButtonGroup leftradio;
     QButtonGroup rightradio;
+
+    QAction num0;
+    QAction num1;
+    QAction num2;
+    QAction num3;
+    QAction num4;
+    QAction num5;
 
 
     //QJsonObject copied_sprite;

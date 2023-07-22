@@ -16,6 +16,27 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->graphicsView->set_opt(&opt);
     this->ui->label_palette->showPalette(&opt);
 
+
+    num0.setShortcut(Qt::Key_0);
+    num1.setShortcut(Qt::Key_1);
+    num2.setShortcut(Qt::Key_2);
+    num3.setShortcut(Qt::Key_3);
+    num4.setShortcut(Qt::Key_4);
+    num5.setShortcut(Qt::Key_5);
+    this->addAction(&num0);
+    this->addAction(&num1);
+    this->addAction(&num2);
+    this->addAction(&num3);
+    this->addAction(&num4);
+    this->addAction(&num5);
+    connect(&num0, &QAction::triggered, [=](){ this->ui->radio_transparent_left->setChecked(true); });
+    connect(&num1, &QAction::triggered, [=](){ this->ui->radio_sprite_left->setChecked(true); });
+    connect(&num2, &QAction::triggered, [=](){ this->ui->radio_mc1_left->setChecked(true); });
+    connect(&num3, &QAction::triggered, [=](){ this->ui->radio_mc2_left->setChecked(true); });
+    connect(&num4, &QAction::triggered, [=](){ this->ui->radio_overlay_color_left->setChecked(true); });
+    connect(&num5, &QAction::triggered, [=](){ this->ui->radio_overlay_transparent_left->setChecked(true); });
+
+
     connect(this->ui->graphicsView, &SpriteView::zoom_in, this, [=](){ this->ui->slider_scale->setValue(this->ui->slider_scale->value()+10);});
     connect(this->ui->graphicsView, &SpriteView::zoom_out, this, [=](){ this->ui->slider_scale->setValue(this->ui->slider_scale->value()-10);});
 

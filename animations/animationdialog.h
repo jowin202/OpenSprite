@@ -19,6 +19,7 @@ public:
     ~AnimationDialog();
 
 
+
     void keyPressEvent(QKeyEvent *e) {
         if(e->key() == Qt::Key_Escape)
             this->close();
@@ -26,8 +27,13 @@ public:
             this->close();
     }
 
+public slots:
+    void fill_list();
+    void save_data();
 
 private slots:
+
+    void on_button_add_animation_clicked();
 
 private:
     Ui::AnimationDialog *ui;

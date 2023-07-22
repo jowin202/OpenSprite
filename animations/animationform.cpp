@@ -10,7 +10,6 @@ AnimationForm::AnimationForm(options *opt, int animation_id) :
     ui->setupUi(this);
 
     this->opt = opt;
-    this->current_id = animation_id;
     this->ui->spin_from->setMaximum(opt->data.value("sprites").toArray().count()-1);
     this->ui->spin_to->setMaximum(opt->data.value("sprites").toArray().count()-1);
 
@@ -46,22 +45,8 @@ AnimationForm::~AnimationForm()
 
 void AnimationForm::update_animation()
 {
-    QJsonArray anim_array = this->opt->data.value("animations").toArray();
-    QJsonObject current = anim_array.at(current_id).toObject();
-
-    current.insert("from", this->ui->spin_from->value());
-    current.insert("to", this->ui->spin_to->value());
-    current.insert("valid", this->ui->spin_from->value() <= this->ui->spin_to->value());
-    current.insert("timer", this->ui->spin_timer->value());
-
-    current.insert("overlay", this->ui->check_overlay->isChecked());
-    current.insert("pingpong", this->ui->check_pingpong->isChecked());
-
     timer.setInterval(this->ui->spin_timer->value()*20);
-
-    anim_array.removeAt(current_id);
-    anim_array.insert(current_id, current);
-    this->opt->data.insert("animations", anim_array);
+    emit changed();
 }
 
 void AnimationForm::reload_images()
@@ -211,18 +196,31 @@ int AnimationForm::get_sprite_bit(int sprite_id, int x, int y)
     return opt->data.value("sprites").toArray().at(sprite_id).toObject().value("sprite_data").toArray().at(y).toArray().at(x).toInt() > 0;
 }
 
+QJsonObject AnimationForm::get_animation()
+{
+    QJsonObject obj;
+
+    obj.insert("from", this->ui->spin_from->value());
+    obj.insert("to", this->ui->spin_to->value());
+    obj.insert("valid", this->ui->spin_from->value() <= this->ui->spin_to->value());
+    obj.insert("timer", this->ui->spin_timer->value());
+
+    obj.insert("overlay", this->ui->check_overlay->isChecked());
+    obj.insert("pingpong", this->ui->check_pingpong->isChecked());
+    return obj;
+}
+
 void AnimationForm::on_button_delete_clicked()
 {
-    QJsonArray array = opt->data.value("animations").toArray();
-    array.removeAt(current_id);
-    opt->data.insert("animations", array);
-
-    delete this;
+    this->delete_this = true;
+    emit changed();
+    emit rewrite_list();
 }
 
 
 void AnimationForm::on_button_play_clicked()
 {
+    this->reload_images();
     if (this->timer.isActive())
     {
         this->timer.stop();
