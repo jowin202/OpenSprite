@@ -84,6 +84,8 @@ private slots:
 
     void on_actionUndo_triggered();
 
+    void on_actionAnimations_Editor_triggered();
+
 private:
     Ui::MainWindow *ui;
 

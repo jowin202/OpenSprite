@@ -21,6 +21,7 @@ struct options {
     int right_button = BUTTONS::TRANSPARENT;
     QJsonObject data;
     int current_sprite = 0;
+    int current_animation = 0;
     QList<Sprite*> sprite_list;
     SpriteView *spriteview;
     bool show_grid_lines = true;

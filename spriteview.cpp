@@ -7,7 +7,7 @@ SpriteView::SpriteView(QWidget *parent) : QGraphicsView(parent)
     this->setRenderHint(QPainter::Antialiasing, true);
     this->setScene(new QGraphicsScene);
     this->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
-    this->scene()->setSceneRect(0,0,2200,1000);
+
 }
 
 void SpriteView::redraw()
@@ -16,6 +16,10 @@ void SpriteView::redraw()
 
     this->scene()->clear();
     this->opt->sprite_list.clear();
+
+    int max_x = opt->sprite_spacing_x+(10*24+opt->sprite_spacing_x)*(opt->sprites_per_row-1);
+    int max_y = opt->sprite_spacing_y+(10*21+opt->sprite_spacing_y)*(1+opt->data.value("sprites").toArray().count()/opt->sprites_per_row);
+    this->scene()->setSceneRect(0,0,max_x,max_y);
 
     int i; //use it later
     for (i = 0; i < opt->data.value("sprites").toArray().count(); i++)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1026</width>
-    <height>871</height>
+    <height>885</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -584,7 +584,7 @@
            <x>0</x>
            <y>0</y>
            <width>609</width>
-           <height>746</height>
+           <height>760</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -628,6 +628,8 @@
     <addaction name="actionSave_Project_As"/>
     <addaction name="actionExport"/>
     <addaction name="actionExport_as"/>
+    <addaction name="separator"/>
+    <addaction name="actionAnimations_Editor"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -936,6 +938,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionAnimations_Editor">
+   <property name="text">
+    <string>Animations Editor</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
    </property>
   </action>
  </widget>

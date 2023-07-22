@@ -4,7 +4,7 @@
 #include "sprite.h"
 
 #include "exportdialog.h"
-
+#include "animations/animationdialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -558,5 +558,12 @@ void MainWindow::on_actionUndo_triggered()
         opt.undoDB.removeLast();
         this->ui->graphicsView->redraw();
     }
+}
+
+
+void MainWindow::on_actionAnimations_Editor_triggered()
+{
+    AnimationDialog *dialog = new AnimationDialog(&opt);
+    dialog->show();
 }
 

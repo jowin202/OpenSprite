@@ -10,6 +10,10 @@ CONFIG += c++11
 
 SOURCES += \
     addbutton.cpp \
+    animations/animationdialog.cpp \
+    animations/animationitem.cpp \
+    animations/animationpropertiesdialog.cpp \
+    animations/animationsview.cpp \
     exportdialog.cpp \
     fileio.cpp \
     main.cpp \
@@ -20,6 +24,10 @@ SOURCES += \
 
 HEADERS += \
     addbutton.h \
+    animations/animationdialog.h \
+    animations/animationitem.h \
+    animations/animationpropertiesdialog.h \
+    animations/animationsview.h \
     exportdialog.h \
     fileio.h \
     mainwindow.h \
@@ -28,6 +36,8 @@ HEADERS += \
     spriteview.h
 
 FORMS += \
+    animations/animationdialog.ui \
+    animations/animationpropertiesdialog.ui \
     exportdialog.ui \
     mainwindow.ui
 
