@@ -32,6 +32,12 @@ struct options {
     int export_address = 0x3000;
     int export_file_format;
     int export_attribute_format;
+    //auto save
+    QString last_saved_file;
+
+    //
+    QList<QJsonObject> undoDB;
+
     QColor background = QColor(0xd9,0xd6,0xc8);
     QStringList col_names = {"Black","White","Red","Cyan","Purple","Green","Blue","Yellow","Orange","Brown",
                              "Pink", "Dark Grey", "Grey","Light Green","Light Blue","Light Grey"};

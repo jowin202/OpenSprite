@@ -280,13 +280,22 @@ void MainWindow::import(QString path)
             this->ui->combo_multicol_1->setCurrentIndex(opt.data.value("mc1").toInt());
             this->ui->combo_multicol_2->setCurrentIndex(opt.data.value("mc2").toInt());
             this->ui->combo_transparent->setCurrentIndex(opt.data.value("background").toInt());
+
+            opt.last_saved_file = path; //activate autosave on spd files
+            opt.last_exported_file = ""; //reset export
         }
         else
         {
             opt.data.insert("background", this->ui->combo_transparent->currentIndex());
             opt.data.insert("mc1", this->ui->combo_multicol_1->currentIndex());
             opt.data.insert("mc2", this->ui->combo_multicol_2->currentIndex());
+
+
+            opt.last_saved_file = ""; //reset save
+            opt.last_exported_file = ""; //reset export
         }
+
+        opt.undoDB.clear();
         this->ui->graphicsView->change_current_sprite(0);
         this->ui->graphicsView->redraw();
     }
@@ -294,6 +303,9 @@ void MainWindow::import(QString path)
 
 void MainWindow::new_project()
 {
+    opt.last_exported_file = "";
+    opt.last_saved_file = "";
+    opt.undoDB.clear();
     opt.data.insert("sprites", QJsonArray());
     this->on_actionAdd_Sprite_triggered();
     this->ui->combo_transparent->setCurrentIndex(6);
@@ -326,6 +338,7 @@ void MainWindow::on_actionCopy_triggered()
 
 void MainWindow::on_actionPaste_triggered()
 {
+    opt.undoDB.append(opt.data);
     QJsonParseError error;
     QSettings settings;
     QJsonObject copied_sprite = QJsonDocument::fromJson(settings.value("copied_sprite").toString().toUtf8(), &error).object();
@@ -341,6 +354,7 @@ void MainWindow::on_actionPaste_triggered()
 
 void MainWindow::on_actionPaste_Into_triggered()
 {
+    QMessageBox::information(this, "Not implemented yet", "Not implemented yet");
     //TODO
     /*
     for (int i = 0; i < 64; i++)
@@ -355,6 +369,7 @@ void MainWindow::on_actionPaste_Into_triggered()
 
 void MainWindow::on_actionClear_triggered()
 {
+    opt.undoDB.append(opt.data);
     QJsonObject current_sprite_obj = opt.data.value("sprites").toArray().at(opt.current_sprite).toObject();
     QJsonArray array_y;
     for (int y = 0; y < 21; y++)
@@ -378,6 +393,7 @@ void MainWindow::on_actionClear_triggered()
 
 void MainWindow::on_actionSlide_Up_triggered()
 {
+    opt.undoDB.append(opt.data);
     this->opt.sprite_list.at(opt.current_sprite)->slide_up();
     this->ui->graphicsView->scene()->update();
 }
@@ -385,6 +401,7 @@ void MainWindow::on_actionSlide_Up_triggered()
 
 void MainWindow::on_actionSlide_Down_triggered()
 {
+    opt.undoDB.append(opt.data);
     this->opt.sprite_list.at(opt.current_sprite)->slide_down();
     this->ui->graphicsView->scene()->update();
 }
@@ -392,6 +409,7 @@ void MainWindow::on_actionSlide_Down_triggered()
 
 void MainWindow::on_actionSlide_Left_triggered()
 {
+    opt.undoDB.append(opt.data);
     this->opt.sprite_list.at(opt.current_sprite)->slide_left();
     if (this->opt.data.value("sprites").toArray().at(opt.current_sprite).toObject().value("mc_mode").toBool())
         this->opt.sprite_list.at(opt.current_sprite)->slide_left();
@@ -401,6 +419,7 @@ void MainWindow::on_actionSlide_Left_triggered()
 
 void MainWindow::on_actionSlide_Right_triggered()
 {
+    opt.undoDB.append(opt.data);
     this->opt.sprite_list.at(opt.current_sprite)->slide_right();
     if (this->opt.data.value("sprites").toArray().at(opt.current_sprite).toObject().value("mc_mode").toBool())
         this->opt.sprite_list.at(opt.current_sprite)->slide_right();
@@ -420,6 +439,7 @@ void MainWindow::on_slider_scale_valueChanged(int value)
 
 void MainWindow::on_actionFlip_Top_to_Bottom_triggered()
 {
+    opt.undoDB.append(opt.data);
     this->opt.sprite_list.at(opt.current_sprite)->flip_top();
     this->ui->graphicsView->scene()->update();
 }
@@ -427,6 +447,7 @@ void MainWindow::on_actionFlip_Top_to_Bottom_triggered()
 
 void MainWindow::on_actionFlip_Left_to_Right_triggered()
 {
+    opt.undoDB.append(opt.data);
     this->opt.sprite_list.at(opt.current_sprite)->flip_left();
     this->ui->graphicsView->scene()->update();
 }
@@ -435,13 +456,16 @@ void MainWindow::on_actionFlip_Left_to_Right_triggered()
 
 void MainWindow::on_actionSave_Project_triggered()
 {
-    QCryptographicHash hash(QCryptographicHash::Algorithm::Sha256);
-    FileIO().write_spd(QSettings().value("last_file").toString(), opt.data);
-
-    QFile f(QSettings().value("last_file").toString());
-    f.open(QIODevice::ReadOnly);
-    hash.addData(f.readAll());
-    qDebug() << hash.result().toHex();
+    if (opt.last_saved_file == "")
+    {
+        this->on_actionSave_Project_As_triggered();
+    }
+    else
+    {
+        //auto save
+        FileIO().write_spd(opt.last_saved_file, opt.data);
+        qDebug() << opt.last_saved_file;
+    }
 }
 
 
@@ -449,11 +473,15 @@ void MainWindow::on_actionSave_Project_As_triggered()
 {
     QString path = QFileDialog::getSaveFileName(this, "Save Project As", QSettings().value("last_file").toString(), "OpenSprite file (*.spd)");
     if (path != "")
+    {
         FileIO().write_spd(path, opt.data);
+        opt.last_saved_file = path;
+    }
 }
 
 void MainWindow::on_actionDelete_Sprite_triggered()
 {
+    opt.undoDB.append(opt.data);
     QJsonArray sprites_array = opt.data.value("sprites").toArray();
     sprites_array.removeAt(opt.current_sprite);
     opt.current_sprite = qMin(opt.current_sprite, sprites_array.count()-1);
@@ -470,10 +498,9 @@ void MainWindow::on_actionAdd_Sprite_triggered()
 
 void MainWindow::on_actionAbout_triggered()
 {
-
     QMessageBox msgBox(this);
     msgBox.setTextFormat(Qt::RichText);
-    msgBox.setText("Author: Johannes Winkler<br>License: GNU GPL License<br><a href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
+    msgBox.setText("Version: 1.2 (07 / 2023)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
 }
@@ -502,6 +529,7 @@ void MainWindow::on_actionExport_triggered()
 
 void MainWindow::on_actionReflect_Left_To_Right_triggered()
 {
+    opt.undoDB.append(opt.data);
     this->opt.sprite_list.at(opt.current_sprite)->reflect_left();
     this->ui->graphicsView->scene()->update();
 }
@@ -509,6 +537,7 @@ void MainWindow::on_actionReflect_Left_To_Right_triggered()
 
 void MainWindow::on_actionReflect_Top_to_Bottom_triggered()
 {
+    opt.undoDB.append(opt.data);
     this->opt.sprite_list.at(opt.current_sprite)->reflect_top();
     this->ui->graphicsView->scene()->update();
 }
@@ -518,5 +547,16 @@ void MainWindow::on_actionReflect_Top_to_Bottom_triggered()
 void MainWindow::on_actionNew_triggered()
 {
     this->new_project();
+}
+
+
+void MainWindow::on_actionUndo_triggered()
+{
+    if (!opt.undoDB.isEmpty())
+    {
+        opt.data = opt.undoDB.last();
+        opt.undoDB.removeLast();
+        this->ui->graphicsView->redraw();
+    }
 }
 

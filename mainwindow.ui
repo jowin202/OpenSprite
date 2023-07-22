@@ -639,6 +639,8 @@
     <addaction name="actionPaste"/>
     <addaction name="actionPaste_Into"/>
     <addaction name="separator"/>
+    <addaction name="actionUndo"/>
+    <addaction name="separator"/>
     <addaction name="actionAdd_Sprite"/>
     <addaction name="actionDelete_Sprite"/>
     <addaction name="separator"/>
@@ -926,6 +928,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
    </property>
   </action>
  </widget>

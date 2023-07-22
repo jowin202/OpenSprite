@@ -254,6 +254,7 @@ void Sprite::mousePressEvent(QGraphicsSceneMouseEvent *ev)
     else if (ev->button() == Qt::RightButton)
         this->right_pressed = true;
 
+    opt->undoDB.append(opt->data);
     this->change_tile(ev->pos());
 }
 
