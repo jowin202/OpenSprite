@@ -9,6 +9,7 @@
 #include <QMimeData>
 #include <QColorDialog>
 #include <QInputDialog>
+#include <QApplication>
 #include <QAction>
 
 #include <QCryptographicHash>
@@ -29,6 +30,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     options opt;
+
+    void closeEvent(QCloseEvent *ev)
+    {
+        Q_UNUSED(ev);
+        qApp->quit();
+    }
 
 public slots:
     QIcon createIconFromColor(QColor col)

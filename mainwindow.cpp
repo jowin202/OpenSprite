@@ -492,7 +492,9 @@ void MainWindow::on_actionSave_Project_triggered()
 
 void MainWindow::on_actionSave_Project_As_triggered()
 {
-    QString path = QFileDialog::getSaveFileName(this, "Save Project As", QSettings().value("last_file").toString(), "OpenSprite file (*.spd)");
+    QString path = QFileDialog::getSaveFileName(this, "Save Project As",
+                                                opt.last_saved_file == "" ? QDir::homePath() + QDir::separator() +"Untitled.spd" : opt.last_saved_file,
+                                                "OpenSprite file (*.spd)");
     if (path != "")
     {
         FileIO().write_spd(path, opt.data);

@@ -21,7 +21,7 @@ ExportDialog::~ExportDialog()
 void ExportDialog::on_button_export_clicked()
 {
     QString path;
-    QString last_file = QSettings().value("last_file").toString();
+    QString last_file = opt->last_saved_file == "" ? QDir::homePath() + QDir::separator() + "Untitled...." : opt->last_saved_file; //last 4 removed
     last_file.chop(4);
 
 

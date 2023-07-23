@@ -26,7 +26,7 @@ struct options {
     bool show_grid_lines = true;
     int sprite_spacing_x = 30;
     int sprite_spacing_y = 30;
-    int sprites_per_row = 8;
+    int sprites_per_row = 4;
     //auto export
     QString last_exported_file;
     int export_address = 0x3000;
