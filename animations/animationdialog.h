@@ -19,6 +19,11 @@ public:
     ~AnimationDialog();
 
 
+    void closeEvent(QCloseEvent *ev)
+    {
+        emit dialog_closed();
+        ev->accept();
+    }
 
     void keyPressEvent(QKeyEvent *e) {
         if(e->key() == Qt::Key_Escape)
@@ -27,12 +32,15 @@ public:
             this->close();
     }
 
+
+signals:
+    void dialog_closed();
+
 public slots:
     void fill_list();
     void save_data();
 
 private slots:
-
     void on_button_add_animation_clicked();
 
 private:

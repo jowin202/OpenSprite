@@ -18,6 +18,8 @@
 
 #include "sprite.h"
 
+class AnimationDialog;
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -92,6 +94,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    AnimationDialog *animation_dialog = 0;
 
     QButtonGroup leftradio;
     QButtonGroup rightradio;

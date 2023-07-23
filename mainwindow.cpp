@@ -313,7 +313,10 @@ void MainWindow::closeEvent(QCloseEvent *ev)
         box.exec();
 
         if (box.clickedButton() == cancel)
+        {
             ev->ignore();
+            return;
+        }
         else if (box.clickedButton() == no)
         {
             ev->accept();
@@ -325,6 +328,8 @@ void MainWindow::closeEvent(QCloseEvent *ev)
             qApp->quit();
         }
     }
+    else qApp->quit();
+
 
 }
 
@@ -370,6 +375,10 @@ void MainWindow::import(QString path)
             opt.last_exported_file = ""; //reset export
         }
 
+        //close animations
+        if (this->animation_dialog != 0)
+            this->animation_dialog->close();
+
         opt.undoDB.clear();
         this->ui->graphicsView->change_current_sprite(0);
         this->ui->graphicsView->redraw();
@@ -386,6 +395,8 @@ void MainWindow::new_project()
     this->ui->combo_transparent->setCurrentIndex(6);
     this->ui->combo_multicol_2->setCurrentIndex(1);
 
+    if (this->animation_dialog != 0)
+        this->animation_dialog->close();
 
     //detect changes
     QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
@@ -701,7 +712,18 @@ void MainWindow::on_actionUndo_triggered()
 
 void MainWindow::on_actionAnimations_Editor_triggered()
 {
-    AnimationDialog *dialog = new AnimationDialog(&opt);
-    dialog->show();
+    //doing a singleton.
+    if (animation_dialog == 0)
+    {
+        animation_dialog = new AnimationDialog(&opt);
+        connect(animation_dialog, &AnimationDialog::dialog_closed, [=](){
+            this->animation_dialog = 0;
+        });
+        animation_dialog->show();
+    }
+    else
+    {
+        animation_dialog->raise();
+    }
 }
 

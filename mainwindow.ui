@@ -851,7 +851,7 @@
     <string>Paste Into</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+E</string>
+    <string>Ctrl+Shift+V</string>
    </property>
   </action>
   <action name="actionClear">
@@ -915,9 +915,6 @@
    <property name="text">
     <string>Flip Top to Bottom</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+F</string>
-   </property>
   </action>
   <action name="actionFlip_Left_to_Right">
    <property name="icon">
@@ -926,9 +923,6 @@
    </property>
    <property name="text">
     <string>Flip Left to Right</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+G</string>
    </property>
   </action>
   <action name="actionSave_Project">
