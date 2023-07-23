@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1026</width>
-    <height>885</height>
+    <height>897</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -675,7 +675,7 @@
            <x>0</x>
            <y>0</y>
            <width>609</width>
-           <height>760</height>
+           <height>772</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -797,7 +797,7 @@
   </widget>
   <action name="actionOpenProject">
    <property name="text">
-    <string>Open Project</string>
+    <string>Open/Import Project</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>

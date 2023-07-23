@@ -31,11 +31,7 @@ public:
     ~MainWindow();
     options opt;
 
-    void closeEvent(QCloseEvent *ev)
-    {
-        Q_UNUSED(ev);
-        qApp->quit();
-    }
+    void closeEvent(QCloseEvent *ev);
 
 public slots:
     QIcon createIconFromColor(QColor col)

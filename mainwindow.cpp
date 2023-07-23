@@ -109,7 +109,33 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    connect(this->ui->graphicsView, &SpriteView::droppedFile, [=](QString file) { this->import(file); });
+    connect(this->ui->graphicsView, &SpriteView::droppedFile, [=](QString file) {
+        //ask question
+        QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
+        hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
+        QByteArray current_hash = hash1.result().toHex();
+
+        if (opt.last_hash != current_hash)
+        {
+            QMessageBox box;
+            box.setWindowTitle("OpenSprite");
+            box.setText("Save changes?");
+            QPushButton *yes = box.addButton("Yes", QMessageBox::YesRole);
+            QPushButton *no = box.addButton("No", QMessageBox::NoRole);
+            QPushButton *cancel = box.addButton("Cancel", QMessageBox::RejectRole);
+            box.exec();
+
+            if (box.clickedButton() == cancel)
+                return; //dont create new project
+            else if (box.clickedButton() == no)
+            {} // go on
+            else if (box.clickedButton() == yes){
+                this->on_actionSave_Project_triggered();
+            }
+        }
+
+        this->import(file);
+    });
 
     //combos
     for (int i = 0; i < 16; i++)
@@ -270,6 +296,38 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::closeEvent(QCloseEvent *ev)
+{
+    QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
+    hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
+    QByteArray current_hash = hash1.result().toHex();
+
+    if (opt.last_hash != current_hash)
+    {
+        QMessageBox box;
+        box.setWindowTitle("OpenSprite");
+        box.setText("Save changes before closing?");
+        QPushButton *yes = box.addButton("Yes", QMessageBox::YesRole);
+        QPushButton *no = box.addButton("No", QMessageBox::NoRole);
+        QPushButton *cancel = box.addButton("Cancel", QMessageBox::RejectRole);
+        box.exec();
+
+        if (box.clickedButton() == cancel)
+            ev->ignore();
+        else if (box.clickedButton() == no)
+        {
+            ev->accept();
+            qApp->quit();
+        }
+        else if (box.clickedButton() == yes){
+            this->on_actionSave_Project_triggered();
+            ev->accept();
+            qApp->quit();
+        }
+    }
+
+}
+
 void MainWindow::import(QString path)
 {
     QSettings settings;
@@ -284,14 +342,10 @@ void MainWindow::import(QString path)
         if (address != 0)
             opt.export_address = address;
 
-        /*
-        QFile f1(path);
-        f1.open(QIODevice::ReadOnly);
+        //detect changes
         QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
-        hash1.addData(f1.readAll());
-        f1.close();
-        */
-
+        hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
+        opt.last_hash = hash1.result().toHex();
 
 
         settings.setValue("last_file", path);
@@ -331,12 +385,42 @@ void MainWindow::new_project()
     this->on_actionAdd_Sprite_triggered();
     this->ui->combo_transparent->setCurrentIndex(6);
     this->ui->combo_multicol_2->setCurrentIndex(1);
+
+
+    //detect changes
+    QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
+    hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
+    opt.last_hash = hash1.result().toHex();
 }
 
 
 
 void MainWindow::on_actionOpenProject_triggered()
 {
+    //ask question
+    QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
+    hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
+    QByteArray current_hash = hash1.result().toHex();
+
+    if (opt.last_hash != current_hash)
+    {
+        QMessageBox box;
+        box.setWindowTitle("OpenSprite");
+        box.setText("Save changes?");
+        QPushButton *yes = box.addButton("Yes", QMessageBox::YesRole);
+        QPushButton *no = box.addButton("No", QMessageBox::NoRole);
+        QPushButton *cancel = box.addButton("Cancel", QMessageBox::RejectRole);
+        box.exec();
+
+        if (box.clickedButton() == cancel)
+            return; //dont create new project
+        else if (box.clickedButton() == no)
+        {} // go on
+        else if (box.clickedButton() == yes){
+            this->on_actionSave_Project_triggered();
+        }
+    }
+
     QSettings settings;
     QString path = QFileDialog::getOpenFileName(this, "File", settings.value("last_file", QVariant()).toString(), "Sprite Files(*.spd *.prg);;All Files (*)");
     this->import(path);
@@ -485,7 +569,11 @@ void MainWindow::on_actionSave_Project_triggered()
     {
         //auto save
         FileIO().write_spd(opt.last_saved_file, opt.data);
-        qDebug() << opt.last_saved_file;
+
+        //detect changes
+        QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
+        hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
+        opt.last_hash = hash1.result().toHex();
     }
 }
 
@@ -499,6 +587,10 @@ void MainWindow::on_actionSave_Project_As_triggered()
     {
         FileIO().write_spd(path, opt.data);
         opt.last_saved_file = path;
+
+        QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
+        hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
+        opt.last_hash = hash1.result().toHex();
     }
 }
 
@@ -569,6 +661,29 @@ void MainWindow::on_actionReflect_Top_to_Bottom_triggered()
 
 void MainWindow::on_actionNew_triggered()
 {
+    //ask question
+    QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
+    hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
+    QByteArray current_hash = hash1.result().toHex();
+
+    if (opt.last_hash != current_hash)
+    {
+        QMessageBox box;
+        box.setWindowTitle("OpenSprite");
+        box.setText("Save changes?");
+        QPushButton *yes = box.addButton("Yes", QMessageBox::YesRole);
+        QPushButton *no = box.addButton("No", QMessageBox::NoRole);
+        QPushButton *cancel = box.addButton("Cancel", QMessageBox::RejectRole);
+        box.exec();
+
+        if (box.clickedButton() == cancel)
+            return; //dont create new project
+        else if (box.clickedButton() == no)
+        {} // go on
+        else if (box.clickedButton() == yes){
+            this->on_actionSave_Project_triggered();
+        }
+    }
     this->new_project();
 }
 

@@ -20,6 +20,7 @@ QJsonObject FileIO::read_spd(QString path)
     }
 
 
+
     QByteArray header = file.read(3);
     if (header.toHex() != "535044")
     {

@@ -35,6 +35,9 @@ struct options {
     //auto save
     QString last_saved_file;
 
+    //hashquestion
+    QByteArray last_hash;
+
     //
     QList<QJsonObject> undoDB;
 
