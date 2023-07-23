@@ -324,8 +324,13 @@ void MainWindow::closeEvent(QCloseEvent *ev)
         }
         else if (box.clickedButton() == yes){
             this->on_actionSave_Project_triggered();
-            ev->accept();
-            qApp->quit();
+            if (opt.last_hash == current_hash)
+            {
+                ev->accept();
+                qApp->quit();
+            }
+            else
+                ev->ignore();
         }
     }
     else qApp->quit();
