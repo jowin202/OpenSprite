@@ -41,13 +41,17 @@ jobs:
       run: |
         Write-Host 'Running qmake ...'
         $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
-        qmake --help
-        Write-Host
+        # Generate MSBuild VC++ project
         qmake -Wall -tp vc OpenSprite.pro
 
     - name: List qmake artifacts
       run: |
         Get-ChildItem . -Recurse
+
+    - name: List Qt6 binaries
+      run: |
+        $src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin"
+        Get-ChildItem $src -Recurse
 
     - name: Build
       run: |
@@ -63,12 +67,11 @@ jobs:
     - name: List artifacts
       run: |
         Get-ChildItem . -Recurse
-        #Get-ChildItem C:\tmp -Recurse
 
     - name: Upload executable artifact
       uses: actions/upload-artifact@v3
       with:
-        name: OpenSprite-latest.zip
+        name: OpenSprite-latest
         path: |
           build/release/OpenSprite.exe
           build/release/Qt*.dll
