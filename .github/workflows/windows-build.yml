@@ -41,9 +41,11 @@ jobs:
       run: |
         Write-Host 'Running qmake ...'
         $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
-        qmake --help
-        Write-Host
+        #qmake --help
+        #Write-Host
         qmake -makefile OpenSprite.pro
 
     - name: List artifacts
-      run: Get-ChildItem . -Recurse
+      run: |
+        Get-ChildItem . -Recurse
+        Get-ChildItem C:\tmp -Recurse
