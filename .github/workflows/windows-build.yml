@@ -48,4 +48,4 @@ jobs:
     - name: List artifacts
       run: |
         Get-ChildItem . -Recurse
-        Get-ChildItem C:\tmp -Recurse
+        #Get-ChildItem C:\tmp -Recurse
