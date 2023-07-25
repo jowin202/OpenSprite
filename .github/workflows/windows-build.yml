@@ -30,10 +30,11 @@ jobs:
         aqt install-qt windows desktop $Env:QT_VERSION "win64_${Env:PLATFORM}" -O C:\Qt
 
     - name: List Dir
-      run: Get-ChildItem "C:\Qt\${Env:QT_VERSION}\${Env:PLATFORM}"
+      run: Get-ChildItem "C:\Qt\${Env:QT_VERSION}\${Env:PLATFORM}\bin"
 
     - name: Run qmake
       run: |
         Write-Host 'Running qmake ...'
-        $Env:PATH = ""C:\Qt\${Env:QT_VERSION}\${Env:PLATFORM}";${Env:PATH}"
+        $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:PLATFORM}\bin;${Env:PATH}"
         qmake --help
+        #qmake OpenSprite.pro
