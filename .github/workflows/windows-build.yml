@@ -7,7 +7,7 @@ on:
       - cicd
 
 env:
-  QT_VERSION: 6.2.0
+  QT_VERSION: 6.5.0
   AQT_PLATFORM: msvc2019_64
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       with:
         compiler: msvc
         vcvarsall: true
-        make: true
+        cmake: true
 
     - name: Download aqtinstall
       run: |
@@ -42,10 +42,9 @@ jobs:
       run: |
         Write-Host 'Running qmake ...'
         $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
-        #qmake --help
-        #Write-Host
-        qmake -Wall -tp vc OpenSprite.pro
-        make
+        qmake --help
+        Write-Host
+        qmake -Wall -tp OpenSprite.pro
 
     - name: List qmake stuff
       run: |
@@ -53,6 +52,7 @@ jobs:
 
     - name: Build
       run: |
+        cmake
         msbuild
 
     - name: List artifacts
