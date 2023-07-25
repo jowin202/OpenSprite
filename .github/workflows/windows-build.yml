@@ -11,9 +11,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Download aqtinstall
-      run: echo Download aqtinstall
+      run: |
+        Write-Host 'Downloading  aqtinstall ...'
+        $src = 'https://github.com/miurahr/aqtinstall/releases/download/v3.1.6/aqt_x64_signed.exe'
+        $target = 'C:\Windows\System32\aqt.exe'
+        Invoke-WebRequest -Uri $src -OutFile $target
+
     - name: Install Qt
-      run: echo Installing Qt ...
+      run: |
+        Write-Host 'Installing Qt ...'
+        aqt install-qt windows desktop 6.2.0 win64_msvc2019_x64 -O C:\Qt
+
     - name: Run qmake
-      run: echo Running qmake ...
+      run: |
+        Write-Host 'Running qmake ...'
+        qmake --help
