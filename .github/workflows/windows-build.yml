@@ -1,4 +1,4 @@
-name: Windows C++ Qt Build
+name: Windows Build
 
 on:
   push:
@@ -78,6 +78,6 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         prerelease: true
-        title: "Automatic Build ${{ github.sha }}"
+        title: "Automatic Build"
         files: |
           OpenSprite-latest.zip
