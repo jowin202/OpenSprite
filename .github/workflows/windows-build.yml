@@ -7,12 +7,14 @@ on:
 env:
   QT_VERSION: 6.2.0
   PLATFORM: msvc2019_64
-  QT_PATH: C:\Qt\${{ env.QT_VERSION }}\${{ env.PLATFORM }}
 
 jobs:
   build:
 
     runs-on: windows-latest
+
+    env:
+      QT_PATH: C:\Qt\${{ env.QT_VERSION }}\${{ env.PLATFORM }}
 
     steps:
     - uses: actions/checkout@v3
