@@ -44,7 +44,7 @@ jobs:
         $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
         qmake --help
         Write-Host
-        qmake -Wall -tp OpenSprite.pro
+        qmake -Wall -tp vc OpenSprite.pro
 
     - name: List qmake stuff
       run: |
@@ -52,7 +52,7 @@ jobs:
 
     - name: Build
       run: |
-        cmake
+        #cmake
         msbuild
 
     - name: List artifacts
