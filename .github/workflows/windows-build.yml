@@ -13,9 +13,6 @@ jobs:
 
     runs-on: windows-latest
 
-    env:
-      QT_PATH: C:\Qt\${{ env.QT_VERSION }}\${{ env.PLATFORM }}
-
     steps:
     - uses: actions/checkout@v3
 
@@ -33,10 +30,10 @@ jobs:
         aqt install-qt windows desktop $Env:QT_VERSION "win64_${Env:PLATFORM}" -O C:\Qt
 
     - name: List Dir
-      run: Get-ChildItem $Env:QT_PATH
+      run: Get-ChildItem "C:\Qt\${Env:QT_VERSION}\${Env:PLATFORM}"
 
     - name: Run qmake
       run: |
         Write-Host 'Running qmake ...'
-        $Env:PATH = "${Env:QT_PATH};${Env:PATH}"
+        $Env:PATH = ""C:\Qt\${Env:QT_VERSION}\${Env:PLATFORM}";${Env:PATH}"
         qmake --help
