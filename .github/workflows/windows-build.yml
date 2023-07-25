@@ -81,4 +81,4 @@ jobs:
         prerelease: true
         title: "Automatic Build"
         files: |
-          "${{ env.ARCHIVE_NAME }}.zip"
+          ${{ env.ARCHIVE_NAME }}.zip
