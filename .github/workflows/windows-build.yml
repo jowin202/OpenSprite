@@ -48,21 +48,20 @@ jobs:
       run: |
         Get-ChildItem . -Recurse
 
-    - name: List Qt6 binaries
-      run: |
-        $src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}"
-        Get-ChildItem $src -Recurse
-
     - name: Build
       run: |
         msbuild OpenSprite.vcxproj -property:Configuration=Release
 
-    - name: Provision Qt6 libraries
+    - name: Provision runtime environment
       run: |
         $src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin"
-        'Qt6Gui.dll', 'Qt6Core.dll', 'Qt6Widgets.dll' | ForEach-Object {
-          Copy-Item (Join-Path $src $_) .\build\release
-        }
+        $windeployqt = Join-Path $src windeployqt.exe
+
+        & "$windeployqt" .\build\release
+
+        #'Qt6Gui.dll', 'Qt6Core.dll', 'Qt6Widgets.dll' | ForEach-Object {
+        #  Copy-Item (Join-Path $src $_) .\build\release
+        #}
 
     - name: List artifacts
       run: |
@@ -73,5 +72,4 @@ jobs:
       with:
         name: OpenSprite-latest
         path: |
-          build/release/OpenSprite.exe
-          build/release/Qt*.dll
+          build/release/*
