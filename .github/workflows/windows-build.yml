@@ -16,6 +16,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Install MSVC
+      uses: aminya/setup-cpp@v1
+      with:
+        compiler: msvc
+        vcvarsall: true
+
     - name: Download aqtinstall
       run: |
         Write-Host 'Downloading  aqtinstall ...'
