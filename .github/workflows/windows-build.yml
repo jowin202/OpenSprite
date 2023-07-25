@@ -2,7 +2,9 @@ name: Windows C++ Qt Build
 
 on:
   push:
-    branches: [ "cicd" ]
+    branches:
+      - main
+      - cicd
 
 env:
   QT_VERSION: 6.2.0
@@ -39,8 +41,9 @@ jobs:
       run: |
         Write-Host 'Running qmake ...'
         $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
-        #qmake --help
-        qmake
+        qmake --help
+        Write-Host
+        qmake -makefile OpenSprite.pro
 
     - name: List artifacts
       run: Get-ChildItem . -Recurse
