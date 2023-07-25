@@ -53,7 +53,7 @@ jobs:
         $src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin"
         $windeployqt = Join-Path $src windeployqt.exe
 
-        & "$windeployqt" (Join-Path $pwd build\release)
+        & "$windeployqt" --release --no-translations (Join-Path $pwd build\release)
 
         #'Qt6Gui.dll', 'Qt6Core.dll', 'Qt6Widgets.dll' | ForEach-Object {
         #  Copy-Item (Join-Path $src $_) .\build\release
