@@ -53,6 +53,13 @@ jobs:
       run: |
         msbuild OpenSprite.vcxproj -property:Configuration=Release
 
+    - name: Provision Qt6 libraries
+      run: |
+        $src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin"
+        'Qt6Gui.dll', 'Qt6Core.dll', 'Qt6Widgets.dll' | ForEach-Object {
+          Copy-Item (Join-Path $src $_) .\build\release
+        }
+
     - name: List artifacts
       run: |
         Get-ChildItem . -Recurse
@@ -61,5 +68,7 @@ jobs:
     - name: Upload executable artifact
       uses: actions/upload-artifact@v3
       with:
-        name: OpenSprite.exe
-        path: build/release/OpenSprite.exe
+        name: OpenSprite-latest.zip
+        path: |
+          build/release/OpenSprite.exe
+          build/release/Qt*.dll
