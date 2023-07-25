@@ -57,10 +57,6 @@ jobs:
 
         & "$windeployqt" --release --no-translations (Join-Path $pwd build\release)
 
-        #'Qt6Gui.dll', 'Qt6Core.dll', 'Qt6Widgets.dll' | ForEach-Object {
-        #  Copy-Item (Join-Path $src $_) .\build\release
-        #}
-
     - name: List artifacts
       run: |
         Get-ChildItem . -Recurse
@@ -82,6 +78,6 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         prerelease: true
-        title: "Automatic Build"
+        title: "Automatic Build ${{ github.sha }}"
         files: |
           OpenSprite-latest.zip
