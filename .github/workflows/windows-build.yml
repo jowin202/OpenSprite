@@ -7,7 +7,7 @@ on:
 env:
   QT_VERSION: 6.2.0
   PLATFORM: msvc2019_64
-  QT_PATH: C:\Qt\$QT_VERSION\$PLATFORM
+  QT_PATH: C:\Qt\${{ $QT_VERSION }}\${{ $PLATFORM }}
 
 jobs:
   build:
