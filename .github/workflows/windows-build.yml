@@ -23,6 +23,7 @@ jobs:
       with:
         compiler: msvc
         vcvarsall: true
+        make: true
 
     - name: Download aqtinstall
       run: |
@@ -44,6 +45,7 @@ jobs:
         #qmake --help
         #Write-Host
         qmake -makefile -Wall -d OpenSprite.pro
+        make
 
     - name: List artifacts
       run: |
