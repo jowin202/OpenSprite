@@ -44,10 +44,6 @@ jobs:
         # Generate MSBuild VC++ project
         qmake -Wall -tp vc OpenSprite.pro
 
-    - name: List qmake artifacts
-      run: |
-        Get-ChildItem . -Recurse
-
     - name: Build
       run: |
         msbuild OpenSprite.vcxproj -property:Configuration=Release
@@ -57,7 +53,7 @@ jobs:
         $src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin"
         $windeployqt = Join-Path $src windeployqt.exe
 
-        & "$windeployqt" .\build\release
+        & "$windeployqt" (Join-Path $pwd build\release)
 
         #'Qt6Gui.dll', 'Qt6Core.dll', 'Qt6Widgets.dll' | ForEach-Object {
         #  Copy-Item (Join-Path $src $_) .\build\release
