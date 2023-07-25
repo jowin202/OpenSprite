@@ -23,7 +23,6 @@ jobs:
       with:
         compiler: msvc
         vcvarsall: true
-        cmake: true
 
     - name: Download aqtinstall
       run: |
