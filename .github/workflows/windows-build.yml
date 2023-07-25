@@ -50,7 +50,7 @@ jobs:
 
     - name: List Qt6 binaries
       run: |
-        $src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin"
+        $src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}"
         Get-ChildItem $src -Recurse
 
     - name: Build
