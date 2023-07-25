@@ -46,16 +46,21 @@ jobs:
         Write-Host
         qmake -Wall -tp vc OpenSprite.pro
 
-    - name: List qmake stuff
+    - name: List qmake artifacts
       run: |
         Get-ChildItem . -Recurse
 
     - name: Build
       run: |
-        #cmake
-        msbuild
+        msbuild OpenSprite.vcxproj -property:Configuration=Release
 
     - name: List artifacts
       run: |
         Get-ChildItem . -Recurse
         #Get-ChildItem C:\tmp -Recurse
+
+    - name: Upload executable artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: OpenSprite.exe
+        path: build/release/OpenSprite.exe
