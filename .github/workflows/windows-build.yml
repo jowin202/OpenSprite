@@ -22,8 +22,8 @@ jobs:
     - name: Install Qt
       run: |
         Write-Host 'Installing Qt ...'
-        #aqt install-qt windows desktop 6.2.0 win64_msvc2019_x64 -O C:\Qt
-        aqt list-qt windows desktop --arch 6.2.0
+        #aqt list-qt windows desktop --arch 6.2.0
+        aqt install-qt windows desktop 6.2.0 win64_msvc2019_64 -O C:\Qt
 
     - name: Run qmake
       run: |
