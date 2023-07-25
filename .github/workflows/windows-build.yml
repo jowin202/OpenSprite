@@ -43,7 +43,7 @@ jobs:
         $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
         #qmake --help
         #Write-Host
-        qmake -makefile OpenSprite.pro
+        qmake -makefile -Wall -d OpenSprite.pro
 
     - name: List artifacts
       run: |
