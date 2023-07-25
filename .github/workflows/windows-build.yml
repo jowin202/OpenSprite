@@ -41,3 +41,6 @@ jobs:
         $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
         #qmake --help
         qmake
+
+    - name: List artifacts
+      run: Get-ChildItem . -Recurse
