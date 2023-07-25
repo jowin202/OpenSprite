@@ -11,11 +11,13 @@ env:
   AQT_PLATFORM: msvc2019_64
 
 jobs:
+
   build:
 
     runs-on: windows-latest
 
     steps:
+
     - uses: actions/checkout@v3
 
     - name: Install MSVC
@@ -69,3 +71,17 @@ jobs:
         name: OpenSprite-latest
         path: |
           build/release/*
+
+    - name: ZIP executable artifacts
+      run: |
+        7z a -r OpenSprite-latest.zip .\build\release\*
+
+    - name: Publish release
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Automatic Build"
+        files: |
+          OpenSprite-latest.zip
