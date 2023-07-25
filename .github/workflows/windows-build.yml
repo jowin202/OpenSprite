@@ -1,0 +1,19 @@
+name: Windows C++ Qt Build
+
+on:
+  push:
+    branches: [ "cicd" ]
+
+jobs:
+  build:
+
+    runs-on: windows
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Download aqtinstall
+      run: echo Download aqtinstall
+    - name: Install Qt
+      run: echo Installing Qt ...
+    - name: Run qmake
+      run: echo Running qmake ...
