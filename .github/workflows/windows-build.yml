@@ -6,7 +6,7 @@ on:
 
 env:
   QT_VERSION: 6.2.0
-  PLATFORM: msvc2019_64
+  AQT_PLATFORM: msvc2019_64
 
 jobs:
   build:
@@ -33,11 +33,11 @@ jobs:
       run: |
         Write-Host 'Installing Qt ...'
         #aqt list-qt windows desktop --arch $Env:QT_VERSION
-        aqt install-qt windows desktop $Env:QT_VERSION "win64_${Env:PLATFORM}" -O C:\Qt
+        aqt install-qt windows desktop $Env:QT_VERSION "win64_${Env:AQT_PLATFORM}" -O C:\Qt
 
     - name: Run qmake
       run: |
         Write-Host 'Running qmake ...'
-        $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:PLATFORM}\bin;${Env:PATH}"
+        $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
         #qmake --help
         qmake
