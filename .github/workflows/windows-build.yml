@@ -9,6 +9,7 @@ on:
 env:
   QT_VERSION: 6.5.0
   AQT_PLATFORM: msvc2019_64
+  ARCHIVE_NAME: OpenSprite-win-amd64-latest
 
 jobs:
 
@@ -64,13 +65,13 @@ jobs:
     - name: Upload executable artifact
       uses: actions/upload-artifact@v3
       with:
-        name: OpenSprite-latest
+        name: ${{ env.ARCHIVE_NAME }}
         path: |
           build/release/*
 
     - name: ZIP executable artifacts
       run: |
-        7z a -r OpenSprite-latest.zip .\build\release\*
+        7z a -r "${Env:ARCHIVE_NAME}.zip" .\build\release\*
 
     - name: Publish release
       uses: "marvinpinto/action-automatic-releases@latest"
@@ -80,4 +81,4 @@ jobs:
         prerelease: true
         title: "Automatic Build"
         files: |
-          OpenSprite-latest.zip
+          "${{ env.ARCHIVE_NAME }}.zip"
