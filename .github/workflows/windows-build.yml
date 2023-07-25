@@ -4,6 +4,11 @@ on:
   push:
     branches: [ "cicd" ]
 
+env:
+  QT_VERSION: 6.2.0
+  PLATFORM: msvc2019_64
+  QT_PATH: C:\Qt\$QT_VERSION\$PLATFORM
+
 jobs:
   build:
 
@@ -22,17 +27,14 @@ jobs:
     - name: Install Qt
       run: |
         Write-Host 'Installing Qt ...'
-        #aqt list-qt windows desktop --arch 6.2.0
-        aqt install-qt windows desktop 6.2.0 win64_msvc2019_64 -O C:\Qt
+        #aqt list-qt windows desktop --arch $Env:QT_VERSION
+        aqt install-qt windows desktop $Env:QT_VERSION "win64_${Env:PLATFORM}" -O C:\Qt
 
-    - name: List Dir 1
-      run: Get-ChildItem C:\Qt
-
-    - name: List Dir 2
-      run: Get-ChildItem C:\Qt\6.2.0
+    - name: List Dir
+      run: Get-ChildItem $Env:QT_PATH
 
     - name: Run qmake
       run: |
         Write-Host 'Running qmake ...'
-        $Env:PATH = "C:\Qt\6.2.0;$($Env:PATH)"
+        $Env:PATH = "${Env:QT_PATH};${Env:PATH}"
         qmake --help
