@@ -235,3 +235,19 @@ void AnimationForm::on_button_play_clicked()
 
 
 
+
+void AnimationForm::on_spin_from_valueChanged(int arg1)
+{
+    Q_UNUSED(arg1);
+    if (this->ui->spin_to->value() < this->ui->spin_from->value())
+        this->ui->spin_to->setValue(this->ui->spin_from->value());
+}
+
+
+void AnimationForm::on_spin_to_valueChanged(int arg1)
+{
+    Q_UNUSED(arg1);
+    if (this->ui->spin_to->value() < this->ui->spin_from->value())
+        this->ui->spin_from->setValue(this->ui->spin_to->value());
+}
+
