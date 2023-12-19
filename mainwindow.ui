@@ -726,6 +726,14 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <widget class="QMenu" name="menuColor_Switch">
+     <property name="title">
+      <string>Color Switch</string>
+     </property>
+     <addaction name="actionSprite_Color_MC_1"/>
+     <addaction name="actionSprite_Color_MC_2"/>
+     <addaction name="actionMC_1_MC_2"/>
+    </widget>
     <addaction name="actionClear"/>
     <addaction name="actionCut"/>
     <addaction name="actionCopy"/>
@@ -746,6 +754,8 @@
     <addaction name="actionFlip_Left_to_Right"/>
     <addaction name="actionReflect_Left_To_Right"/>
     <addaction name="actionReflect_Top_to_Bottom"/>
+    <addaction name="separator"/>
+    <addaction name="menuColor_Switch"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1031,6 +1041,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+  <action name="actionSprite_Color_MC_1">
+   <property name="text">
+    <string>Sprite Color &lt;==&gt; MC 1</string>
+   </property>
+  </action>
+  <action name="actionSprite_Color_MC_2">
+   <property name="text">
+    <string>Sprite Color &lt;==&gt; MC 2</string>
+   </property>
+  </action>
+  <action name="actionMC_1_MC_2">
+   <property name="text">
+    <string>MC 1 &lt;==&gt; MC 2</string>
    </property>
   </action>
  </widget>

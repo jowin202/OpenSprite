@@ -92,6 +92,12 @@ private slots:
 
     void on_actionAnimations_Editor_triggered();
 
+    void on_actionSprite_Color_MC_1_triggered();
+
+    void on_actionSprite_Color_MC_2_triggered();
+
+    void on_actionMC_1_MC_2_triggered();
+
 private:
     Ui::MainWindow *ui;
     AnimationDialog *animation_dialog = 0;

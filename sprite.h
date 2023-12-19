@@ -224,6 +224,76 @@ public:
         }
     }
 
+    void switch_col_to_mc1()
+    {
+        if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
+        {
+            for (int x = 0; x < 12; x++)
+            {
+                for (int y = 0; y < 21; y++)
+                {
+                    if (this->get_bit(2*x,y) && !this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, false);
+                        this->set_bit(2*x+1,y, true);
+                    }
+                    else if (!this->get_bit(2*x,y) && this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, true);
+                        this->set_bit(2*x+1,y, false);
+                    }
+                }
+            }
+        }
+    }
+
+
+    void switch_col_to_mc2()
+    {
+        if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
+        {
+            for (int x = 0; x < 12; x++)
+            {
+                for (int y = 0; y < 21; y++)
+                {
+                    if (this->get_bit(2*x,y) && !this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, true);
+                        this->set_bit(2*x+1,y, true);
+                    }
+                    else if (this->get_bit(2*x,y) && this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, true);
+                        this->set_bit(2*x+1,y, false);
+                    }
+                }
+            }
+        }
+    }
+
+
+    void switch_mc1_to_mc2()
+    {
+        if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
+        {
+            for (int x = 0; x < 12; x++)
+            {
+                for (int y = 0; y < 21; y++)
+                {
+                    if (this->get_bit(2*x,y) && this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, false);
+                        this->set_bit(2*x+1,y, true);
+                    }
+                    else if (!this->get_bit(2*x,y) && this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, true);
+                        this->set_bit(2*x+1,y, true);
+                    }
+                }
+            }
+        }
+    }
 
 private:
     int id;

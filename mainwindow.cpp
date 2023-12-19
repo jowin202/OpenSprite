@@ -733,3 +733,27 @@ void MainWindow::on_actionAnimations_Editor_triggered()
     }
 }
 
+
+void MainWindow::on_actionSprite_Color_MC_1_triggered()
+{
+    opt.undoDB.append(opt.data);
+    this->opt.sprite_list.at(opt.current_sprite)->switch_col_to_mc1();
+    this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_actionSprite_Color_MC_2_triggered()
+{
+    opt.undoDB.append(opt.data);
+    this->opt.sprite_list.at(opt.current_sprite)->switch_col_to_mc2();
+    this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_actionMC_1_MC_2_triggered()
+{
+    opt.undoDB.append(opt.data);
+    this->opt.sprite_list.at(opt.current_sprite)->switch_mc1_to_mc2();
+    this->ui->graphicsView->scene()->update();
+}
+
