@@ -466,6 +466,7 @@ void MainWindow::on_actionPaste_triggered()
     if (error.error != QJsonParseError::NoError) return;
 
     QJsonArray sprite_array = this->opt.data.value("sprites").toArray();
+    this->ui->combo_sprite_col->setCurrentIndex(copied_sprite.value("sprite_color").toInt());
     //sprite_array.removeAt(current_sprite);
     sprite_array.insert(opt.current_sprite, copied_sprite);
     this->opt.data.insert("sprites", sprite_array);

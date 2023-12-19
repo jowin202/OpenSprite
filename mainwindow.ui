@@ -355,7 +355,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Sprite Colour</string>
+              <string>Sprite Color</string>
              </property>
             </widget>
            </item>
