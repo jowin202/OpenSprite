@@ -33,8 +33,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&num1, &QAction::triggered, [=](){ this->ui->radio_sprite_left->setChecked(true); });
     connect(&num2, &QAction::triggered, [=](){ this->ui->radio_mc1_left->setChecked(true); });
     connect(&num3, &QAction::triggered, [=](){ this->ui->radio_mc2_left->setChecked(true); });
-    connect(&num4, &QAction::triggered, [=](){ this->ui->radio_overlay_color_left->setChecked(true); });
-    connect(&num5, &QAction::triggered, [=](){ this->ui->radio_overlay_transparent_left->setChecked(true); });
+    connect(&num4, &QAction::triggered, [=](){ if (this->ui->radio_overlay_color_left->isEnabled()) this->ui->radio_overlay_color_left->setChecked(true); });
+    connect(&num5, &QAction::triggered, [=](){ if (this->ui->radio_overlay_transparent_left->isEnabled())this->ui->radio_overlay_transparent_left->setChecked(true); });
 
 
     connect(this->ui->graphicsView, &SpriteView::zoom_in, this, [=](){ this->ui->slider_scale->setValue(this->ui->slider_scale->value()+10);});
