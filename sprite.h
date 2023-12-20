@@ -118,7 +118,7 @@ public:
             tmp[y] = this->get_bit(0,y);
         for (int x = 0; x < 23; x++)
         {
-            for (int y = 0; y < 20; y++)
+            for (int y = 0; y < 21; y++)
             {
                 this->set_bit(x,y, this->get_bit(x+1,y));
             }
