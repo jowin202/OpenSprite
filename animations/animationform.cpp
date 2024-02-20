@@ -15,7 +15,9 @@ AnimationForm::AnimationForm(options *opt, int animation_id) :
 
     this->ui->spin_from->setValue(opt->data.value("animations").toArray().at(animation_id).toObject().value("from").toInt());
     this->ui->spin_to->setValue(opt->data.value("animations").toArray().at(animation_id).toObject().value("to").toInt());
-    this->ui->spin_timer->setValue(opt->data.value("animations").toArray().at(animation_id).toObject().value("timer").toInt());
+
+    int delay = opt->data.value("animations").toArray().at(animation_id).toObject().value("timer").toInt();
+    this->ui->spin_timer->setValue( delay == 0 ? 16 : delay);
 
     this->ui->check_overlay->setChecked(opt->data.value("animations").toArray().at(animation_id).toObject().value("overlay").toBool());
     this->ui->check_pingpong->setChecked(opt->data.value("animations").toArray().at(animation_id).toObject().value("pingpong").toBool());
@@ -239,15 +241,15 @@ void AnimationForm::on_button_play_clicked()
 void AnimationForm::on_spin_from_valueChanged(int arg1)
 {
     Q_UNUSED(arg1);
-    if (this->ui->spin_to->value() < this->ui->spin_from->value())
-        this->ui->spin_to->setValue(this->ui->spin_from->value());
+    if (this->ui->spin_to->value() <= this->ui->spin_from->value())
+        this->ui->spin_to->setValue(this->ui->spin_from->value()+1);
 }
 
 
 void AnimationForm::on_spin_to_valueChanged(int arg1)
 {
     Q_UNUSED(arg1);
-    if (this->ui->spin_to->value() < this->ui->spin_from->value())
-        this->ui->spin_from->setValue(this->ui->spin_to->value());
+    if (this->ui->spin_to->value() <= this->ui->spin_from->value())
+        this->ui->spin_from->setValue(this->ui->spin_to->value()-1);
 }
 

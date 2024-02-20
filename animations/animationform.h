@@ -41,7 +41,6 @@ private slots:
     void on_button_play_clicked();
 
     void on_spin_from_valueChanged(int arg1);
-
     void on_spin_to_valueChanged(int arg1);
 
 private:

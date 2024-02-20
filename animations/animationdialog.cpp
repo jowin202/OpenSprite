@@ -58,5 +58,6 @@ void AnimationDialog::on_button_add_animation_clicked()
 {
     AnimationForm *item = new AnimationForm(opt, opt->data.value("animations").toArray().count());
     this->ui->verticalLayout->addWidget(item);
+    this->save_data();
 }
 
