@@ -632,7 +632,7 @@ void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox msgBox(this);
     msgBox.setTextFormat(Qt::RichText);
-    msgBox.setText("Version: 1.2 (07 / 2023)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
+    msgBox.setText("Version: 1.3 (02 / 2024)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
 }
