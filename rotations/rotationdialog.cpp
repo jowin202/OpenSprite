@@ -16,6 +16,7 @@ RotationDialog::RotationDialog(options *opt, QWidget *parent) :
     this->opt = opt;
 
     this->base_sprite = opt->data.value("sprites").toArray().at(opt->current_sprite).toObject();
+
     connect(this->ui->spin_angle, SIGNAL(valueChanged(int)), this, SLOT(update_rotation()));
     connect(this->ui->spin_steps, SIGNAL(valueChanged(int)), this, SLOT(update_rotation()));
 
@@ -64,17 +65,38 @@ QJsonObject RotationDialog::rotate_by(QJsonObject sprite, int angle)
         for (int j = 0; j < 144; j++)
             temp1[i][j] = temp2[i][j] = temp3[i][j] = rotated[i][j] = 0;
 
-    for (int i = 0; i < 24; i++)
-    {
-        for (int j = 0; j < 21; j++)
+
+   //
+   if (angle <= 90 || angle >= 270)
+   {
+        for (int i = 0; i < 24; i++)
         {
-            int px_val = sprite.value("sprite_data").toArray().at(j).toArray().at(i).toInt();
-            rotated[BORDER_SIZE + 2*i+0][BORDER_SIZE + 2*j+0+3] = px_val;
-            rotated[BORDER_SIZE + 2*i+1][BORDER_SIZE + 2*j+0+3] = px_val;
-            rotated[BORDER_SIZE + 2*i+0][BORDER_SIZE + 2*j+1+3] = px_val;
-            rotated[BORDER_SIZE + 2*i+1][BORDER_SIZE + 2*j+1+3] = px_val;
+            for (int j = 0; j < 21; j++)
+            {
+                int px_val = sprite.value("sprite_data").toArray().at(j).toArray().at(i).toInt();
+                rotated[BORDER_SIZE + 2*i+0][BORDER_SIZE + 2*j+0+3] = px_val;
+                rotated[BORDER_SIZE + 2*i+1][BORDER_SIZE + 2*j+0+3] = px_val;
+                rotated[BORDER_SIZE + 2*i+0][BORDER_SIZE + 2*j+1+3] = px_val;
+                rotated[BORDER_SIZE + 2*i+1][BORDER_SIZE + 2*j+1+3] = px_val;
+            }
         }
-    }
+   }
+   else //angle near 180
+   {
+       angle -= 180;
+       for (int i = 0; i < 24; i++)
+       {
+           for (int j = 0; j < 21; j++)
+           {
+               int px_val = sprite.value("sprite_data").toArray().at(20-j).toArray().at(23-i).toInt();
+               rotated[BORDER_SIZE + 2*i+0][BORDER_SIZE + 2*j+0+3] = px_val;
+               rotated[BORDER_SIZE + 2*i+1][BORDER_SIZE + 2*j+0+3] = px_val;
+               rotated[BORDER_SIZE + 2*i+0][BORDER_SIZE + 2*j+1+3] = px_val;
+               rotated[BORDER_SIZE + 2*i+1][BORDER_SIZE + 2*j+1+3] = px_val;
+           }
+       }
+   }
+
 
     qreal shear_factor_x = -qTan(angle/180.0 * 3.14159265358979323846 * 0.5);
     qreal shear_factor_y = qSin(angle/180.0 * 3.14159265358979323846);
