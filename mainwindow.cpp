@@ -5,6 +5,7 @@
 
 #include "exportdialog.h"
 #include "animations/animationdialog.h"
+#include "rotations/rotationdialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -632,7 +633,7 @@ void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox msgBox(this);
     msgBox.setTextFormat(Qt::RichText);
-    msgBox.setText("Version: 1.3 (02 / 2024)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
+    msgBox.setText("Version: 1.4 (04 / 2024)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
 }
@@ -755,5 +756,15 @@ void MainWindow::on_actionMC_1_MC_2_triggered()
     opt.undoDB.append(opt.data);
     this->opt.sprite_list.at(opt.current_sprite)->switch_mc1_to_mc2();
     this->ui->graphicsView->scene()->update();
+}
+
+
+void MainWindow::on_actionRotate_triggered()
+{
+    RotationDialog *dialog = new RotationDialog(&opt);
+    dialog->show();
+    connect(dialog, &RotationDialog::finished, [=](){
+        this->ui->graphicsView->redraw();
+    });
 }
 

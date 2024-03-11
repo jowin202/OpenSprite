@@ -297,10 +297,7 @@ public:
 
 private:
     int id;
-    //unsigned char sprite_data[64];
     bool overlay_next = false;
-    //bool multi_color_mode = true;
-
 
     bool left_pressed = false;
     bool right_pressed = false;

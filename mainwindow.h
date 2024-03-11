@@ -98,6 +98,8 @@ private slots:
 
     void on_actionMC_1_MC_2_triggered();
 
+    void on_actionRotate_triggered();
+
 private:
     Ui::MainWindow *ui;
     AnimationDialog *animation_dialog = 0;

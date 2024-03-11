@@ -23,6 +23,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     palette.cpp \
+    rotations/rotationdialog.cpp \
     sprite.cpp \
     spriteview.cpp
 
@@ -34,6 +35,7 @@ HEADERS += \
     fileio.h \
     mainwindow.h \
     palette.h \
+    rotations/rotationdialog.h \
     sprite.h \
     spriteview.h
 
@@ -41,7 +43,8 @@ FORMS += \
     animations/animationdialog.ui \
     animations/animationform.ui \
     exportdialog.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    rotations/rotationdialog.ui
 
 
 RC_ICONS = icons/opensprite96x96.ico
