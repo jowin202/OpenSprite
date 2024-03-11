@@ -806,6 +806,7 @@
    <addaction name="actionReflect_Top_to_Bottom"/>
    <addaction name="actionReflect_Left_To_Right"/>
    <addaction name="separator"/>
+   <addaction name="actionRotate"/>
   </widget>
   <action name="actionOpenProject">
    <property name="text">
@@ -1061,6 +1062,10 @@
    </property>
   </action>
   <action name="actionRotate">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/rotate.svg</normaloff>:/icons/rotate.svg</iconset>
+   </property>
    <property name="text">
     <string>Rotate</string>
    </property>

@@ -4,6 +4,10 @@
 #include "sprite.h"
 #include "QtCore/QtMath"
 
+#define WIDTH 48
+#define HEIGHT 48
+#define BORDER_SIZE 48
+
 RotationDialog::RotationDialog(options *opt, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::RotationDialog)
@@ -51,28 +55,70 @@ void RotationDialog::update_rotation()
 
 QJsonObject RotationDialog::rotate_by(QJsonObject sprite, int angle)
 {
-    Q_UNUSED(angle);
+    int rotated[WIDTH + 2 * BORDER_SIZE][HEIGHT + 2 * BORDER_SIZE];
+    float temp1[WIDTH + 2 * BORDER_SIZE][HEIGHT + 2 * BORDER_SIZE];
+    float temp2[WIDTH + 2 * BORDER_SIZE][HEIGHT + 2 * BORDER_SIZE];
+    float temp3[WIDTH + 2 * BORDER_SIZE][HEIGHT + 2 * BORDER_SIZE];
 
-    int rotated[24][21];
+    for (int i = 0; i < 144; i++)
+        for (int j = 0; j < 144; j++)
+            temp1[i][j] = temp2[i][j] = temp3[i][j] = rotated[i][j] = 0;
 
-    //actual rotation algorithm
-    int i, j;
-    double radians = angle * (3.14159265358979323846 / 180.0);
-    double cosVal = qCos(radians);
-    double sinVal = qSin(radians);
-
-    for (i = 0; i < 24; ++i) {
-        for (j = 0; j < 21; ++j) {
-            int x = (int)(cosVal * (i - 24 / 2) - sinVal * (j - 21 / 2) + 24 / 2);
-            int y = (int)(sinVal * (i - 24 / 2) + cosVal * (j - 21 / 2) + 21 / 2);
-
-            if (x >= 0 && x < 24 && y >= 0 && y < 21) {
-                rotated[i][j] = sprite.value("sprite_data").toArray().at(y).toArray().at(x).toInt();
-            } else {
-                rotated[i][j] = 0;
-            }
+    for (int i = 0; i < 24; i++)
+    {
+        for (int j = 0; j < 21; j++)
+        {
+            int px_val = sprite.value("sprite_data").toArray().at(j).toArray().at(i).toInt();
+            rotated[BORDER_SIZE + 2*i+0][BORDER_SIZE + 2*j+0+3] = px_val;
+            rotated[BORDER_SIZE + 2*i+1][BORDER_SIZE + 2*j+0+3] = px_val;
+            rotated[BORDER_SIZE + 2*i+0][BORDER_SIZE + 2*j+1+3] = px_val;
+            rotated[BORDER_SIZE + 2*i+1][BORDER_SIZE + 2*j+1+3] = px_val;
         }
     }
+
+    qreal shear_factor_x = -qTan(angle/180.0 * 3.14159265358979323846 * 0.5);
+    qreal shear_factor_y = qSin(angle/180.0 * 3.14159265358979323846);
+
+
+    int i, j;
+
+    // Shear x
+    for (i = 0; i < HEIGHT + 2 * BORDER_SIZE; i++) {
+        for (j = 0; j < WIDTH + 2 * BORDER_SIZE; j++) {
+            int newX = j + shear_factor_x * (i-BORDER_SIZE-WIDTH/2);
+            if (newX < 0 || newX >= WIDTH + 2 * BORDER_SIZE) {
+                // Handle out of bounds by skipping
+                continue;
+            }
+            temp1[newX][i] = rotated[j][i];
+        }
+    }
+
+    // Shear y
+    for (i = 0; i < HEIGHT + 2 * BORDER_SIZE; i++) {
+        for (j = 0; j < WIDTH + 2 * BORDER_SIZE; j++) {
+            int newY = i + shear_factor_y *  (j-BORDER_SIZE-HEIGHT/2);
+            if (newY < 0 || newY >= HEIGHT + 2 * BORDER_SIZE) {
+                // Handle out of bounds by skipping
+                continue;
+            }
+            temp2[j][newY] = temp1[j][i];
+        }
+    }
+
+    // Shear x with -shear_factor_x
+    for (i = 0; i < HEIGHT + 2 * BORDER_SIZE; i++) {
+        for (j = 0; j < WIDTH + 2 * BORDER_SIZE; j++) {
+            int newX = j + shear_factor_x * (i-BORDER_SIZE-WIDTH/2);
+            if (newX < 0 || newX >= WIDTH + 2 * BORDER_SIZE) {
+                // Handle out of bounds by skipping
+                continue;
+            }
+            temp3[newX][i] = temp2[j][i];
+        }
+    }
+
+
 
     QJsonArray sprite_data = sprite.value("sprite_data").toArray();
     for (int y = 0; y < 21; y++)
@@ -80,8 +126,14 @@ QJsonObject RotationDialog::rotate_by(QJsonObject sprite, int angle)
         QJsonArray row = sprite_data.at(y).toArray();
         for (int x = 0; x < 24; x++)
         {
+            int sum =
+                    temp3[BORDER_SIZE + 2*x+0][BORDER_SIZE + 2*y+0+3] +
+                    temp3[BORDER_SIZE + 2*x+0][BORDER_SIZE + 2*y+1+3] +
+                    temp3[BORDER_SIZE + 2*x+1][BORDER_SIZE + 2*y+0+3] +
+                    temp3[BORDER_SIZE + 2*x+1][BORDER_SIZE + 2*y+1+3];
+
             row.removeAt(x);
-            row.insert(x,rotated[x][y]);
+            row.insert(x,(sum < 2 ? 0 : 1));
         }
         sprite_data.removeAt(y);
         sprite_data.insert(y, row);
