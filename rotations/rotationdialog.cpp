@@ -2,6 +2,7 @@
 #include "ui_rotationdialog.h"
 
 #include "sprite.h"
+#include "QtCore/QtMath"
 
 RotationDialog::RotationDialog(options *opt, QWidget *parent) :
     QWidget(parent),
@@ -52,18 +53,40 @@ QJsonObject RotationDialog::rotate_by(QJsonObject sprite, int angle)
 {
     Q_UNUSED(angle);
 
-    //TODO actual rotation algorithm
+    int rotated[24][21];
 
-    /*
-    //remove this
-    QJsonArray sprite_data1 = sprite.value("sprite_data").toArray();
-    QJsonArray sprite_data2 = sprite_data1.at(0).toArray();
-    sprite_data2.removeAt(angle);
-    sprite_data2.insert(angle,1);
-    sprite_data1.removeAt(0);
-    sprite_data1.insert(0,sprite_data2);
-    sprite.insert("sprite_data", sprite_data1);
-    */
+    //actual rotation algorithm
+    int i, j;
+    double radians = angle * (3.14159265358979323846 / 180.0);
+    double cosVal = qCos(radians);
+    double sinVal = qSin(radians);
+
+    for (i = 0; i < 24; ++i) {
+        for (j = 0; j < 21; ++j) {
+            int x = (int)(cosVal * (i - 24 / 2) - sinVal * (j - 21 / 2) + 24 / 2);
+            int y = (int)(sinVal * (i - 24 / 2) + cosVal * (j - 21 / 2) + 21 / 2);
+
+            if (x >= 0 && x < 24 && y >= 0 && y < 21) {
+                rotated[i][j] = sprite.value("sprite_data").toArray().at(y).toArray().at(x).toInt();
+            } else {
+                rotated[i][j] = 0;
+            }
+        }
+    }
+
+    QJsonArray sprite_data = sprite.value("sprite_data").toArray();
+    for (int y = 0; y < 21; y++)
+    {
+        QJsonArray row = sprite_data.at(y).toArray();
+        for (int x = 0; x < 24; x++)
+        {
+            row.removeAt(x);
+            row.insert(x,rotated[x][y]);
+        }
+        sprite_data.removeAt(y);
+        sprite_data.insert(y, row);
+    }
+    sprite.insert("sprite_data", sprite_data);
 
     return sprite;
 }
