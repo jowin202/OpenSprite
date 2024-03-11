@@ -91,13 +91,6 @@
       </spacer>
      </item>
      <item>
-      <widget class="QCheckBox" name="check_replace">
-       <property name="text">
-        <string>Replace original</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="button_cancel">
        <property name="text">
         <string>Cancel</string>

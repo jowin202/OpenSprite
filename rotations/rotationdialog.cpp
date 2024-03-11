@@ -316,17 +316,9 @@ void RotationDialog::on_button_ok_clicked()
     opt->undoDB.append(opt->data);
 
     QJsonArray sprites = opt->data.value("sprites").toArray();
-
-    int skip = 1; //insert 1 later when original is kept
-    if (this->ui->check_replace->isChecked())
+    for (int i = 1; i < result_list.count(); i++)
     {
-        sprites.removeAt(opt->current_sprite);
-        skip = 0;
-    }
-
-    for (int i = 0; i < result_list.count(); i++)
-    {
-        sprites.insert(opt->current_sprite+skip+i, result_list.at(i));
+        sprites.insert(opt->current_sprite+i, result_list.at(i));
     }
 
     opt->data.insert("sprites", sprites);
