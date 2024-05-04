@@ -1,27 +1,28 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QFileDialog>
-#include <QSettings>
-#include <QButtonGroup>
-#include <QDragEnterEvent>
-#include <QMimeData>
-#include <QColorDialog>
-#include <QInputDialog>
-#include <QApplication>
 #include <QAction>
+#include <QApplication>
+#include <QButtonGroup>
+#include <QColorDialog>
+#include <QDragEnterEvent>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QMainWindow>
+#include <QMimeData>
+#include <QSettings>
 
 #include <QCryptographicHash>
 #include <QJsonDocument>
-
 
 #include "sprite.h"
 
 class AnimationDialog;
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui {
+class MainWindow;
+}
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -37,19 +38,20 @@ public:
 
 public slots:
     QIcon createIconFromColor(QColor col)
-    {    QImage img(QSize(22,14), QImage::Format_RGB32);
-         QPainter painter;
-         painter.begin(&img);
-         painter.fillRect(0,0,22,14,col);
-         painter.drawRect(0,0,22,14);
-         painter.end();
-         return QIcon(QPixmap::fromImage(img));}
-
-    void dragEnterEvent(QDragEnterEvent *event) {
-            event->acceptProposedAction();
+    {
+        QImage img(QSize(22, 14), QImage::Format_RGB32);
+        QPainter painter;
+        painter.begin(&img);
+        painter.fillRect(0, 0, 22, 14, col);
+        painter.drawRect(0, 0, 22, 14);
+        painter.end();
+        return QIcon(QPixmap::fromImage(img));
     }
-    void dropEvent(QDropEvent *event){
-        const QMimeData* mimeData = event->mimeData();
+
+    void dragEnterEvent(QDragEnterEvent *event) { event->acceptProposedAction(); }
+    void dropEvent(QDropEvent *event)
+    {
+        const QMimeData *mimeData = event->mimeData();
         if (mimeData->hasUrls() && mimeData->urls().length() == 1)
             this->import(mimeData->urls().at(0).toLocalFile());
     }
@@ -80,11 +82,9 @@ private slots:
     void on_actionExport_as_triggered();
     void on_actionExport_triggered();
 
-
     void on_actionReflect_Left_To_Right_triggered();
 
     void on_actionReflect_Top_to_Bottom_triggered();
-
 
     void on_actionNew_triggered();
 
@@ -113,7 +113,6 @@ private:
     QAction num3;
     QAction num4;
     QAction num5;
-
 
     //QJsonObject copied_sprite;
 };
