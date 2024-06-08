@@ -332,6 +332,10 @@ MainWindow::MainWindow(QWidget *parent)
         this->opt.show_grid_lines = val;
         this->ui->graphicsView->scene()->update();
     });
+    connect(this->ui->check_sprite_numbers, &QCheckBox::toggled, [=](bool val) {
+        this->opt.show_numbers = val;
+        this->ui->graphicsView->scene()->update();
+    });
     connect(this->ui->spin_horizontal_spacing, &QSpinBox::valueChanged, [=](int val) {
         this->opt.sprite_spacing_x = val;
         this->ui->graphicsView->redraw();

@@ -26,6 +26,7 @@ struct options {
     QList<Sprite*> sprite_list;
     SpriteView *spriteview;
     bool show_grid_lines = true;
+    bool show_numbers = false;
     int sprite_spacing_x = 30;
     int sprite_spacing_y = 30;
     int sprites_per_row = 4;

@@ -132,6 +132,19 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     }
 
 
+    if (opt->show_numbers)
+    {
+
+        int w = 10 * (expand_y ? 0.5 : 1);
+        int h = 10 * (expand_x ? 0.5 : 1);
+
+        QFont font = painter->font();
+        font.setPixelSize(qMin(0.8*24*w, 0.8*21*h));
+        painter->setFont(font);
+        painter->drawText(0,0,24*w,21*h, Qt::AlignVCenter | Qt::AlignHCenter, QString::number(id));
+    }
+
+
     if (id >= opt->selection_from && id <= opt->selection_to)
     {
         QPen pen;
