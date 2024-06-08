@@ -350,6 +350,12 @@ MainWindow::MainWindow(QWidget *parent)
             this->opt.background = col;
         this->ui->graphicsView->redraw();
     });
+    connect(this->ui->button_selection_color, &QPushButton::clicked, [=]() {
+        QColor col = QColorDialog::getColor(opt.selection_color, 0, "Selection Color");
+        if (col.isValid())
+            this->opt.selection_color = col;
+        this->ui->graphicsView->redraw();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -826,3 +832,4 @@ void MainWindow::on_actionRotate_triggered()
     dialog->show();
     connect(dialog, &RotationDialog::finished, [=]() { this->ui->graphicsView->redraw(); });
 }
+

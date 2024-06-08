@@ -135,8 +135,8 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     if (id >= opt->selection_from && id <= opt->selection_to)
     {
         QPen pen;
-        pen.setWidth(2);
-        pen.setColor(Qt::green);
+        pen.setWidth(5);
+        pen.setColor(opt->selection_color);
         painter->setPen(pen);
         painter->setOpacity(1);
         painter->drawRect(this->boundingRect());

@@ -524,23 +524,50 @@
          </item>
          <item row="13" column="0">
           <layout class="QGridLayout" name="gridLayout_6">
-           <item row="0" column="1">
-            <widget class="QSpinBox" name="spin_horizontal_spacing">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_11">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="maximum">
-              <number>100</number>
-             </property>
-             <property name="value">
-              <number>30</number>
+             <property name="text">
+              <string>Horizontal Spacing:</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_12">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Vertical Spacing:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QSpinBox" name="spin_sprites_per_line">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="value">
+              <number>4</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QPushButton" name="button_spacing_color">
+             <property name="text">
+              <string>Choose Color</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
             <widget class="QLabel" name="label_14">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -552,6 +579,19 @@
               <string>Show Sprites per Line</string>
              </property>
             </widget>
+           </item>
+           <item row="0" column="2">
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
            <item row="1" column="1">
             <widget class="QSpinBox" name="spin_vertical_spacing">
@@ -569,39 +609,19 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_11">
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="spin_horizontal_spacing">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="text">
-              <string>Horizontal Spacing:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="3" column="1">
-            <widget class="QSpinBox" name="spin_sprites_per_line">
-             <property name="minimum">
-              <number>1</number>
+             <property name="maximum">
+              <number>100</number>
              </property>
              <property name="value">
-              <number>4</number>
+              <number>30</number>
              </property>
             </widget>
            </item>
@@ -618,15 +638,8 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QPushButton" name="button_spacing_color">
-             <property name="text">
-              <string>Choose Color</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_12">
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_21">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -634,7 +647,14 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Vertical Spacing:</string>
+              <string>Selection Color:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QPushButton" name="button_selection_color">
+             <property name="text">
+              <string>Choose Color</string>
              </property>
             </widget>
            </item>
@@ -675,7 +695,7 @@
            <x>0</x>
            <y>0</y>
            <width>609</width>
-           <height>786</height>
+           <height>814</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -706,7 +726,7 @@
      <x>0</x>
      <y>0</y>
      <width>1026</width>
-     <height>30</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

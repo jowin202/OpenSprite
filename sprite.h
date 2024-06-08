@@ -44,6 +44,7 @@ struct options {
     QList<QJsonObject> undoDB;
 
     QColor background = QColor(0xd9,0xd6,0xc8);
+    QColor selection_color = QColor(0x00,0xff,0x00);
     QStringList col_names = {"Black","White","Red","Cyan","Purple","Green","Blue","Yellow","Orange","Brown",
                              "Pink", "Dark Grey", "Grey","Light Green","Light Blue","Light Grey"};
     QList<QColor> col_list = { QColor(0,0,0),
