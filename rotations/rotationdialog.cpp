@@ -15,7 +15,7 @@ RotationDialog::RotationDialog(options *opt, QWidget *parent) :
     ui->setupUi(this);
     this->opt = opt;
 
-    this->base_sprite = opt->data.value("sprites").toArray().at(opt->current_sprite).toObject();
+    this->base_sprite = opt->data.value("sprites").toArray().at(opt->selection_from).toObject();
 
     connect(this->ui->spin_angle, SIGNAL(valueChanged(int)), this, SLOT(update_rotation()));
     connect(this->ui->spin_steps, SIGNAL(valueChanged(int)), this, SLOT(update_rotation()));
@@ -318,7 +318,7 @@ void RotationDialog::on_button_ok_clicked()
     QJsonArray sprites = opt->data.value("sprites").toArray();
     for (int i = 1; i < result_list.count(); i++)
     {
-        sprites.insert(opt->current_sprite+i, result_list.at(i));
+        sprites.insert(opt->selection_from+i, result_list.at(i));
     }
 
     opt->data.insert("sprites", sprites);

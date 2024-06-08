@@ -73,8 +73,9 @@ void SpriteView::add_new_sprite()
     QJsonArray sprites = opt->data.value("sprites").toArray();
     sprites.append(sprite);
     opt->data.insert("sprites", sprites);
-    opt->current_sprite = sprites.count()-1;
+    opt->selection_from = sprites.count()-1;
+    opt->selection_to = sprites.count()-1;
     this->redraw();
-    emit current_sprite_changed(opt->current_sprite);
+    emit current_sprite_changed(opt->selection_to);
 }
 

@@ -1,6 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <QGraphicsWidget>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QPainter>
@@ -20,7 +21,8 @@ struct options {
     int left_button = BUTTONS::COLOR;
     int right_button = BUTTONS::TRANSPARENT;
     QJsonObject data;
-    int current_sprite = 0;
+    int selection_from = 0;
+    int selection_to = 0;
     QList<Sprite*> sprite_list;
     SpriteView *spriteview;
     bool show_grid_lines = true;

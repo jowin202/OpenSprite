@@ -52,7 +52,8 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(this->ui->graphicsView, &SpriteView::current_sprite_changed, this, [=](int id) {
-        opt.current_sprite = id;
+        opt.selection_from = id;
+        opt.selection_to = id;
         this->ui->combo_sprite_col->setCurrentIndex(
             opt.data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt());
         this->ui->check_multicolor->setChecked(
@@ -178,13 +179,17 @@ MainWindow::MainWindow(QWidget *parent)
         this->ui->graphicsView->redraw();
     });
     connect(this->ui->combo_sprite_col, &QComboBox::currentIndexChanged, this, [=](int index) {
-        QJsonObject current_sprite_obj
-            = opt.data.value("sprites").toArray().at(opt.current_sprite).toObject();
-        current_sprite_obj.insert("sprite_color", index);
-        QJsonArray sprites_array = opt.data.value("sprites").toArray();
-        sprites_array.removeAt(opt.current_sprite);
-        sprites_array.insert(opt.current_sprite, current_sprite_obj);
-        opt.data.insert("sprites", sprites_array);
+
+        for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        {
+            QJsonObject current_sprite_obj
+                = opt.data.value("sprites").toArray().at(i).toObject();
+            current_sprite_obj.insert("sprite_color", index);
+            QJsonArray sprites_array = opt.data.value("sprites").toArray();
+            sprites_array.removeAt(i);
+            sprites_array.insert(i, current_sprite_obj);
+            opt.data.insert("sprites", sprites_array);
+        }
 
         this->ui->graphicsView->scene()->update();
     });
@@ -197,26 +202,34 @@ MainWindow::MainWindow(QWidget *parent)
         this->ui->graphicsView->scene()->update();
     });
     connect(this->ui->combo_overlay_color, &QComboBox::currentIndexChanged, this, [=](int index) {
-        if (this->opt.data.value("sprites").toArray().count() > opt.current_sprite + 1) {
-            QJsonObject current_sprite_obj
-                = opt.data.value("sprites").toArray().at(opt.current_sprite + 1).toObject();
-            current_sprite_obj.insert("sprite_color", index);
-            QJsonArray sprites_array = opt.data.value("sprites").toArray();
-            sprites_array.removeAt(opt.current_sprite + 1);
-            sprites_array.insert(opt.current_sprite + 1, current_sprite_obj);
-            opt.data.insert("sprites", sprites_array);
+
+        for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        {
+            if (this->opt.data.value("sprites").toArray().count() > i + 1) {
+                QJsonObject current_sprite_obj
+                    = opt.data.value("sprites").toArray().at(i + 1).toObject();
+                current_sprite_obj.insert("sprite_color", index);
+                QJsonArray sprites_array = opt.data.value("sprites").toArray();
+                sprites_array.removeAt(i + 1);
+                sprites_array.insert(i + 1, current_sprite_obj);
+                opt.data.insert("sprites", sprites_array);
+            }
         }
+
         this->ui->graphicsView->scene()->update();
     });
 
     connect(this->ui->check_multicolor, &QCheckBox::toggled, this, [=](bool val) {
-        QJsonObject current_sprite_obj
-            = opt.data.value("sprites").toArray().at(opt.current_sprite).toObject();
-        current_sprite_obj.insert("mc_mode", val);
-        QJsonArray sprites_array = opt.data.value("sprites").toArray();
-        sprites_array.removeAt(opt.current_sprite);
-        sprites_array.insert(opt.current_sprite, current_sprite_obj);
-        opt.data.insert("sprites", sprites_array);
+        for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        {
+            QJsonObject current_sprite_obj
+                = opt.data.value("sprites").toArray().at(i).toObject();
+            current_sprite_obj.insert("mc_mode", val);
+            QJsonArray sprites_array = opt.data.value("sprites").toArray();
+            sprites_array.removeAt(i);
+            sprites_array.insert(i, current_sprite_obj);
+            opt.data.insert("sprites", sprites_array);
+        }
 
         this->ui->radio_mc1_left->setEnabled(val);
         this->ui->radio_mc1_right->setEnabled(val);
@@ -234,6 +247,7 @@ MainWindow::MainWindow(QWidget *parent)
             this->ui->radio_sprite_left->setChecked(true);
         if (!val && this->ui->radio_mc2_right->isChecked())
             this->ui->radio_transparent_right->setChecked(true);
+
 
         this->ui->graphicsView->scene()->update();
     });
@@ -255,51 +269,62 @@ MainWindow::MainWindow(QWidget *parent)
         if (!val && this->ui->radio_overlay_transparent_right->isChecked())
             this->ui->radio_transparent_right->setChecked(true);
 
-        QJsonObject current_sprite_obj
-            = opt.data.value("sprites").toArray().at(opt.current_sprite).toObject();
-        current_sprite_obj.insert("overlay_next", val);
-        QJsonArray sprites_array = opt.data.value("sprites").toArray();
-        sprites_array.removeAt(opt.current_sprite);
-        sprites_array.insert(opt.current_sprite, current_sprite_obj);
-        //next sprite should be single color
-        if (val && this->ui->check_force_single_color->isChecked()
-            && opt.current_sprite + 1 < opt.data.value("sprites").toArray().count()) {
-            QJsonObject next_sprite_obj
-                = opt.data.value("sprites").toArray().at(opt.current_sprite + 1).toObject();
-            next_sprite_obj.insert("mc_mode", false);
-            sprites_array.removeAt(opt.current_sprite + 1);
-            sprites_array.insert(opt.current_sprite + 1, next_sprite_obj);
-        }
-        opt.data.insert("sprites", sprites_array);
 
-        this->ui->combo_overlay_color->setCurrentIndex(opt.data.value("sprites")
-                                                           .toArray()
-                                                           .at(opt.current_sprite + 1)
-                                                           .toObject()
-                                                           .value("sprite_color")
-                                                           .toInt());
+        for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        {
+            QJsonObject current_sprite_obj
+                = opt.data.value("sprites").toArray().at(i).toObject();
+            current_sprite_obj.insert("overlay_next", val);
+            QJsonArray sprites_array = opt.data.value("sprites").toArray();
+            sprites_array.removeAt(i);
+            sprites_array.insert(i, current_sprite_obj);
+            //next sprite should be single color
+            if (val && this->ui->check_force_single_color->isChecked()
+                && i + 1 < opt.data.value("sprites").toArray().count()) {
+                QJsonObject next_sprite_obj
+                    = opt.data.value("sprites").toArray().at(i + 1).toObject();
+                next_sprite_obj.insert("mc_mode", false);
+                sprites_array.removeAt(i + 1);
+                sprites_array.insert(i + 1, next_sprite_obj);
+            }
+            opt.data.insert("sprites", sprites_array);
+
+            this->ui->combo_overlay_color->setCurrentIndex(opt.data.value("sprites")
+                                                               .toArray()
+                                                               .at(i + 1)
+                                                               .toObject()
+                                                               .value("sprite_color")
+                                                               .toInt());
+        }
 
         this->ui->graphicsView->scene()->update();
     });
 
     connect(this->ui->check_exp_x, &QCheckBox::toggled, this, [=](bool val) {
-        QJsonObject current_sprite_obj
-            = opt.data.value("sprites").toArray().at(opt.current_sprite).toObject();
-        current_sprite_obj.insert("exp_x", val);
-        QJsonArray sprites_array = opt.data.value("sprites").toArray();
-        sprites_array.removeAt(opt.current_sprite);
-        sprites_array.insert(opt.current_sprite, current_sprite_obj);
-        opt.data.insert("sprites", sprites_array);
+        for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        {
+            QJsonObject current_sprite_obj
+                = opt.data.value("sprites").toArray().at(i).toObject();
+            current_sprite_obj.insert("exp_x", val);
+            QJsonArray sprites_array = opt.data.value("sprites").toArray();
+            sprites_array.removeAt(i);
+            sprites_array.insert(i, current_sprite_obj);
+            opt.data.insert("sprites", sprites_array);
+        }
         this->ui->graphicsView->scene()->update();
     });
     connect(this->ui->check_exp_y, &QCheckBox::toggled, this, [=](bool val) {
-        QJsonObject current_sprite_obj
-            = opt.data.value("sprites").toArray().at(opt.current_sprite).toObject();
-        current_sprite_obj.insert("exp_y", val);
-        QJsonArray sprites_array = opt.data.value("sprites").toArray();
-        sprites_array.removeAt(opt.current_sprite);
-        sprites_array.insert(opt.current_sprite, current_sprite_obj);
-        opt.data.insert("sprites", sprites_array);
+
+        for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        {
+            QJsonObject current_sprite_obj
+                = opt.data.value("sprites").toArray().at(i).toObject();
+            current_sprite_obj.insert("exp_y", val);
+            QJsonArray sprites_array = opt.data.value("sprites").toArray();
+            sprites_array.removeAt(i);
+            sprites_array.insert(i, current_sprite_obj);
+            opt.data.insert("sprites", sprites_array);
+        }
         this->ui->graphicsView->scene()->update();
     });
 
@@ -479,14 +504,19 @@ void MainWindow::on_actionCut_triggered()
 void MainWindow::on_actionCopy_triggered()
 {
     QSettings settings;
+    /*
+     * //TODO
     settings.setValue("copied_sprite",
                       QJsonDocument(
                           this->opt.data.value("sprites").toArray().at(opt.current_sprite).toObject())
                           .toJson(QJsonDocument::Compact));
+    */
 }
 
 void MainWindow::on_actionPaste_triggered()
 {
+    /*
+     * //TODO
     opt.undoDB.append(opt.data);
     QJsonParseError error;
     QSettings settings;
@@ -502,6 +532,7 @@ void MainWindow::on_actionPaste_triggered()
     sprite_array.insert(opt.current_sprite, copied_sprite);
     this->opt.data.insert("sprites", sprite_array);
     this->ui->graphicsView->redraw();
+    */
 }
 
 void MainWindow::on_actionPaste_Into_triggered()
@@ -521,64 +552,75 @@ void MainWindow::on_actionPaste_Into_triggered()
 void MainWindow::on_actionClear_triggered()
 {
     opt.undoDB.append(opt.data);
-    QJsonObject current_sprite_obj
-        = opt.data.value("sprites").toArray().at(opt.current_sprite).toObject();
-    QJsonArray array_y;
-    for (int y = 0; y < 21; y++) {
-        QJsonArray array_x;
-        for (int x = 0; x < 24; x++) {
-            array_x.append(0);
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+    {
+        QJsonObject current_sprite_obj
+            = opt.data.value("sprites").toArray().at(i).toObject();
+        QJsonArray array_y;
+        for (int y = 0; y < 21; y++) {
+            QJsonArray array_x;
+            for (int x = 0; x < 24; x++) {
+                array_x.append(0);
+            }
+            array_y.append(array_x);
         }
-        array_y.append(array_x);
-    }
-    current_sprite_obj.insert("sprite_data", array_y);
+        current_sprite_obj.insert("sprite_data", array_y);
 
-    QJsonArray sprites_array = opt.data.value("sprites").toArray();
-    sprites_array.removeAt(opt.current_sprite);
-    sprites_array.insert(opt.current_sprite, current_sprite_obj);
-    opt.data.insert("sprites", sprites_array);
+        QJsonArray sprites_array = opt.data.value("sprites").toArray();
+        sprites_array.removeAt(i);
+        sprites_array.insert(i, current_sprite_obj);
+        opt.data.insert("sprites", sprites_array);
+    }
     this->ui->graphicsView->scene()->update();
 }
 
 void MainWindow::on_actionSlide_Up_triggered()
 {
     opt.undoDB.append(opt.data);
-    this->opt.sprite_list.at(opt.current_sprite)->slide_up();
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        this->opt.sprite_list.at(i)->slide_up();
     this->ui->graphicsView->scene()->update();
 }
 
 void MainWindow::on_actionSlide_Down_triggered()
 {
     opt.undoDB.append(opt.data);
-    this->opt.sprite_list.at(opt.current_sprite)->slide_down();
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        this->opt.sprite_list.at(i)->slide_down();
     this->ui->graphicsView->scene()->update();
 }
 
 void MainWindow::on_actionSlide_Left_triggered()
 {
     opt.undoDB.append(opt.data);
-    this->opt.sprite_list.at(opt.current_sprite)->slide_left();
-    if (this->opt.data.value("sprites")
-            .toArray()
-            .at(opt.current_sprite)
-            .toObject()
-            .value("mc_mode")
-            .toBool())
-        this->opt.sprite_list.at(opt.current_sprite)->slide_left();
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+    {
+        this->opt.sprite_list.at(i)->slide_left();
+        if (this->opt.data.value("sprites")
+                .toArray()
+                .at(i)
+                .toObject()
+                .value("mc_mode")
+                .toBool())
+            this->opt.sprite_list.at(i)->slide_left();
+    }
     this->ui->graphicsView->scene()->update();
 }
 
 void MainWindow::on_actionSlide_Right_triggered()
 {
     opt.undoDB.append(opt.data);
-    this->opt.sprite_list.at(opt.current_sprite)->slide_right();
-    if (this->opt.data.value("sprites")
-            .toArray()
-            .at(opt.current_sprite)
-            .toObject()
-            .value("mc_mode")
-            .toBool())
-        this->opt.sprite_list.at(opt.current_sprite)->slide_right();
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+    {
+        this->opt.sprite_list.at(i)->slide_right();
+        if (this->opt.data.value("sprites")
+                .toArray()
+                .at(i)
+                .toObject()
+                .value("mc_mode")
+                .toBool())
+            this->opt.sprite_list.at(i)->slide_right();
+    }
     this->ui->graphicsView->scene()->update();
 }
 
@@ -594,14 +636,16 @@ void MainWindow::on_slider_scale_valueChanged(int value)
 void MainWindow::on_actionFlip_Top_to_Bottom_triggered()
 {
     opt.undoDB.append(opt.data);
-    this->opt.sprite_list.at(opt.current_sprite)->flip_top();
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        this->opt.sprite_list.at(i)->flip_top();
     this->ui->graphicsView->scene()->update();
 }
 
 void MainWindow::on_actionFlip_Left_to_Right_triggered()
 {
     opt.undoDB.append(opt.data);
-    this->opt.sprite_list.at(opt.current_sprite)->flip_left();
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        this->opt.sprite_list.at(i)->flip_left();
     this->ui->graphicsView->scene()->update();
 }
 
@@ -643,8 +687,10 @@ void MainWindow::on_actionDelete_Sprite_triggered()
 {
     opt.undoDB.append(opt.data);
     QJsonArray sprites_array = opt.data.value("sprites").toArray();
-    sprites_array.removeAt(opt.current_sprite);
-    opt.current_sprite = qMin(opt.current_sprite, sprites_array.count() - 1);
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        sprites_array.removeAt(opt.selection_from);
+    opt.selection_from = qMin(opt.selection_from, sprites_array.count() - 1);
+    opt.selection_to = qMin(opt.selection_to, sprites_array.count() - 1);
     opt.data.insert("sprites", sprites_array);
     this->ui->graphicsView->redraw();
 }
@@ -687,14 +733,16 @@ void MainWindow::on_actionExport_triggered()
 void MainWindow::on_actionReflect_Left_To_Right_triggered()
 {
     opt.undoDB.append(opt.data);
-    this->opt.sprite_list.at(opt.current_sprite)->reflect_left();
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        this->opt.sprite_list.at(i)->reflect_left();
     this->ui->graphicsView->scene()->update();
 }
 
 void MainWindow::on_actionReflect_Top_to_Bottom_triggered()
 {
     opt.undoDB.append(opt.data);
-    this->opt.sprite_list.at(opt.current_sprite)->reflect_top();
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        this->opt.sprite_list.at(i)->reflect_top();
     this->ui->graphicsView->scene()->update();
 }
 
@@ -751,21 +799,24 @@ void MainWindow::on_actionAnimations_Editor_triggered()
 void MainWindow::on_actionSprite_Color_MC_1_triggered()
 {
     opt.undoDB.append(opt.data);
-    this->opt.sprite_list.at(opt.current_sprite)->switch_col_to_mc1();
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        this->opt.sprite_list.at(i)->switch_col_to_mc1();
     this->ui->graphicsView->scene()->update();
 }
 
 void MainWindow::on_actionSprite_Color_MC_2_triggered()
 {
     opt.undoDB.append(opt.data);
-    this->opt.sprite_list.at(opt.current_sprite)->switch_col_to_mc2();
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        this->opt.sprite_list.at(i)->switch_col_to_mc2();
     this->ui->graphicsView->scene()->update();
 }
 
 void MainWindow::on_actionMC_1_MC_2_triggered()
 {
     opt.undoDB.append(opt.data);
-    this->opt.sprite_list.at(opt.current_sprite)->switch_mc1_to_mc2();
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        this->opt.sprite_list.at(i)->switch_mc1_to_mc2();
     this->ui->graphicsView->scene()->update();
 }
 

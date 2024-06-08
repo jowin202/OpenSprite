@@ -132,7 +132,7 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     }
 
 
-    if (id == opt->current_sprite)
+    if (id >= opt->selection_from && id <= opt->selection_to)
     {
         QPen pen;
         pen.setWidth(2);
@@ -237,18 +237,53 @@ void Sprite::change_tile(QPointF pos)
 
 void Sprite::mousePressEvent(QGraphicsSceneMouseEvent *ev)
 {
-    if (this->opt->current_sprite != id)
+    bool shift_pressed = ev->modifiers().testAnyFlag(Qt::ShiftModifier);
+
+    //click outside of selection and shift not pressed
+    if ((id < opt->selection_from || id > opt->selection_to) && !shift_pressed)
     {
-        if ( this->opt->current_sprite < opt->sprite_list.count() )
-        {
-            Sprite *old = opt->sprite_list.at(this->opt->current_sprite);
-            old->update();
-        }
-        this->opt->current_sprite = id;
-        opt->spriteview->change_current_sprite(id);
+        //change selection to current
+        int from = this->opt->selection_from;
+        int to = this->opt->selection_to;
+        this->opt->selection_from = id;
+        this->opt->selection_to = id;
+        for (int i = from; i <= to; i++)
+            opt->sprite_list.at(i)->update();
         this->update();
+
+        opt->spriteview->change_current_sprite(id);
         return; //dont do anything else when switching sprite
     }
+    //click outside of selection and shift pressed
+    else if ((id < opt->selection_from || id > opt->selection_to) && shift_pressed)
+    {
+        //change selection to current
+        this->opt->selection_from = qMin(this->opt->selection_from,id);
+        this->opt->selection_to = qMax(this->opt->selection_to,id);
+        for (int i = 0; i < opt->sprite_list.count(); i++)
+            opt->sprite_list.at(i)->update();
+        this->update();
+
+        //opt->spriteview->change_current_sprite(id);
+        return; //dont do anything else when switching sprite
+    }
+    //click inside of selection and not shift pressed AND MULTIPLE SELECTED
+    else if ((id >= opt->selection_from && id <= opt->selection_to) && !shift_pressed && (opt->selection_to != opt->selection_from))
+    {
+        //change selection to current
+        this->opt->selection_from = id;
+        this->opt->selection_to = id;
+        for (int i = 0; i < opt->sprite_list.count(); i++)
+            opt->sprite_list.at(i)->update();
+        this->update();
+
+        opt->spriteview->change_current_sprite(id);
+        return; //dont do anything else when switching sprite
+    }
+
+    //update current
+    this->update();
+
     if (ev->button() == Qt::LeftButton)
         this->left_pressed = true;
     else if (ev->button() == Qt::RightButton)
