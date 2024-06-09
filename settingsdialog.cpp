@@ -15,8 +15,8 @@ SettingsDialog::SettingsDialog(options *opt, QWidget *parent)
     this->ui->spin_vertical_spacing->setValue(settings.value("sprite_spacing_y").toInt());
     this->ui->spin_sprites_per_row->setValue(settings.value("sprites_per_row").toInt());
 
-    this->ui->widget_selection_color->setStyleSheet(QString("background-color: #%1").arg(QString::number(settings.value("selection_color").toInt(),16)));
-    this->ui->widget_spacing_color->setStyleSheet(QString("background-color: #%1").arg(QString::number(settings.value("bgcolor").toInt(),16)));
+    this->ui->widget_selection_color->setStyleSheet(QString("background-color: #%1").arg(QString::number(settings.value("selection_color").toInt(),16),6,QChar('0')));
+    this->ui->widget_spacing_color->setStyleSheet(QString("background-color: #%1").arg(QString::number(settings.value("bgcolor").toInt(),16),6,QChar('0')));
 }
 
 SettingsDialog::~SettingsDialog()
@@ -50,7 +50,7 @@ void SettingsDialog::on_button_ok_clicked()
 void SettingsDialog::on_button_spacing_color_clicked()
 {
     bgcolor = QColorDialog::getColor(settings.value("bgcolor").toInt(), 0, "Selection Color");
-    this->ui->widget_spacing_color->setStyleSheet(QString("background-color: #%1").arg(QString::number(bgcolor.red() << 16 | bgcolor.green() << 8 | bgcolor.blue(),16)));
+    this->ui->widget_spacing_color->setStyleSheet(QString("background-color: #%1").arg(QString::number(bgcolor.red() << 16 | bgcolor.green() << 8 | bgcolor.blue(),16),6,QChar('0')));
 
 }
 
@@ -58,7 +58,7 @@ void SettingsDialog::on_button_spacing_color_clicked()
 void SettingsDialog::on_button_selection_color_clicked()
 {
     select_color = QColorDialog::getColor(settings.value("selection_color").toInt(), 0, "Selection Color");
-    this->ui->widget_selection_color->setStyleSheet(QString("background-color: #%1").arg(QString::number(select_color.red() << 16 | select_color.green() << 8 | select_color.blue(),16)));
+    this->ui->widget_selection_color->setStyleSheet(QString("background-color: #%1").arg(QString::number(select_color.red() << 16 | select_color.green() << 8 | select_color.blue(),16),6,QChar('0')));
 }
 
 
