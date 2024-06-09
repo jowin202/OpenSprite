@@ -103,6 +103,10 @@ private slots:
 
     void on_actionPreferences_triggered();
 
+    void on_actionSelection_to_Animation_triggered();
+
+    void on_actionSelect_All_triggered();
+
 private:
     Ui::MainWindow *ui;
     AnimationDialog *animation_dialog = 0;

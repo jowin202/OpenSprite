@@ -821,3 +821,28 @@ void MainWindow::on_actionPreferences_triggered()
     connect(dialog, &SettingsDialog::finished, [=]() { this->ui->graphicsView->redraw(); });
 }
 
+
+void MainWindow::on_actionSelection_to_Animation_triggered()
+{
+    QJsonArray animation_array = opt.data.value("animations").toArray();
+    QJsonObject new_animation;
+    new_animation.insert("from", opt.selection_from);
+    new_animation.insert("to", opt.selection_to);
+    new_animation.insert("overlay", false);
+    new_animation.insert("pingpong", false);
+    new_animation.insert("valid", true);
+    new_animation.insert("timer", 16);
+    animation_array.append(new_animation);
+    opt.data.insert("animations", animation_array);
+
+    this->on_actionAnimations_Editor_triggered();
+}
+
+
+void MainWindow::on_actionSelect_All_triggered()
+{
+    this->opt.selection_from = 0;
+    this->opt.selection_to = this->opt.sprite_list.length()-1;
+    this->ui->graphicsView->redraw();
+}
+

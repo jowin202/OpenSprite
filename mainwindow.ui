@@ -629,6 +629,7 @@
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
     <addaction name="actionPaste_Into"/>
+    <addaction name="actionSelect_All"/>
     <addaction name="separator"/>
     <addaction name="actionUndo"/>
     <addaction name="separator"/>
@@ -648,6 +649,8 @@
     <addaction name="menuColor_Switch"/>
     <addaction name="separator"/>
     <addaction name="actionRotate"/>
+    <addaction name="separator"/>
+    <addaction name="actionSelection_to_Animation"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -697,6 +700,8 @@
    <addaction name="actionReflect_Left_To_Right"/>
    <addaction name="separator"/>
    <addaction name="actionRotate"/>
+   <addaction name="separator"/>
+   <addaction name="actionSelection_to_Animation"/>
   </widget>
   <action name="actionOpenProject">
    <property name="text">
@@ -966,6 +971,23 @@
   <action name="actionPreferences">
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionSelection_to_Animation">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/to_animation.svg</normaloff>:/icons/to_animation.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Selection to Animation</string>
+   </property>
+  </action>
+  <action name="actionSelect_All">
+   <property name="text">
+    <string>Select All</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
    </property>
   </action>
  </widget>
