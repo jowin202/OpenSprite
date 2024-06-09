@@ -40,14 +40,14 @@ void RotationDialog::update_rotation()
     }
 
 
-    QImage wallpaper(opt->sprite_spacing_x+(10*24+opt->sprite_spacing_x)*(opt->sprites_per_row),opt->sprite_spacing_y+(10*21+opt->sprite_spacing_y)*(steps/opt->sprites_per_row+1), QImage::Format_RGB16);
-    wallpaper.fill(opt->background);
+    QImage wallpaper(settings.value("sprite_spacing_x").toInt() + (10*24+settings.value("sprite_spacing_x").toInt())*(settings.value("sprites_per_row").toInt()),settings.value("sprite_spacing_y").toInt()+(10*21+settings.value("sprite_spacing_y").toInt())*(steps/settings.value("sprites_per_row").toInt()+1), QImage::Format_RGB16);
+    wallpaper.fill(settings.value("bgcolor").toInt());
     QPainter painter;
     painter.begin(&wallpaper);
     for (int i = 0; i < this->result_list.count(); i++)
     {
         QImage sprite = this->draw_sprite(i);
-        painter.drawImage(opt->sprite_spacing_x+(10*24+opt->sprite_spacing_x)*(i% opt->sprites_per_row),opt->sprite_spacing_y+(10*21+opt->sprite_spacing_y)*(i/opt->sprites_per_row), sprite);
+        painter.drawImage(settings.value("sprite_spacing_x").toInt()+(10*24+settings.value("sprite_spacing_x").toInt())*(i% settings.value("sprites_per_row").toInt()),settings.value("sprite_spacing_y").toInt()+(10*21+settings.value("sprite_spacing_y").toInt())*(i/settings.value("sprites_per_row").toInt()), sprite);
     }
     painter.end();
     wallpaper = wallpaper.scaledToHeight(wallpaper.height()/2, Qt::SmoothTransformation);

@@ -14,6 +14,7 @@
 
 #include <QCryptographicHash>
 #include <QJsonDocument>
+#include <QPushButton>
 
 #include "sprite.h"
 
@@ -99,6 +100,8 @@ private slots:
     void on_actionMC_1_MC_2_triggered();
 
     void on_actionRotate_triggered();
+
+    void on_actionPreferences_triggered();
 
 private:
     Ui::MainWindow *ui;

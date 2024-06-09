@@ -149,7 +149,7 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     {
         QPen pen;
         pen.setWidth(5);
-        pen.setColor(opt->selection_color);
+        pen.setColor(settings.value("selection_color").toInt());
         painter->setPen(pen);
         painter->setOpacity(1);
         painter->drawRect(this->boundingRect());

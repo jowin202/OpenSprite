@@ -8,6 +8,7 @@
 
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QSettings>
 
 class Sprite;
 
@@ -52,6 +53,7 @@ private:
     Ui::RotationDialog *ui;
     options *opt;
     QJsonObject base_sprite;
+    QSettings settings;
 };
 
 #endif // ROTATIONDIALOG_H

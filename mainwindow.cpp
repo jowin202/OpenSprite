@@ -5,6 +5,7 @@
 
 #include "animations/animationdialog.h"
 #include "exportdialog.h"
+#include "settingsdialog.h"
 #include "rotations/rotationdialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -335,30 +336,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->check_sprite_numbers, &QCheckBox::toggled, [=](bool val) {
         this->opt.show_numbers = val;
         this->ui->graphicsView->scene()->update();
-    });
-    connect(this->ui->spin_horizontal_spacing, &QSpinBox::valueChanged, [=](int val) {
-        this->opt.sprite_spacing_x = val;
-        this->ui->graphicsView->redraw();
-    });
-    connect(this->ui->spin_vertical_spacing, &QSpinBox::valueChanged, [=](int val) {
-        this->opt.sprite_spacing_y = val;
-        this->ui->graphicsView->redraw();
-    });
-    connect(this->ui->spin_sprites_per_line, &QSpinBox::valueChanged, [=](int val) {
-        this->opt.sprites_per_row = val;
-        this->ui->graphicsView->redraw();
-    });
-    connect(this->ui->button_spacing_color, &QPushButton::clicked, [=]() {
-        QColor col = QColorDialog::getColor(opt.background, 0, "Background Color");
-        if (col.isValid())
-            this->opt.background = col;
-        this->ui->graphicsView->redraw();
-    });
-    connect(this->ui->button_selection_color, &QPushButton::clicked, [=]() {
-        QColor col = QColorDialog::getColor(opt.selection_color, 0, "Selection Color");
-        if (col.isValid())
-            this->opt.selection_color = col;
-        this->ui->graphicsView->redraw();
     });
 }
 
@@ -835,5 +812,12 @@ void MainWindow::on_actionRotate_triggered()
     RotationDialog *dialog = new RotationDialog(&opt);
     dialog->show();
     connect(dialog, &RotationDialog::finished, [=]() { this->ui->graphicsView->redraw(); });
+}
+
+void MainWindow::on_actionPreferences_triggered()
+{
+    SettingsDialog *dialog = new SettingsDialog(&opt);
+    dialog->show();
+    connect(dialog, &SettingsDialog::finished, [=]() { this->ui->graphicsView->redraw(); });
 }
 

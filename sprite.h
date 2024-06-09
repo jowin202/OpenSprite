@@ -27,9 +27,8 @@ struct options {
     SpriteView *spriteview;
     bool show_grid_lines = true;
     bool show_numbers = false;
-    int sprite_spacing_x = 30;
-    int sprite_spacing_y = 30;
-    int sprites_per_row = 4;
+
+
     //auto export
     QString last_exported_file;
     int export_address = 0x3000;
@@ -44,8 +43,13 @@ struct options {
     //
     QList<QJsonObject> undoDB;
 
-    QColor background = QColor(0xd9,0xd6,0xc8);
-    QColor selection_color = QColor(0x00,0xff,0x00);
+    //QColor background = QColor(0xd9,0xd6,0xc8);
+    //QColor selection_color = QColor(0x00,0xff,0x00);
+    //int sprite_spacing_x = 30;
+    //int sprite_spacing_y = 30;
+    //int sprites_per_row = 4;
+
+
     QStringList col_names = {"Black","White","Red","Cyan","Purple","Green","Blue","Yellow","Orange","Brown",
                              "Pink", "Dark Grey", "Grey","Light Green","Light Blue","Light Grey"};
     QList<QColor> col_list = { QColor(0,0,0),
@@ -306,6 +310,7 @@ private:
     bool left_pressed = false;
     bool right_pressed = false;
 
+    QSettings settings;
     options *opt;
 };
 
