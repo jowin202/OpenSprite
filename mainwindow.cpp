@@ -642,6 +642,13 @@ void MainWindow::on_actionSave_Project_triggered()
         this->on_actionSave_Project_As_triggered();
     } else {
         //auto save
+        //TODO REMOVE THIS
+        if (opt.data.value("version").toInt() > 0)
+        {
+            QMessageBox::critical(this, "Unsupported format", "Only spd files v1 can be saved", QMessageBox::Ok);
+            return;
+        }
+        //TODO REMOVE THIS
         FileIO().write_spd(opt.last_saved_file, opt.data);
 
         //detect changes
@@ -661,6 +668,13 @@ void MainWindow::on_actionSave_Project_As_triggered()
                                                     : opt.last_saved_file,
                                                 "OpenSprite file (*.spd)");
     if (path != "") {
+        //TODO REMOVE THIS
+        if (opt.data.value("version").toInt() > 0)
+        {
+            QMessageBox::critical(this, "Unsupported format", "Only spd files v1 can be saved", QMessageBox::Ok);
+            return;
+        }
+        //TODO REMOVE THIS
         FileIO().write_spd(path, opt.data);
         opt.last_saved_file = path;
 

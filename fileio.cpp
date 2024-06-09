@@ -26,16 +26,75 @@ QJsonObject FileIO::read_spd(QString path)
         return file_obj;
     }
 
-    int vers = file.read(1).at(0);
-    file_obj.insert("version", vers);
+    int version = file.read(1).at(0);
+    file_obj.insert("version", version);
 
-    int sprite_num = file.read(1).at(0) + 1;
-    int animations_num = file.read(1).at(0) + 1;
+    if (version >= 2)
+    {
+        //TODO: save flags
+        file.read(1);
+    }
+
+    int sprite_num = -1;
+    int tiles_num = -1;
+    int animations_num = -1;
+    int tile_animations_num = -1;
+
+    if (version <= 1)
+    {
+        sprite_num = file.read(1).at(0) + 1;
+        animations_num = file.read(1).at(0) + 1;
+    }
+    else if (version == 2)
+    {
+        sprite_num = file.read(1).at(0) & 0xFF;
+        sprite_num |= (file.read(1).at(0) & 0xFF) << 8;
+
+        tiles_num = file.read(1).at(0) & 0xFF;
+        tiles_num |= (file.read(1).at(0) & 0xFF) << 8;
+
+        animations_num = file.read(1).at(0) & 0xFF;
+        animations_num |= (file.read(1).at(0) & 0xFF) << 8;
+    }
+    else //if (version >= 3)
+    {
+        sprite_num = file.read(1).at(0) & 0xFF;
+        sprite_num |= (file.read(1).at(0) & 0xFF) << 8;
+
+        tiles_num = file.read(1).at(0) & 0xFF;
+        tiles_num |= (file.read(1).at(0) & 0xFF) << 8;
+
+        animations_num = file.read(1).at(0);// + 1; //error in documentation?
+        tile_animations_num = file.read(1).at(0);// + 1; //error in documentation?
+    }
+
+    int tile_width = -1;
+    int tile_height = -1;
+    if (version >= 2)
+    {
+        tile_width = file.read(1).at(0); //1-4 for version 2, else 1-8
+        tile_height = file.read(1).at(0);//1-4 for version 2, else 1-8
+    }
+
 
     file_obj.insert("background", file.read(1).at(0));
     file_obj.insert("mc1", file.read(1).at(0));
     file_obj.insert("mc2", file.read(1).at(0));
 
+    int sprite_overlay_distance = -1;
+    int tile_overlay_distance = -1;
+    if (version >= 4)
+    {
+        //TODO: Verify this
+        sprite_overlay_distance = file.read(1).at(0) & 0xFF;
+        sprite_overlay_distance |= (file.read(1).at(0) & 0xFF) << 8;
+
+        tile_overlay_distance = file.read(1).at(0) & 0xFF;
+        tile_overlay_distance |= (file.read(1).at(0) & 0xFF) << 8;
+    }
+
+
+    //SPRITE DATA (same in all versions)
     QJsonArray sprites;
     QJsonArray animations;
     for (int i = 0; i < sprite_num; i++) {
@@ -64,6 +123,43 @@ QJsonObject FileIO::read_spd(QString path)
     }
     file_obj.insert("sprites", sprites);
 
+    //TILESP_DATA (version 2-5)
+    if (version >= 2)
+    {
+        file.read(tiles_num * tile_width * tile_height * 2);
+        //TODO: currently dropped
+    }
+    //TILESP_ATTR (version 3-5)
+    if (version >= 3)
+    {
+        file.read(tiles_num);
+        //TODO: currently dropped
+    }
+    //TILESP_TAGS (version 5)
+    if (version >= 5)
+    {
+        file.read(tiles_num);
+        //TODO: currently dropped
+    }
+    //TILESP_NAME: String zero terminated
+    if (version >= 5)
+    {
+        char ch;
+        for (int i = 0; i < tiles_num; i++)
+        {
+            while (!file.atEnd()) {
+                file.getChar(&ch);
+                if (ch == '\0') {
+                    break;
+                }
+            }
+        }
+        //TODO: currently dropped
+    }
+
+
+
+    //TILE_ANIMATIONS (all versions, but from-to has 2 bytes in version 2-5)
     QList<int> start;
     QList<int> end;
     QList<int> timer;
@@ -71,10 +167,30 @@ QJsonObject FileIO::read_spd(QString path)
     QList<bool> overlay;
     QList<bool> valid;
 
-    for (int i = 0; i < animations_num; i++)
-        start.append(file.read(1).at(0));
-    for (int i = 0; i < animations_num; i++)
-        end.append(file.read(1).at(0));
+    if (version < 2)
+    {
+        for (int i = 0; i < animations_num; i++)
+            start.append(file.read(1).at(0));
+        for (int i = 0; i < animations_num; i++)
+            end.append(file.read(1).at(0));
+    }
+    else //version >= 2
+    {
+        int tmp;
+        for (int i = 0; i < animations_num; i++)
+        {
+            tmp = file.read(1).at(0) & 0xFF;
+            tmp |= (file.read(1).at(0) & 0xFF) << 8;
+            start.append(tmp);
+        }
+        for (int i = 0; i < animations_num; i++)
+        {
+            tmp = file.read(1).at(0) & 0xFF;
+            tmp |= (file.read(1).at(0) & 0xFF) << 8;
+            start.append(tmp);
+        }
+    }
+
     for (int i = 0; i < animations_num; i++)
         timer.append(file.read(1).at(0));
 
@@ -100,7 +216,24 @@ QJsonObject FileIO::read_spd(QString path)
 
     file_obj.insert("animations", animations);
 
+
+
+
+
+    //TODO: tile animations omitted
+
+
+
+
+
+
+
     file.close();
+    Q_UNUSED(tile_animations_num); //TODO
+    Q_UNUSED(tile_width); //TODO
+    Q_UNUSED(tile_height); //TODO
+    Q_UNUSED(sprite_overlay_distance); //TODO
+    Q_UNUSED(tile_overlay_distance); //TODO
     return file_obj;
 }
 
