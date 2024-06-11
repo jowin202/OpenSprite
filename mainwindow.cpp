@@ -490,36 +490,35 @@ void MainWindow::on_actionCut_triggered()
 
 void MainWindow::on_actionCopy_triggered()
 {
+    //there is no sub-array function
+    QJsonArray copied_sprites;
+    for (int i = opt.selection_from; i <= opt.selection_to; i++)
+        copied_sprites.append(this->opt.data.value("sprites").toArray().at(i).toObject());
+
     QSettings settings;
-    /*
-     * //TODO
-    settings.setValue("copied_sprite",
-                      QJsonDocument(
-                          this->opt.data.value("sprites").toArray().at(opt.current_sprite).toObject())
+    settings.setValue("copied_sprites",
+                      QJsonDocument(copied_sprites)
                           .toJson(QJsonDocument::Compact));
-    */
 }
 
 void MainWindow::on_actionPaste_triggered()
 {
-    /*
-     * //TODO
     opt.undoDB.append(opt.data);
     QJsonParseError error;
     QSettings settings;
-    QJsonObject copied_sprite
-        = QJsonDocument::fromJson(settings.value("copied_sprite").toString().toUtf8(), &error)
-              .object();
+    QJsonArray copied_sprites
+        = QJsonDocument::fromJson(settings.value("copied_sprites").toString().toUtf8(), &error)
+              .array();
     if (error.error != QJsonParseError::NoError)
         return;
 
     QJsonArray sprite_array = this->opt.data.value("sprites").toArray();
-    this->ui->combo_sprite_col->setCurrentIndex(copied_sprite.value("sprite_color").toInt());
+    //this->ui->combo_sprite_col->setCurrentIndex(copied_sprites.value("sprite_color").toInt());
     //sprite_array.removeAt(current_sprite);
-    sprite_array.insert(opt.current_sprite, copied_sprite);
+    for (int i = copied_sprites.count()-1; i >= 0; i--)
+        sprite_array.insert(opt.selection_from, copied_sprites[i]);
     this->opt.data.insert("sprites", sprite_array);
     this->ui->graphicsView->redraw();
-    */
 }
 
 void MainWindow::on_actionPaste_Into_triggered()
