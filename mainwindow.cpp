@@ -385,7 +385,7 @@ void MainWindow::import(QString path)
         if (path.endsWith(".spd", Qt::CaseInsensitive))
         {
             opt.data = FileIO().read_spd(path);
-            //TODO REMOVE THIS
+            //TODO REMOVE THIS //
             if (opt.data.value("version").toInt() > 0)
             {
                 QMessageBox::critical(this, "Unsupported format", "Attention! Your file is in a newer spd version format. It will be saved in spd V1 format.", QMessageBox::Ok);
