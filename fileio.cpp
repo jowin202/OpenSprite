@@ -26,13 +26,21 @@ QJsonObject FileIO::read_spd(QString path)
         return file_obj;
     }
 
+    bool tiles_exists = false;
+    bool sprite_anim_exists = false;
+    bool tile_anim_exists = false;
     int version = file.read(1).at(0);
     file_obj.insert("version", version);
 
     if (version >= 2)
     {
-        //TODO: save flags
-        file.read(1);
+        int flags = file.read(1).at(0);
+        if (flags & 0x01)
+            tiles_exists = true;
+        if (flags & 0x02)
+            sprite_anim_exists = true;
+        if (flags & 0x04)
+            tile_anim_exists = true;
     }
 
     int sprite_num = -1;
@@ -64,8 +72,8 @@ QJsonObject FileIO::read_spd(QString path)
         tiles_num = file.read(1).at(0) & 0xFF;
         tiles_num |= (file.read(1).at(0) & 0xFF) << 8;
 
-        animations_num = file.read(1).at(0);// + 1; //error in documentation?
-        tile_animations_num = file.read(1).at(0);// + 1; //error in documentation?
+        animations_num = file.read(1).at(0) + 1;
+        tile_animations_num = file.read(1).at(0) + 1;
     }
 
     int tile_width = -1;
@@ -75,7 +83,7 @@ QJsonObject FileIO::read_spd(QString path)
         tile_width = file.read(1).at(0); //1-4 for version 2, else 1-8
         tile_height = file.read(1).at(0);//1-4 for version 2, else 1-8
     }
-
+    qDebug() << tile_width << tile_height;
 
     file_obj.insert("background", file.read(1).at(0));
     file_obj.insert("mc1", file.read(1).at(0));
@@ -124,13 +132,13 @@ QJsonObject FileIO::read_spd(QString path)
     file_obj.insert("sprites", sprites);
 
     //TILESP_DATA (version 2-5)
-    if (version >= 2)
+    if (version >= 2 && tiles_exists)
     {
         file.read(tiles_num * tile_width * tile_height * 2);
         //TODO: currently dropped
     }
     //TILESP_ATTR (version 3-5)
-    if (version >= 3)
+    if (version >= 3 && tiles_exists)
     {
         file.read(tiles_num);
         //TODO: currently dropped
@@ -158,63 +166,65 @@ QJsonObject FileIO::read_spd(QString path)
     }
 
 
-
-    //TILE_ANIMATIONS (all versions, but from-to has 2 bytes in version 2-5)
-    QList<int> start;
-    QList<int> end;
-    QList<int> timer;
-    QList<bool> pingpong;
-    QList<bool> overlay;
-    QList<bool> valid;
-
-    if (version < 2)
+    //ANIMATIONS (all versions, but from-to has 2 bytes in version 2-5)
+    if (version <= 1 || sprite_anim_exists)
     {
-        for (int i = 0; i < animations_num; i++)
-            start.append(file.read(1).at(0));
-        for (int i = 0; i < animations_num; i++)
-            end.append(file.read(1).at(0));
-    }
-    else //version >= 2
-    {
-        int tmp;
-        for (int i = 0; i < animations_num; i++)
+        QList<int> start;
+        QList<int> end;
+        QList<int> timer;
+        QList<bool> pingpong;
+        QList<bool> overlay;
+        QList<bool> valid;
+
+        if (version < 2)
         {
-            tmp = file.read(1).at(0) & 0xFF;
-            tmp |= (file.read(1).at(0) & 0xFF) << 8;
-            start.append(tmp);
+            for (int i = 0; i < animations_num; i++)
+                start.append(file.read(1).at(0));
+            for (int i = 0; i < animations_num; i++)
+                end.append(file.read(1).at(0));
         }
-        for (int i = 0; i < animations_num; i++)
+        else //version >= 2
         {
-            tmp = file.read(1).at(0) & 0xFF;
-            tmp |= (file.read(1).at(0) & 0xFF) << 8;
-            start.append(tmp);
+            int tmp;
+            for (int i = 0; i < animations_num; i++)
+            {
+                tmp = file.read(1).at(0) & 0xFF;
+                tmp |= (file.read(1).at(0) & 0xFF) << 8;
+                start.append(tmp);
+            }
+            for (int i = 0; i < animations_num; i++)
+            {
+                tmp = file.read(1).at(0) & 0xFF;
+                tmp |= (file.read(1).at(0) & 0xFF) << 8;
+                end.append(tmp);
+            }
         }
+
+        for (int i = 0; i < animations_num; i++)
+            timer.append(file.read(1).at(0));
+
+        for (int i = 0; i < animations_num; i++) {
+            int options = file.read(1).at(0);
+
+            pingpong.append((0x1 & (options >> 4)) != 0);
+            overlay.append((0x1 & (options >> 5)) != 0);
+            valid.append((0x1 & (options >> 7)) != 0);
+        }
+
+        for (int i = 0; i < animations_num; i++) {
+            QJsonObject animation;
+            animation.insert("from", start.at(i));
+            animation.insert("to", end.at(i));
+            animation.insert("timer", timer.at(i));
+            animation.insert("pingpong", pingpong.at(i));
+            animation.insert("overlay", overlay.at(i));
+            animation.insert("valid", valid.at(i));
+
+            animations.append(animation);
+        }
+
+        file_obj.insert("animations", animations);
     }
-
-    for (int i = 0; i < animations_num; i++)
-        timer.append(file.read(1).at(0));
-
-    for (int i = 0; i < animations_num; i++) {
-        int options = file.read(1).at(0);
-
-        pingpong.append((0x1 & (options >> 4)) != 0);
-        overlay.append((0x1 & (options >> 5)) != 0);
-        valid.append((0x1 & (options >> 7)) != 0);
-    }
-
-    for (int i = 0; i < animations_num; i++) {
-        QJsonObject animation;
-        animation.insert("from", start.at(i));
-        animation.insert("to", end.at(i));
-        animation.insert("timer", timer.at(i));
-        animation.insert("pingpong", pingpong.at(i));
-        animation.insert("overlay", overlay.at(i));
-        animation.insert("valid", valid.at(i));
-
-        animations.append(animation);
-    }
-
-    file_obj.insert("animations", animations);
 
 
 

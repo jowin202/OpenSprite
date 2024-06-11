@@ -383,7 +383,15 @@ void MainWindow::import(QString path)
     if (path != "") {
         int address = 0;
         if (path.endsWith(".spd", Qt::CaseInsensitive))
+        {
             opt.data = FileIO().read_spd(path);
+            //TODO REMOVE THIS
+            if (opt.data.value("version").toInt() > 0)
+            {
+                QMessageBox::critical(this, "Unsupported format", "Attention! Your file is in a newer spd version format. It will be saved in spd V1 format.", QMessageBox::Ok);
+            }
+            //TODO REMOVE THIS
+        }
         else if (path.endsWith(".bin", Qt::CaseInsensitive)
                  || path.endsWith(".prg", Qt::CaseInsensitive))
             opt.data = FileIO().read_prg_bin(path, &address);
@@ -641,13 +649,6 @@ void MainWindow::on_actionSave_Project_triggered()
         this->on_actionSave_Project_As_triggered();
     } else {
         //auto save
-        //TODO REMOVE THIS
-        if (opt.data.value("version").toInt() > 0)
-        {
-            QMessageBox::critical(this, "Unsupported format", "Only spd files v1 can be saved", QMessageBox::Ok);
-            return;
-        }
-        //TODO REMOVE THIS
         FileIO().write_spd(opt.last_saved_file, opt.data);
 
         //detect changes
@@ -667,13 +668,6 @@ void MainWindow::on_actionSave_Project_As_triggered()
                                                     : opt.last_saved_file,
                                                 "OpenSprite file (*.spd)");
     if (path != "") {
-        //TODO REMOVE THIS
-        if (opt.data.value("version").toInt() > 0)
-        {
-            QMessageBox::critical(this, "Unsupported format", "Only spd files v1 can be saved", QMessageBox::Ok);
-            return;
-        }
-        //TODO REMOVE THIS
         FileIO().write_spd(path, opt.data);
         opt.last_saved_file = path;
 
