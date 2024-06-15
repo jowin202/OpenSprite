@@ -48,6 +48,44 @@
          <string>Options</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_4">
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="check_exp_x">
+           <property name="text">
+            <string>Expand X</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="check_multicolor">
+           <property name="text">
+            <string>Multicolor</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QCheckBox" name="check_force_single_color">
+           <property name="text">
+            <string>Automatically set overlays to single color</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="check_overlay">
+           <property name="text">
+            <string>Overlay next sprite</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="check_exp_y">
+           <property name="text">
+            <string>Expand Y</string>
+           </property>
+          </widget>
+         </item>
          <item row="4" column="0" colspan="3">
           <layout class="QGridLayout" name="gridLayout_5">
            <item row="6" column="3">
@@ -430,10 +468,53 @@
            </item>
           </layout>
          </item>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="check_exp_x">
+         <item row="9" column="0">
+          <widget class="QCheckBox" name="check_sprite_numbers">
            <property name="text">
-            <string>Expand X</string>
+            <string>Show Sprite Numbers</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBox_editor_grid_lines">
+           <property name="text">
+            <string>Show editor grid lines</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="0">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="11" column="0" colspan="3">
+          <widget class="QSlider" name="slider_scale">
+           <property name="maximum">
+            <number>500</number>
+           </property>
+           <property name="value">
+            <number>250</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Scale:</string>
            </property>
           </widget>
          </item>
@@ -456,101 +537,6 @@
             </widget>
            </item>
           </layout>
-         </item>
-         <item row="14" column="0">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="2" column="0">
-          <widget class="QCheckBox" name="check_exp_y">
-           <property name="text">
-            <string>Expand Y</string>
-           </property>
-          </widget>
-         </item>
-         <item row="13" column="0" colspan="3">
-          <widget class="QSlider" name="slider_scale">
-           <property name="maximum">
-            <number>500</number>
-           </property>
-           <property name="value">
-            <number>250</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QCheckBox" name="check_overlay">
-           <property name="text">
-            <string>Overlay next sprite</string>
-           </property>
-          </widget>
-         </item>
-         <item row="12" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Scale:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="0">
-          <widget class="QCheckBox" name="check_force_single_color">
-           <property name="text">
-            <string>Automatically set overlays to single color</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_9">
-           <property name="text">
-            <string>Selecting an animation select it's images</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_10">
-           <property name="text">
-            <string>Show animation values in hex</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="check_multicolor">
-           <property name="text">
-            <string>Multicolor</string>
-           </property>
-          </widget>
-         </item>
-         <item row="11" column="0">
-          <widget class="QCheckBox" name="check_sprite_numbers">
-           <property name="text">
-            <string>Show Sprite Numbers</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_editor_grid_lines">
-           <property name="text">
-            <string>Show editor grid lines</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
