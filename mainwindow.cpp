@@ -386,7 +386,7 @@ void MainWindow::import(QString path)
         {
             opt.data = FileIO().read_spd(path);
             //TODO REMOVE THIS //
-            if (opt.data.value("version").toInt() > 0)
+            if (opt.data.value("version").toInt() > 1)
             {
                 QMessageBox::critical(this, "Unsupported format", "Attention! Your file is in a newer spd version format. It will be saved in spd V1 format.", QMessageBox::Ok);
             }

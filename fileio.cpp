@@ -254,7 +254,7 @@ void FileIO::write_spd(QString path, QJsonObject file_obj)
 
     file.write(QByteArray::fromHex("535044"));
 
-    file.write(QByteArray(1, file_obj.value("version").toInt()));
+    file.write(QByteArray(1, 1));
     file.write(QByteArray(1, file_obj.value("sprites").toArray().count() - 1));
     file.write(QByteArray(1, file_obj.value("animations").toArray().count() - 1));
 
