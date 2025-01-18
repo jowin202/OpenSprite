@@ -445,6 +445,19 @@ void MainWindow::new_project()
     opt.undoDB.clear();
     opt.data.insert("sprites", QJsonArray());
     this->on_actionAdd_Sprite_triggered();
+
+    //create sample animation (original spritepad wants at least 1 animation)
+    QJsonObject anim;
+    anim.insert("from", 0);
+    anim.insert("to", 0);
+    anim.insert("timer", 16);
+    anim.insert("overlay", false);
+    anim.insert("pingpong", false);
+    anim.insert("valid", false);
+    QJsonArray anim_array;
+    anim_array.append(anim);
+    opt.data.insert("animations", anim_array);
+
     this->ui->combo_transparent->setCurrentIndex(6);
     this->ui->combo_multicol_2->setCurrentIndex(1);
 
