@@ -36,13 +36,19 @@ void ExportDialog::on_button_export_clicked()
     {
         path = QFileDialog::getSaveFileName(this, "Export As", last_file + ".prg", "PRG File (*.prg)");
         if (path != "")
+        {
             FileIO().write_prg(path, opt->data, this->ui->address->value(), attribute);
+            emit statusmsg("Exported to: " + path);
+        }
     }
     else if (this->ui->radio_bin->isChecked())
     {
         path = QFileDialog::getSaveFileName(this, "Export As", last_file + ".bin", "BIN File (*.bin)");
         if (path != "")
+        {
             FileIO().write_prg(path, opt->data, -1, attribute);
+            emit statusmsg("Exported to: " + path);
+        }
     }
 
     if (path != "")

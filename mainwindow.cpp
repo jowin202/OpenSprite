@@ -650,6 +650,7 @@ void MainWindow::on_actionSave_Project_triggered()
     } else {
         //auto save
         FileIO().write_spd(opt.last_saved_file, opt.data);
+        this->statusBar()->showMessage("Saved to: " + opt.last_saved_file);
 
         //detect changes
         QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
@@ -670,6 +671,7 @@ void MainWindow::on_actionSave_Project_As_triggered()
     if (path != "") {
         FileIO().write_spd(path, opt.data);
         opt.last_saved_file = path;
+        this->statusBar()->showMessage("Saved to: " + opt.last_saved_file);
 
         QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
         hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
@@ -708,6 +710,9 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionExport_as_triggered()
 {
     ExportDialog *d = new ExportDialog(&opt);
+    connect(d,&ExportDialog::statusmsg, [=](QString msg){
+        this->statusBar()->showMessage(msg);
+    });
     d->show();
 }
 
