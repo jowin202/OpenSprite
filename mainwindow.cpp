@@ -720,12 +720,16 @@ void MainWindow::on_actionExport_triggered()
 {
     if (opt.last_exported_file == "") {
         ExportDialog *d = new ExportDialog(&opt);
+        connect(d,&ExportDialog::statusmsg, [=](QString msg){
+            this->statusBar()->showMessage(msg);
+        });
         d->show();
     } else { //auto export
         FileIO().write_prg(opt.last_exported_file,
                            opt.data,
                            opt.export_address,
                            opt.export_attribute_format);
+        this->statusBar()->showMessage("Exported to: " + opt.last_exported_file);
     }
 }
 
