@@ -56,11 +56,15 @@ void AnimationForm::reload_images()
     this->animation_images.clear();
     for (int i = this->ui->spin_from->value(); i <= this->ui->spin_to->value(); i++)
     {
+        if (this->opt->data.value("sprites").toArray().at(i-1).toObject().value("overlay_next").toBool())
+            continue;
         this->animation_images.append(this->draw_sprite(i));
     }
 
     for (int i = this->ui->spin_to->value()-1; i >= this->ui->spin_from->value(); i--)
     {
+        if (this->opt->data.value("sprites").toArray().at(i-1).toObject().value("overlay_next").toBool())
+            continue;
         this->animation_images.append(this->draw_sprite(i));
     }
     this->ui->label_img->setPixmap(QPixmap::fromImage(this->animation_images.first()));
