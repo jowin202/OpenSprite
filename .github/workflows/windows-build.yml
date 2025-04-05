@@ -66,7 +66,7 @@ jobs:
         Get-ChildItem . -Recurse
 
     - name: Upload executable artifact
-      uses: actions/upload-artifact@3c86c3295a8fa57f05e8a89c8bdf4e88db731f73
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ env.ARCHIVE_NAME }}
         path: |
