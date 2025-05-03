@@ -1,0 +1,51 @@
+name: macOS Build
+
+on:
+  push:
+    branches:
+      - main
+      - unstable
+
+env:
+  QT_VERSION: 6.5.0
+  ARCHIVE_NAME: OpenSprite-macOS-arm64-latest
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Python (für aqtinstall)
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install aqtinstall
+      run: |
+        pip install aqtinstall
+
+    - name: Install Qt
+      run: |
+        aqt install-qt mac desktop $QT_VERSION clang_64 -O $HOME/Qt
+
+    - name: Run qmake
+      run: |
+        export PATH="$HOME/Qt/$QT_VERSION/clang_64/bin:$PATH"
+        qmake -Wall OpenSprite.pro
+
+    - name: Build
+      run: |
+        make
+
+    - name: Package app (optional, falls du .app erstellen willst)
+      run: |
+        macdeployqt OpenSprite.app
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.ARCHIVE_NAME }}
+        path: |
+          ./OpenSprite.app
