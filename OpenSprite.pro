@@ -52,6 +52,12 @@ FORMS += \
 
 RC_ICONS = icons/opensprite96x96.ico
 
+
+# macOS icon
+macx {
+    ICON = icons/icon.icns
+}
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
