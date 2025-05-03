@@ -32,7 +32,9 @@ jobs:
 
     - name: Run qmake
       run: |
-        export PATH="$HOME/Qt/$QT_VERSION/clang_64/bin:$PATH"
+        export QT_PATH="$HOME/Qt/$QT_VERSION/clang_64"
+        export PATH="$QT_PATH/bin:$PATH"
+        which qmake  # Hilft beim Debuggen
         qmake -Wall OpenSprite.pro
 
     - name: Build
