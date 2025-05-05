@@ -55,6 +55,7 @@ RC_ICONS = icons/opensprite96x96.ico
 
 # macOS icon
 macx {
+    CONFIG += app_bundle
     ICON = icons/icon.icns
 }
 
