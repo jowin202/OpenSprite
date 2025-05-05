@@ -39,9 +39,9 @@ jobs:
       run: |
         make
 
-    - name: Package app (optional, falls du .app erstellen willst)
+    - name: Package app 
       run: |
-        macdeployqt OpenSprite.app
+        $HOME/Qt/6.5.0/macos/bin/macdeployqt OpenSprite.app
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
