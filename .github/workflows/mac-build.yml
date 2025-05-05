@@ -6,6 +6,10 @@ on:
       - main
       - unstable
 
+
+permissions:
+  contents: write 
+  
 env:
   QT_VERSION: 6.5.0
   ARCHIVE_NAME: OpenSprite-macOS-arm64-latest
