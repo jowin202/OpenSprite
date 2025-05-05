@@ -43,10 +43,21 @@ jobs:
       run: |
         $HOME/Qt/6.5.0/macos/bin/macdeployqt ./build/Release/OpenSprite.app
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ env.ARCHIVE_NAME }}
-        path: |
-          ./build/Release/OpenSprite.app
+    - name: Create DMG from .app
+      run: |
+        hdiutil create \
+          -volname OpenSprite \
+          -srcfolder ./build/Release/OpenSprite.app \
+          -ov \
+          -format UDZO \
+          ${{ env.ARCHIVE_NAME }}.dmg
 
+    - name: Upload DMG to GitHub Release
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Automatic Build"
+        files: |
+          ${{ env.ARCHIVE_NAME }}.dmg
