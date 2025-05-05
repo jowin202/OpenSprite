@@ -48,4 +48,5 @@ jobs:
       with:
         name: ${{ env.ARCHIVE_NAME }}
         path: |
-          ./OpenSprite.app
+          ./build/Release/OpenSprite.app
+
