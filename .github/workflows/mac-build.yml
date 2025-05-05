@@ -47,6 +47,10 @@ jobs:
       run: |
         $HOME/Qt/6.5.0/macos/bin/macdeployqt ./build/Release/OpenSprite.app
 
+    - name: Remove quarantine attribute from .app
+      run: |
+        xattr -r -d com.apple.quarantine ./build/Release/OpenSprite.app
+        
     - name: Create DMG from .app
       run: |
         hdiutil create \
