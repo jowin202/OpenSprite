@@ -28,14 +28,16 @@ jobs:
 
     - name: Install Qt
       run: |
+        pip install aqtinstall
         aqt install-qt mac desktop $QT_VERSION clang_64 -O $HOME/Qt
-
+    
+    - name: Verify qmake exists
+      run: |
+        ls $HOME/Qt/$QT_VERSION/clang_64/bin/qmake
+    
     - name: Run qmake
       run: |
-        export QT_PATH="$HOME/Qt/$QT_VERSION/clang_64"
-        export PATH="$QT_PATH/bin:$PATH"
-        which qmake  # Hilft beim Debuggen
-        qmake -Wall OpenSprite.pro
+        $HOME/Qt/$QT_VERSION/clang_64/bin/qmake -Wall OpenSprite.pro
 
     - name: Build
       run: |
