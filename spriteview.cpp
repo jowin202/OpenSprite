@@ -12,26 +12,31 @@ SpriteView::SpriteView(QWidget *parent) : QGraphicsView(parent)
 
 void SpriteView::redraw()
 {
-    this->setBackgroundBrush(opt->background);
+    this->setBackgroundBrush(QColor(settings.value("bgcolor").toInt()));
 
     this->scene()->clear();
     this->opt->sprite_list.clear();
 
-    int max_x = opt->sprite_spacing_x+(10*24+opt->sprite_spacing_x)*(opt->sprites_per_row);
-    int max_y = opt->sprite_spacing_y+(10*21+opt->sprite_spacing_y)*(1+opt->data.value("sprites").toArray().count()/opt->sprites_per_row);
+    int sprite_spacing_x = settings.value("sprite_spacing_x").toInt();
+    int sprite_spacing_y = settings.value("sprite_spacing_y").toInt();
+    int sprites_per_row = settings.value("sprites_per_row").toInt();
+
+
+    int max_x = sprite_spacing_x+(10*24+sprite_spacing_x)*(sprites_per_row);
+    int max_y = sprite_spacing_y+(10*21+sprite_spacing_y)*(1+opt->data.value("sprites").toArray().count()/sprites_per_row);
     this->scene()->setSceneRect(0,0,max_x,max_y);
 
     int i; //use it later
     for (i = 0; i < opt->data.value("sprites").toArray().count(); i++)
     {
         Sprite *sprite = new Sprite(opt, i);
-        sprite->setPos(opt->sprite_spacing_x+(10*24+opt->sprite_spacing_x)*(i% opt->sprites_per_row),opt->sprite_spacing_y+(10*21+opt->sprite_spacing_y)*(i/opt->sprites_per_row));
+        sprite->setPos(sprite_spacing_x+(10*24+sprite_spacing_x)*(i% sprites_per_row),sprite_spacing_y+(10*21+sprite_spacing_y)*(i/sprites_per_row));
         this->scene()->addItem(sprite);
         opt->sprite_list.append(sprite);
     }
 
     AddButton *add_button = new AddButton();
-    add_button->setPos(opt->sprite_spacing_x+(10*24+opt->sprite_spacing_x)*(i% opt->sprites_per_row),opt->sprite_spacing_y+(10*21+opt->sprite_spacing_y)*(i/opt->sprites_per_row));
+    add_button->setPos(sprite_spacing_x+(10*24+sprite_spacing_x)*(i% sprites_per_row),sprite_spacing_y+(10*21+sprite_spacing_y)*(i/sprites_per_row));
     connect(add_button, SIGNAL(clicked()), this, SLOT(add_new_sprite()));
     this->scene()->addItem(add_button);
 
@@ -73,8 +78,9 @@ void SpriteView::add_new_sprite()
     QJsonArray sprites = opt->data.value("sprites").toArray();
     sprites.append(sprite);
     opt->data.insert("sprites", sprites);
-    opt->current_sprite = sprites.count()-1;
+    opt->selection_from = sprites.count()-1;
+    opt->selection_to = sprites.count()-1;
     this->redraw();
-    emit current_sprite_changed(opt->current_sprite);
+    emit current_sprite_changed(opt->selection_to);
 }
 

@@ -9,6 +9,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QSettings>
 
 #include <QMimeData>
 
@@ -53,6 +54,7 @@ signals:
 
 private:
     options *opt;
+    QSettings settings;
 
 };
 

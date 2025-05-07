@@ -1,6 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <QGraphicsWidget>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QPainter>
@@ -20,13 +21,14 @@ struct options {
     int left_button = BUTTONS::COLOR;
     int right_button = BUTTONS::TRANSPARENT;
     QJsonObject data;
-    int current_sprite = 0;
+    int selection_from = 0;
+    int selection_to = 0;
     QList<Sprite*> sprite_list;
     SpriteView *spriteview;
     bool show_grid_lines = true;
-    int sprite_spacing_x = 30;
-    int sprite_spacing_y = 30;
-    int sprites_per_row = 4;
+    bool show_numbers = false;
+
+
     //auto export
     QString last_exported_file;
     int export_address = 0x3000;
@@ -41,7 +43,13 @@ struct options {
     //
     QList<QJsonObject> undoDB;
 
-    QColor background = QColor(0xd9,0xd6,0xc8);
+    //QColor background = QColor(0xd9,0xd6,0xc8);
+    //QColor selection_color = QColor(0x00,0xff,0x00);
+    //int sprite_spacing_x = 30;
+    //int sprite_spacing_y = 30;
+    //int sprites_per_row = 4;
+
+
     QStringList col_names = {"Black","White","Red","Cyan","Purple","Green","Blue","Yellow","Orange","Brown",
                              "Pink", "Dark Grey", "Grey","Light Green","Light Blue","Light Grey"};
     QList<QColor> col_list = { QColor(0,0,0),
@@ -118,7 +126,7 @@ public:
             tmp[y] = this->get_bit(0,y);
         for (int x = 0; x < 23; x++)
         {
-            for (int y = 0; y < 20; y++)
+            for (int y = 0; y < 21; y++)
             {
                 this->set_bit(x,y, this->get_bit(x+1,y));
             }
@@ -224,17 +232,85 @@ public:
         }
     }
 
+    void switch_col_to_mc1()
+    {
+        if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
+        {
+            for (int x = 0; x < 12; x++)
+            {
+                for (int y = 0; y < 21; y++)
+                {
+                    if (this->get_bit(2*x,y) && !this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, false);
+                        this->set_bit(2*x+1,y, true);
+                    }
+                    else if (!this->get_bit(2*x,y) && this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, true);
+                        this->set_bit(2*x+1,y, false);
+                    }
+                }
+            }
+        }
+    }
+
+
+    void switch_col_to_mc2()
+    {
+        if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
+        {
+            for (int x = 0; x < 12; x++)
+            {
+                for (int y = 0; y < 21; y++)
+                {
+                    if (this->get_bit(2*x,y) && !this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, true);
+                        this->set_bit(2*x+1,y, true);
+                    }
+                    else if (this->get_bit(2*x,y) && this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, true);
+                        this->set_bit(2*x+1,y, false);
+                    }
+                }
+            }
+        }
+    }
+
+
+    void switch_mc1_to_mc2()
+    {
+        if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
+        {
+            for (int x = 0; x < 12; x++)
+            {
+                for (int y = 0; y < 21; y++)
+                {
+                    if (this->get_bit(2*x,y) && this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, false);
+                        this->set_bit(2*x+1,y, true);
+                    }
+                    else if (!this->get_bit(2*x,y) && this->get_bit(2*x+1,y))
+                    {
+                        this->set_bit(2*x,y, true);
+                        this->set_bit(2*x+1,y, true);
+                    }
+                }
+            }
+        }
+    }
 
 private:
     int id;
-    //unsigned char sprite_data[64];
     bool overlay_next = false;
-    //bool multi_color_mode = true;
-
 
     bool left_pressed = false;
     bool right_pressed = false;
 
+    QSettings settings;
     options *opt;
 };
 

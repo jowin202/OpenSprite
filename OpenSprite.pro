@@ -23,6 +23,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     palette.cpp \
+    rotations/rotationdialog.cpp \
+    settingsdialog.cpp \
     sprite.cpp \
     spriteview.cpp
 
@@ -34,6 +36,8 @@ HEADERS += \
     fileio.h \
     mainwindow.h \
     palette.h \
+    rotations/rotationdialog.h \
+    settingsdialog.h \
     sprite.h \
     spriteview.h
 
@@ -41,10 +45,19 @@ FORMS += \
     animations/animationdialog.ui \
     animations/animationform.ui \
     exportdialog.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    rotations/rotationdialog.ui \
+    settingsdialog.ui
 
 
 RC_ICONS = icons/opensprite96x96.ico
+
+
+# macOS icon
+macx {
+    CONFIG += app_bundle
+    ICON = icons/icon.icns
+}
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

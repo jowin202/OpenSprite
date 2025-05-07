@@ -16,6 +16,10 @@
   <property name="windowTitle">
    <string>OpenSprite Export</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/icons/opensprite96x96.png</normaloff>:/icons/opensprite96x96.png</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="1" column="0" colspan="3">
     <widget class="QGroupBox" name="groupBox_2">

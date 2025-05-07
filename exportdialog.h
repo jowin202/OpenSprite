@@ -29,6 +29,9 @@ public:
             this->on_button_export_clicked();
     }
 
+signals:
+    void statusmsg(QString);
+
 private slots:
     void on_button_export_clicked();
     void on_button_close_clicked();
