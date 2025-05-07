@@ -1,0 +1,209 @@
+# This workflow will install C++/Qt dependencies and
+# build a binary for multiple platforms
+# on demand or version tag push.
+
+name: Build & Publish OpenSprite
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+  workflow_dispatch:
+
+env:
+  PRODUCT_NAME: OpenSprite
+  QT_VERSION: 6.5.0
+  AQT_PLATFORM_WINDOWS: msvc2019_64
+  AQT_PLATFORM_MACOS: xxx
+  ARCHIVE_NAME: OpenSprite-win-amd64-latest
+
+jobs:
+
+  build:
+
+    permissions:
+      contents: write
+
+    strategy:
+      matrix:
+        os:
+          - macos-12
+          - windows-latest
+          #- ubuntu-20.04
+
+    runs-on: ${{ matrix.os }}
+
+    outputs:
+      short-sha: ${{ steps.short-hash.outputs.short-sha }}
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Set short commit hash variable
+      id: short-hash
+      shell: pwsh
+      run: |
+        $shortHash = ${Env:GITHUB_SHA}.Substring(0, 7)
+
+        Write-Output "SHORT_SHA=$shortHash" >> "${Env:GITHUB_ENV}"
+        Write-Output "short-sha=$shortHash" >> "${Env:GITHUB_OUTPUT}"
+
+    - name: Set version name variable
+      shell: pwsh
+      run: |
+        $versionName = ${Env:SHORT_SHA}
+        
+        if (${Env:GITHUB_REF} -match '^refs/tags/v')
+        {
+          $versionName = ${Env:GITHUB_REF_NAME}
+        }
+
+        Write-Output "VERSION_NAME=$versionName" >> "${Env:GITHUB_ENV}"
+
+    - name: Set Windows file name environment variables
+      if: ${{ runner.os == 'Windows' }}
+      shell: pwsh
+      run: |
+        Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
+        Write-Output "BINARY_NAME=${Env:PRODUCT_NAME}.exe" >> "${Env:GITHUB_ENV}"
+        Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${Env:VERSION_NAME}.zip" >> "${Env:GITHUB_ENV}"
+
+    - name: Set macOS & Linux file name environment variables
+      if: ${{ runner.os != 'Windows' }}
+      shell: pwsh
+      run: |
+        Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
+        Write-Output "BINARY_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
+        Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${Env:VERSION_NAME}.zip" >> "${Env:GITHUB_ENV}"
+
+    - name: Show build variables
+      shell: pwsh
+      run: |
+        Write-Host "GitHub ref: ${{ github.ref }}"
+        Write-Host "GitHub ref name: ${{ github.ref_name }}"
+        Write-Host "Commit short SHA: ${Env:SHORT_SHA}"
+        Write-Host "Version name: ${Env:VERSION_NAME}"
+        Write-Host "Base name: ${Env:BASE_NAME}"
+        Write-Host "Binary name: ${Env:BINARY_NAME}"
+        Write-Host "Archive name: ${Env:ARCHIVE_NAME}"
+
+    - name: Install MSVC
+      if: ${{ runner.os == 'Windows' }}
+      uses: aminya/setup-cpp@v1
+      with:
+        compiler: msvc
+        vcvarsall: true
+
+    - name: Download aqtinstall Windows
+      if: ${{ runner.os == 'Windows' }}
+      shell: pwsh
+      run: |
+        Write-Host 'Downloading  aqtinstall ...'
+        $src = 'https://github.com/miurahr/aqtinstall/releases/download/v3.1.6/aqt_x64_signed.exe'
+        $target = 'C:\Windows\System32\aqt.exe'
+        Invoke-WebRequest -Uri $src -OutFile $target
+
+    - name: Install Qt Windows
+      if: ${{ runner.os == 'Windows' }}
+      shell: pwsh
+      run: |
+        Write-Host 'Installing Qt ...'
+        #aqt list-qt windows desktop --arch $Env:QT_VERSION
+        aqt install-qt windows desktop $Env:QT_VERSION "win64_${Env:AQT_PLATFORM}" -O C:\Qt
+
+    - name: Run qmake - Windows
+      if: ${{ runner.os == 'Windows' }}
+      shell: pwsh
+      run: |
+        Write-Host 'Running qmake ...'
+        $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
+        # Generate MSBuild VC++ project
+        qmake -Wall -tp vc OpenSprite.pro
+
+    - name: Build
+      if: ${{ runner.os == 'Windows' }}
+      run: |
+        msbuild OpenSprite.vcxproj -property:Configuration=Release
+
+    - name: Provision runtime environment
+      if: ${{ runner.os == 'Windows' }}
+      shell: pwsh
+      run: |
+        $src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin"
+        $windeployqt = Join-Path $src windeployqt.exe
+
+        & "$windeployqt" --release --no-translations (Join-Path $pwd build\release)
+
+    - name: List artifacts
+      run: |
+        Get-ChildItem . -Recurse
+
+    - name: ZIP executable artifacts
+      shell: pwsh
+      run: |
+        7z a "${Env:ARCHIVE_NAME}.zip" ./build/release/*
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.PRODUCT_NAME }}
+        path: |
+          "${{ env.ARCHIVE_NAME }}.zip"
+
+  publish:
+
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+
+    - name: Create dist directory
+      run: mkdir dist
+
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ env.PRODUCT_NAME }}
+        path: dist
+ 
+    - name: Display structure of downloaded files
+      run: ls -R
+      working-directory: dist
+  
+    - name: Publish on-demand release
+      if: ${{ ! startsWith(github.ref, 'refs/tags/v') }}
+      #uses: "marvinpinto/action-automatic-releases@latest"
+      uses: softprops/action-gh-release@v1
+      with:
+        #repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        #automatic_release_tag: "ondemand"
+        tag_name: "ondemand"
+        prerelease: true
+        #title: "Development Release ${{ needs.build.outputs.short-sha }}"
+        name: "Development Release ${{ needs.build.outputs.short-sha }}"
+        files: |
+          *.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish version release
+      if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      #uses: "marvinpinto/action-automatic-releases@latest"
+      uses: softprops/action-gh-release@v1
+      with:
+        #repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        #automatic_release_tag: ${{ github.ref_name }}
+        tag_name: ${{ github.ref_name }}
+        prerelease: false
+        #title: "${{ env.PRODUCT_NAME }} ${{ github.ref_name }}"
+        name: "${{ env.PRODUCT_NAME }} ${{ github.ref_name }}"
+        files: |
+          *.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
