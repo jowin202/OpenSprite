@@ -1,11 +1,7 @@
 name: macOS Build
 
 on:
-  push:
-    branches:
-      - main
-      - unstable
-
+  workflow_dispatch:
 
 permissions:
   contents: write 
