@@ -69,6 +69,7 @@ jobs:
         Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
         Write-Output "BINARY_NAME=${Env:PRODUCT_NAME}.exe" >> "${Env:GITHUB_ENV}"
         Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${Env:VERSION_NAME}.zip" >> "${Env:GITHUB_ENV}"
+        Write-Output "AQT_PLATFORM=${Env:AQT_PLATFORM_WINDOWS}" >> "${Env:GITHUB_ENV}"
 
     - name: Set macOS & Linux file name environment variables
       if: ${{ runner.os != 'Windows' }}
