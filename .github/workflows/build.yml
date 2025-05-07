@@ -16,7 +16,6 @@ env:
   QT_VERSION: 6.5.0
   AQT_PLATFORM_WINDOWS: msvc2019_64
   AQT_PLATFORM_MACOS: xxx
-  ARCHIVE_NAME: OpenSprite-win-amd64-latest
 
 jobs:
 
@@ -144,14 +143,14 @@ jobs:
     - name: ZIP executable artifacts
       shell: pwsh
       run: |
-        7z a "${Env:ARCHIVE_NAME}.zip" ./build/release/*
+        7z a "${Env:ARCHIVE_NAME}" ./build/release/*
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.PRODUCT_NAME }}
         path: |
-          "${{ env.ARCHIVE_NAME }}.zip"
+          ${{ env.ARCHIVE_NAME }}
 
   publish:
 
@@ -189,7 +188,7 @@ jobs:
         #title: "Development Release ${{ needs.build.outputs.short-sha }}"
         name: "Development Release ${{ needs.build.outputs.short-sha }}"
         files: |
-          *.zip
+          dist/*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -205,6 +204,6 @@ jobs:
         #title: "${{ env.PRODUCT_NAME }} ${{ github.ref_name }}"
         name: "${{ env.PRODUCT_NAME }} ${{ github.ref_name }}"
         files: |
-          *.zip
+          dist/*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
