@@ -183,7 +183,6 @@ jobs:
         qmake -Wall -tp vc OpenSprite.pro
 
         # Generate Makefile for Linux/UNIX
-        $Env:PREFIX = './AppDir'
         qmake -Wall OpenSprite.pro
 
     - name: Build Windows binary
@@ -208,6 +207,13 @@ jobs:
       run: |
         macdeployqt ./build/Release/OpenSprite.app
 
+    - name: Deploy to AppImage skeleton structure - Linux
+      if: ${{ runner.os == 'Linux' }}
+      shell: bash
+      run: |
+        qmake -install qinstall -exe build/release/OpenSprite ./AppDir/usr/bin
+        strip ./AppDir/usr/bin/OpenSprite
+
     - name: Download AppImage tool for Linux and set permissions
       if: ${{ runner.os == 'Linux' }}
       shell: bash
@@ -219,12 +225,6 @@ jobs:
         
         # Make appimagetool executable
         chmod +x appimagetool-*.AppImage
-
-    - name: Create AppImage skeleton structure - Linux
-      if: ${{ runner.os == 'Linux' }}
-      shell: bash
-      run: |
-        make install DESTDIR=AppDir
 
     - name: Provision Qt runtime environment/AppImage - Linux
       if: ${{ runner.os == 'Linux' }}
