@@ -183,7 +183,7 @@ jobs:
         qmake -Wall -tp vc OpenSprite.pro
 
         # Generate Makefile for Linux/UNIX
-        qmake -Wall OpenSprite.pro
+        PREFIX=./AppDir qmake -Wall OpenSprite.pro
 
     - name: Build Windows binary
       if: ${{ runner.os == 'Windows' }}
@@ -230,10 +230,10 @@ jobs:
       shell: bash
       run: |
         # Either bundle EVERYTHING
-        #./appimagetool-*.AppImage -s deploy appdir/usr/share/applications/*.desktop 
+        #./appimagetool-*.AppImage -s deploy AppDir/usr/share/applications/*.desktop 
         # or 
         # bundle everything except what comes with the base system
-        ./appimagetool-*.AppImage deploy appdir/usr/share/applications/*.desktop
+        ./appimagetool-*.AppImage deploy AppDir/usr/share/applications/*.desktop
         
         # Build AppImage - turn AppDir into AppImage
         VERSION=$VERSION_NAME ./appimagetool-*.AppImage ./AppDir
