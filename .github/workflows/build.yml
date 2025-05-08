@@ -1,6 +1,7 @@
 # This workflow will install C++/Qt dependencies and
 # build a binary for multiple platforms
 # on demand or version tag push.
+# By @prof79 & @jowin202
 
 # Notable links:
 #
