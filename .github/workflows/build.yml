@@ -145,14 +145,15 @@ jobs:
       run: |
         msbuild OpenSprite.vcxproj -property:Configuration=Release
 
-    - name: Provision runtime environment
+    - name: Provision Qt runtime environment - Windows
       if: ${{ runner.os == 'Windows' }}
       shell: pwsh
       run: |
-        $src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin"
-        $windeployqt = Join-Path $src windeployqt.exe
+        #$src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin"
+        #$windeployqt = Join-Path $src windeployqt.exe
 
-        & "$windeployqt" --release --no-translations (Join-Path $pwd build\release)
+        #& "$windeployqt" --release --no-translations (Join-Path $pwd build\release)
+        windeployqt --release --no-translations (Join-Path $pwd build\release)
 
     - name: List artifacts
       run: |
