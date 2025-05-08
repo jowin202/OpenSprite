@@ -82,7 +82,15 @@ jobs:
     - name: Set environment variables common to all OS
       shell: pwsh
       run: |
-        $architecture = ${Env:PROCESSOR_ARCHITECTURE}.ToLower()
+        $architecture = ${Env:PROCESSOR_ARCHITECTURE}
+
+        if ([String]::IsNullOrEmpty($architecture))
+        {
+          # We must be on Linux or macOS, try this ...
+          $architecture = $(uname -m)
+        }
+
+        $architecture = $architecture.ToLower()
 
         Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
 
