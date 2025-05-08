@@ -2,7 +2,7 @@
 # build a binary for multiple platforms
 # on demand or version tag push.
 # By @prof79 & @jowin202
-
+#
 # Notable links:
 #
 # https://github.com/aminya/setup-cpp
@@ -12,6 +12,15 @@
 # https://docs.github.com/en/actions/writing-workflows/choosing-where-your-workflow-runs/choosing-the-runner-for-a-job
 # https://github.com/actions/upload-artifact?tab=readme-ov-file#not-uploading-to-the-same-artifact
 # https://github.com/actions/upload-artifact/issues/480
+#
+# AppImage References
+#
+# https://github.com/probonopd/linuxdeployqt
+# https://specifications.freedesktop.org/icon-theme-spec/latest/
+# https://github.com/probonopd/go-appimage
+# https://github.com/probonopd/go-appimage/blob/master/src/appimagetool/README.md
+# https://appimage-builder.readthedocs.io/en/latest/intro/tutorial.html
+#
 
 name: Build & Publish OpenSprite
 
