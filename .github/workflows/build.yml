@@ -219,6 +219,7 @@ jobs:
     #region Build artifacts handling
 
     - name: List artifacts
+      shell: pwsh
       run: |
         Get-ChildItem . -Recurse
 
