@@ -21,10 +21,10 @@ on:
 
 env:
   PRODUCT_NAME: OpenSprite
-  QT_VERSION: 6.9.0
-  #AQT_PLATFORM_WINDOWS: win64_msvc2019_64
+  QT_VERSION: 6.8.3
   AQT_PLATFORM_WINDOWS: win64_msvc2022_64
-  AQT_PLATFORM_MACOS: xxx
+  AQT_PLATFORM_MACOS: clang64
+  AQT_PLATFORM_LINUX: linux_gcc_64
 
 jobs:
 
@@ -49,6 +49,8 @@ jobs:
 
     - uses: actions/checkout@v4
 
+    #region Environment variables
+
     - name: Set short commit hash variable
       id: short-hash
       shell: pwsh
@@ -70,7 +72,7 @@ jobs:
 
         Write-Output "VERSION_NAME=$versionName" >> "${Env:GITHUB_ENV}"
 
-    - name: Set Windows file name environment variables
+    - name: Set Windows environment variables
       if: ${{ runner.os == 'Windows' }}
       shell: pwsh
       run: |
@@ -79,7 +81,7 @@ jobs:
         Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${Env:VERSION_NAME}.zip" >> "${Env:GITHUB_ENV}"
         Write-Output "AQT_PLATFORM=${Env:AQT_PLATFORM_WINDOWS}" >> "${Env:GITHUB_ENV}"
 
-    - name: Set macOS & Linux file name environment variables
+    - name: Set macOS & Linux environment variables
       if: ${{ runner.os != 'Windows' }}
       shell: pwsh
       run: |
@@ -87,6 +89,18 @@ jobs:
         Write-Output "BINARY_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
         Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${Env:VERSION_NAME}.zip" >> "${Env:GITHUB_ENV}"
 
+    - name: Set macOS environment variables
+      if: ${{ runner.os == 'macOS' }}
+      shell: pwsh
+      run: |
+        Write-Output "AQT_PLATFORM=${Env:AQT_PLATFORM_MACOS}" >> "${Env:GITHUB_ENV}"
+
+    - name: Set Linux environment variables
+      if: ${{ runner.os == 'Linux' }}
+      shell: pwsh
+      run: |
+        Write-Output "AQT_PLATFORM=${Env:AQT_PLATFORM_LINUX}" >> "${Env:GITHUB_ENV}"
+  
     - name: Show build variables
       shell: pwsh
       run: |
@@ -97,6 +111,11 @@ jobs:
         Write-Host "Base name: ${Env:BASE_NAME}"
         Write-Host "Binary name: ${Env:BINARY_NAME}"
         Write-Host "Archive name: ${Env:ARCHIVE_NAME}"
+        Write-Host "AQT platform: ${Env:AQT_PLATFORM}"
+
+    #endregion
+
+    #region Compiler Installation
 
     - name: Install MSVC on Windows
       if: ${{ runner.os == 'Windows' }}
@@ -110,31 +129,21 @@ jobs:
       uses: aminya/setup-cpp@v1
       with:
         compiler: apple-clang
-  
-    # - name: Download aqtinstall Windows
-    #   if: ${{ runner.os == 'Windows' }}
-    #   shell: pwsh
-    #   run: |
-    #     Write-Host 'Downloading  aqtinstall ...'
-    #     $src = 'https://github.com/miurahr/aqtinstall/releases/download/v3.1.6/aqt_x64_signed.exe'
-    #     $target = 'C:\Windows\System32\aqt.exe'
-    #     Invoke-WebRequest -Uri $src -OutFile $target
 
-    # - name: Install Qt Windows
-    #   if: ${{ runner.os == 'Windows' }}
-    #   shell: pwsh
-    #   run: |
-    #     Write-Host 'Installing Qt ...'
-    #     #aqt list-qt windows desktop --arch $Env:QT_VERSION
-    #     aqt install-qt windows desktop $Env:QT_VERSION "${Env:AQT_PLATFORM}" -O C:\Qt
+    - name: Install GCC on Linux
+      if: ${{ runner.os == 'Linux' }}
+      uses: aminya/setup-cpp@v1
+      with:
+        compiler: gcc
 
-    - name: Install Qt Windows
-      if: ${{ runner.os == 'Windows' }}
+    #endregion
+
+    - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
         version: ${{ env.QT_VERSION }}
         target: 'desktop'
-        arch: ${{ env.AQT_PLATFORM_WINDOWS }}
+        arch: ${{ env.AQT_PLATFORM }}
         use-official: false
         #email: ${{ secrets.QT_EMAIL }}
         #pw: ${{ secrets.QT_PW }}
@@ -143,9 +152,8 @@ jobs:
       if: ${{ runner.os == 'Windows' }}
       shell: pwsh
       run: |
-        Write-Host 'Running qmake ...'
-        #$Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
         # Generate MSBuild VC++ project
+        Write-Host 'Running qmake ...'
         qmake -Wall -tp vc OpenSprite.pro
 
     - name: Build Windows binary
@@ -157,11 +165,9 @@ jobs:
       if: ${{ runner.os == 'Windows' }}
       shell: pwsh
       run: |
-        #$src = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin"
-        #$windeployqt = Join-Path $src windeployqt.exe
-
-        #& "$windeployqt" --release --no-translations (Join-Path $pwd build\release)
         windeployqt --release --no-translations (Join-Path $pwd build\release)
+
+    #region Build artifacts handling
 
     - name: List artifacts
       run: |
@@ -178,6 +184,8 @@ jobs:
         name: ${{ env.PRODUCT_NAME }}
         path: |
           ${{ env.ARCHIVE_NAME }}
+
+    #endregion
 
   publish:
 
