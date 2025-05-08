@@ -16,6 +16,7 @@
 # AppImage References
 #
 # https://github.com/probonopd/linuxdeployqt
+# https://specifications.freedesktop.org/desktop-entry-spec/1.0/recognized-keys.html
 # https://specifications.freedesktop.org/icon-theme-spec/latest/
 # https://specifications.freedesktop.org/menu-spec/latest/category-registry.html
 # https://github.com/probonopd/go-appimage
