@@ -275,8 +275,8 @@ jobs:
         prerelease: true
         name: "Development Release ${{ needs.build.outputs.short-sha }}"
         files: |
-          dist/*.zip
-          dist/*.dmg
+          dist/${{ env.PRODUCT_NAME }}-*/*.zip
+          dist/${{ env.PRODUCT_NAME }}-*/*.dmg
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -288,7 +288,7 @@ jobs:
         prerelease: false
         name: "${{ env.PRODUCT_NAME }} ${{ github.ref_name }}"
         files: |
-          dist/*.zip
-          dist/*.dmg
+          dist/${{ env.PRODUCT_NAME }}-*/*.zip
+          dist/${{ env.PRODUCT_NAME }}-*/*.dmg
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
