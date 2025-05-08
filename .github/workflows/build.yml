@@ -28,7 +28,7 @@ env:
   #AQT_PLATFORM_WINDOWS: win64_msvc2022_64
   AQT_PLATFORM_MACOS: clang64
   AQT_PLATFORM_LINUX: linux_gcc_64
-  WINDOWS_COMPILER: msvc-2019
+  WINDOWS_COMPILER: msvc-latest
 
 jobs:
 
