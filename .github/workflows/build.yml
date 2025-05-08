@@ -212,7 +212,7 @@ jobs:
       shell: bash
       run: |
         qmake -install qinstall -exe build/release/OpenSprite ./AppDir/usr/bin
-        strip ./AppDir/usr/bin/OpenSprite
+        strip $PWD/AppDir/usr/bin/OpenSprite
 
     - name: Download AppImage tool for Linux and set permissions
       if: ${{ runner.os == 'Linux' }}
