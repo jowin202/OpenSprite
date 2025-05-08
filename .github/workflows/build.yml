@@ -207,11 +207,42 @@ jobs:
       run: |
         macdeployqt ./build/Release/OpenSprite.app
 
+    - name: Download AppImage tool for Linux and set permissions
+      if: ${{ runner.os == 'Linux' }}
+      shell: bash
+      run: |
+        RELATIVE_TOOL_URL=$(wget -q https://github.com/probonopd/go-appimage/releases/expanded_assets/continuous -O - | \
+          grep "appimagetool-.*-x86_64.AppImage" | head -n 1 | cut -d '"' -f 2)
+
+        wget -c https://github.com/${RELATIVE_TOOL_URL}
+        
+        # Make appimagetool executable
+        chmod +x appimagetool-*.AppImage
+
+    - name: Create AppImage skeleton structure - Linux
+      if: ${{ runner.os == 'Linux' }}
+      shell: bash
+      run: |
+        make install DESTDIR=AppDir
+
+    - name: Provision Qt runtime environment/AppImage - Linux
+      if: ${{ runner.os == 'Linux' }}
+      shell: bash
+      run: |
+        # Either bundle EVERYTHING
+        #./appimagetool-*.AppImage -s deploy appdir/usr/share/applications/*.desktop 
+        # or 
+        # bundle everything except what comes with the base system
+        ./appimagetool-*.AppImage deploy appdir/usr/share/applications/*.desktop
+        
+        # Build AppImage - turn AppDir into AppImage
+        VERSION=$VERSION_NAME ./appimagetool-*.AppImage ./AppDir
+
     - name: Remove quarantine attribute from .app
       if: ${{ runner.os == 'macOS' }}
       run: |
         xattr -r -d com.apple.quarantine ./build/Release/OpenSprite.app
-          
+   
     - name: Create DMG from .app
       if: ${{ runner.os == 'macOS' }}
       run: |
