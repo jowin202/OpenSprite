@@ -13,8 +13,9 @@ on:
 
 env:
   PRODUCT_NAME: OpenSprite
-  QT_VERSION: 6.5.0
-  AQT_PLATFORM_WINDOWS: msvc2019_64
+  QT_VERSION: 6.9.0
+  #AQT_PLATFORM_WINDOWS: win64_msvc2019_64
+  AQT_PLATFORM_WINDOWS: win64_msvc2022_64
   AQT_PLATFORM_MACOS: xxx
 
 jobs:
@@ -27,8 +28,8 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-12
           - windows-latest
+          #- macos-latest
           #- ubuntu-20.04
 
     runs-on: ${{ matrix.os }}
@@ -89,40 +90,57 @@ jobs:
         Write-Host "Binary name: ${Env:BINARY_NAME}"
         Write-Host "Archive name: ${Env:ARCHIVE_NAME}"
 
-    - name: Install MSVC
+    - name: Install MSVC on Windows
       if: ${{ runner.os == 'Windows' }}
       uses: aminya/setup-cpp@v1
       with:
-        compiler: msvc
+        compiler: msvc-2022
         vcvarsall: true
 
-    - name: Download aqtinstall Windows
-      if: ${{ runner.os == 'Windows' }}
-      shell: pwsh
-      run: |
-        Write-Host 'Downloading  aqtinstall ...'
-        $src = 'https://github.com/miurahr/aqtinstall/releases/download/v3.1.6/aqt_x64_signed.exe'
-        $target = 'C:\Windows\System32\aqt.exe'
-        Invoke-WebRequest -Uri $src -OutFile $target
+    - name: Install clang on Apple
+      if: ${{ runner.os == 'macOS' }}
+      uses: aminya/setup-cpp@v1
+      with:
+        compiler: apple-clang
+  
+    # - name: Download aqtinstall Windows
+    #   if: ${{ runner.os == 'Windows' }}
+    #   shell: pwsh
+    #   run: |
+    #     Write-Host 'Downloading  aqtinstall ...'
+    #     $src = 'https://github.com/miurahr/aqtinstall/releases/download/v3.1.6/aqt_x64_signed.exe'
+    #     $target = 'C:\Windows\System32\aqt.exe'
+    #     Invoke-WebRequest -Uri $src -OutFile $target
+
+    # - name: Install Qt Windows
+    #   if: ${{ runner.os == 'Windows' }}
+    #   shell: pwsh
+    #   run: |
+    #     Write-Host 'Installing Qt ...'
+    #     #aqt list-qt windows desktop --arch $Env:QT_VERSION
+    #     aqt install-qt windows desktop $Env:QT_VERSION "${Env:AQT_PLATFORM}" -O C:\Qt
 
     - name: Install Qt Windows
       if: ${{ runner.os == 'Windows' }}
-      shell: pwsh
-      run: |
-        Write-Host 'Installing Qt ...'
-        #aqt list-qt windows desktop --arch $Env:QT_VERSION
-        aqt install-qt windows desktop $Env:QT_VERSION "win64_${Env:AQT_PLATFORM}" -O C:\Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: ${{ env.QT_VERSION }}
+        target: 'desktop'
+        arch: ${{ env.AQT_PLATFORM_WINDOWS }}
+        use-official: false
+        #email: ${{ secrets.QT_EMAIL }}
+        #pw: ${{ secrets.QT_PW }}
 
     - name: Run qmake - Windows
       if: ${{ runner.os == 'Windows' }}
       shell: pwsh
       run: |
         Write-Host 'Running qmake ...'
-        $Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
+        #$Env:PATH = "C:\Qt\${Env:QT_VERSION}\${Env:AQT_PLATFORM}\bin;${Env:PATH}"
         # Generate MSBuild VC++ project
         qmake -Wall -tp vc OpenSprite.pro
 
-    - name: Build
+    - name: Build Windows binary
       if: ${{ runner.os == 'Windows' }}
       run: |
         msbuild OpenSprite.vcxproj -property:Configuration=Release
