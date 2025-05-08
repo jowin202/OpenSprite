@@ -223,9 +223,10 @@ jobs:
       shell: bash
       run: |
         mkdir -p ./AppDir/usr/bin
+
         cp build/release/OpenSprite ./AppDir/usr/bin/
-        ls -lR
-        strip $PWD/AppDir/usr/bin/OpenSprite
+
+        strip ./AppDir/usr/bin/OpenSprite
 
     - name: Download AppImage tool for Linux and set permissions
       if: ${{ runner.os == 'Linux' }}
