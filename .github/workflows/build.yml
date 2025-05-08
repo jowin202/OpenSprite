@@ -217,14 +217,10 @@ jobs:
   
     - name: Publish on-demand release
       if: ${{ ! startsWith(github.ref, 'refs/tags/v') }}
-      #uses: "marvinpinto/action-automatic-releases@latest"
       uses: softprops/action-gh-release@v1
       with:
-        #repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        #automatic_release_tag: "ondemand"
         tag_name: "ondemand"
         prerelease: true
-        #title: "Development Release ${{ needs.build.outputs.short-sha }}"
         name: "Development Release ${{ needs.build.outputs.short-sha }}"
         files: |
           dist/*.zip
@@ -233,14 +229,10 @@ jobs:
 
     - name: Publish version release
       if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-      #uses: "marvinpinto/action-automatic-releases@latest"
       uses: softprops/action-gh-release@v1
       with:
-        #repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        #automatic_release_tag: ${{ github.ref_name }}
         tag_name: ${{ github.ref_name }}
         prerelease: false
-        #title: "${{ env.PRODUCT_NAME }} ${{ github.ref_name }}"
         name: "${{ env.PRODUCT_NAME }} ${{ github.ref_name }}"
         files: |
           dist/*.zip
