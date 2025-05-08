@@ -79,7 +79,7 @@ jobs:
     - name: Set environment variables common to all OS
       shell: pwsh
       run: |
-        $architecture = ${Env:PROCESSOR_ARCHITECTURE}.lower()
+        $architecture = ${Env:PROCESSOR_ARCHITECTURE}.ToLower()
 
         Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
 
