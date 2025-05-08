@@ -2,6 +2,13 @@
 # build a binary for multiple platforms
 # on demand or version tag push.
 
+# Notable links:
+#
+# https://github.com/marketplace/actions/install-qt
+# https://ddalcino.github.io/aqt-list-server/
+# https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables
+# https://docs.github.com/en/actions/writing-workflows/choosing-where-your-workflow-runs/choosing-the-runner-for-a-job
+
 name: Build & Publish OpenSprite
 
 on:
