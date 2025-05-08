@@ -25,12 +25,13 @@ on:
 env:
   PRODUCT_NAME: OpenSprite
   QT_VERSION: 6.6.3
+  AQT_PLATFORM_MACOS: clang_64
   # for QT < 6.8
   AQT_PLATFORM_WINDOWS: win64_msvc2019_64
+  AQT_PLATFORM_LINUX: gcc_64
   # for QT >= 6.8
   #AQT_PLATFORM_WINDOWS: win64_msvc2022_64
-  AQT_PLATFORM_MACOS: clang_64
-  AQT_PLATFORM_LINUX: linux_gcc_64
+  #AQT_PLATFORM_LINUX: linux_gcc_64
   WINDOWS_COMPILER: msvc
 
 jobs:
