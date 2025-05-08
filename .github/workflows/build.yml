@@ -221,7 +221,7 @@ jobs:
       shell: bash
       run: |
         mkdir -p ./AppDir/usr/bin
-        qmake -install qinstall -exe build/release/OpenSprite ./AppDir/usr/bin
+        cp build/release/OpenSprite ./AppDir/usr/bin/
         ls -lR
         strip $PWD/AppDir/usr/bin/OpenSprite
 
