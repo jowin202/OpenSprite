@@ -10,6 +10,7 @@
 # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables
 # https://docs.github.com/en/actions/writing-workflows/choosing-where-your-workflow-runs/choosing-the-runner-for-a-job
 # https://github.com/actions/upload-artifact?tab=readme-ov-file#not-uploading-to-the-same-artifact
+# https://github.com/actions/upload-artifact/issues/480
 
 name: Build & Publish OpenSprite
 
@@ -95,7 +96,7 @@ jobs:
 
         Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
 
-        Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${{ matrix.version }}-${architecture}-${Env:VERSION_NAME}" >> "${Env:GITHUB_ENV}"
+        Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${Env:MATRIX_VERSION}}-${architecture}-${Env:VERSION_NAME}" >> "${Env:GITHUB_ENV}"
 
     - name: Set Windows environment variables
       if: ${{ runner.os == 'Windows' }}
@@ -233,7 +234,7 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.PRODUCT_NAME }}-${{ matrix.os }}-${{ matrix.version }}
+        name: ${{ env.PRODUCT_NAME }}-${{ strategy.job-index }}
         path: |
           ${{ env.ARCHIVE_NAME }}.zip
           ${{ env.ARCHIVE_NAME }}.dmg
@@ -254,27 +255,11 @@ jobs:
     - name: Create dist directory
       run: mkdir dist
 
-    #region Artifacts - upload-artifact@v4 made this messy
-
-    - name: Download artifact - Windows
+    - name: Download artifact
       uses: actions/download-artifact@v4
       with:
-        name: ${{ env.PRODUCT_NAME }}-windows-latest
+        pattern: ${{ env.PRODUCT_NAME }}-*
         path: dist
-
-    - name: Download artifact - macOS 13
-      uses: actions/download-artifact@v4
-      with:
-        name: ${{ env.PRODUCT_NAME }}-macos-13
-        path: dist
-
-    - name: Download artifact - macOS 14
-      uses: actions/download-artifact@v4
-      with:
-        name: ${{ env.PRODUCT_NAME }}-macos-14
-        path: dist
-
-    #endregion
 
     - name: Display structure of downloaded files
       run: ls -R
