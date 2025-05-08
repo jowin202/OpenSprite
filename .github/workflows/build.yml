@@ -94,7 +94,7 @@ jobs:
 
         $architecture = $architecture.ToLower()
 
-        $osVersion = (${Env:MATRIX_OS} -split '-')[1]
+        $osVersion = ('${{ matrix.os }}' -split '-')[1]
 
         Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
 
