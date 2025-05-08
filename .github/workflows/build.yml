@@ -21,10 +21,14 @@ on:
 
 env:
   PRODUCT_NAME: OpenSprite
-  QT_VERSION: 6.8.3
-  AQT_PLATFORM_WINDOWS: win64_msvc2022_64
+  QT_VERSION: 6.7.3
+  # for QT < 6.8
+  AQT_PLATFORM_WINDOWS: win64_msvc2019_64
+  # for QT >= 6.8
+  #AQT_PLATFORM_WINDOWS: win64_msvc2022_64
   AQT_PLATFORM_MACOS: clang64
   AQT_PLATFORM_LINUX: linux_gcc_64
+  WINDOWS_COMPILER: msvc-2019
 
 jobs:
 
@@ -121,7 +125,7 @@ jobs:
       if: ${{ runner.os == 'Windows' }}
       uses: aminya/setup-cpp@v1
       with:
-        compiler: msvc-2022
+        compiler: ${{ env.WINDOWS_COMPILER }}
         vcvarsall: true
 
     - name: Install clang on Apple
