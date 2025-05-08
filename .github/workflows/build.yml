@@ -183,7 +183,8 @@ jobs:
         qmake -Wall -tp vc OpenSprite.pro
 
         # Generate Makefile for Linux/UNIX
-        PREFIX=./AppDir qmake -Wall OpenSprite.pro
+        $Env:PREFIX = './AppDir'
+        qmake -Wall OpenSprite.pro
 
     - name: Build Windows binary
       if: ${{ runner.os == 'Windows' }}
