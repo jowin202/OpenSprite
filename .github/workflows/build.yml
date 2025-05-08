@@ -326,7 +326,7 @@ jobs:
         files: |
           dist/${{ env.PRODUCT_NAME }}-*/*.zip
           dist/${{ env.PRODUCT_NAME }}-*/*.dmg
-          dist/${{ env.PRODUCT_NAME }}-*-x86_64.AppImage
+          dist/${{ env.PRODUCT_NAME }}-*/${{ env.PRODUCT_NAME }}-*-x86_64.AppImage
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -340,6 +340,6 @@ jobs:
         files: |
           dist/${{ env.PRODUCT_NAME }}-*/*.zip
           dist/${{ env.PRODUCT_NAME }}-*/*.dmg
-          dist/${{ env.PRODUCT_NAME }}-*-x86_64.AppImage
+          dist/${{ env.PRODUCT_NAME }}-*/${{ env.PRODUCT_NAME }}-*-x86_64.AppImage
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
