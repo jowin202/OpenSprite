@@ -21,7 +21,7 @@ on:
 
 env:
   PRODUCT_NAME: OpenSprite
-  QT_VERSION: 6.7.3
+  QT_VERSION: 6.6.3
   # for QT < 6.8
   AQT_PLATFORM_WINDOWS: win64_msvc2019_64
   # for QT >= 6.8
@@ -76,22 +76,27 @@ jobs:
 
         Write-Output "VERSION_NAME=$versionName" >> "${Env:GITHUB_ENV}"
 
+    - name: Set environment variables common to all OS
+      shell: pwsh
+      run: |
+        $architecture = ${Env:PROCESSOR_ARCHITECTURE}.lower()
+
+        Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
+
+        Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${architecture}-${Env:VERSION_NAME}.zip" >> "${Env:GITHUB_ENV}"
+
     - name: Set Windows environment variables
       if: ${{ runner.os == 'Windows' }}
       shell: pwsh
       run: |
-        Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
         Write-Output "BINARY_NAME=${Env:PRODUCT_NAME}.exe" >> "${Env:GITHUB_ENV}"
-        Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${Env:VERSION_NAME}.zip" >> "${Env:GITHUB_ENV}"
         Write-Output "AQT_PLATFORM=${Env:AQT_PLATFORM_WINDOWS}" >> "${Env:GITHUB_ENV}"
 
     - name: Set macOS & Linux environment variables
       if: ${{ runner.os != 'Windows' }}
       shell: pwsh
       run: |
-        Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
         Write-Output "BINARY_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
-        Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${Env:VERSION_NAME}.zip" >> "${Env:GITHUB_ENV}"
 
     - name: Set macOS environment variables
       if: ${{ runner.os == 'macOS' }}
