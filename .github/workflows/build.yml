@@ -249,10 +249,10 @@ jobs:
       shell: bash
       run: |
         # Either bundle EVERYTHING
-        #./appimagetool-*.AppImage -s deploy AppDir/usr/share/applications/*.desktop 
+        ./appimagetool-*.AppImage --standalone deploy AppDir/usr/share/applications/*.desktop
         # or 
         # bundle everything except what comes with the base system
-        ./appimagetool-*.AppImage deploy AppDir/usr/share/applications/*.desktop
+        #./appimagetool-*.AppImage deploy AppDir/usr/share/applications/*.desktop
         
         # Build AppImage - turn AppDir into AppImage
         VERSION=$VERSION_NAME ./appimagetool-*.AppImage ./AppDir
