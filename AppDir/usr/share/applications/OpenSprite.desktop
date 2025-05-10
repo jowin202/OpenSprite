@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=OpenSprite
+Comment=C64 Sprite Editor
+Exec=OpenSprite
+Icon=OpenSprite
+Categories=Graphics;

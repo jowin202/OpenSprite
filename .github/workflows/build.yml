@@ -1,0 +1,347 @@
+# This workflow will install C++/Qt dependencies and
+# build a binary for multiple platforms
+# on demand or version tag push.
+# By @prof79 & @jowin202
+#
+# Notable links:
+#
+# https://github.com/aminya/setup-cpp
+# https://github.com/marketplace/actions/install-qt
+# https://ddalcino.github.io/aqt-list-server/
+# https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables
+# https://docs.github.com/en/actions/writing-workflows/choosing-where-your-workflow-runs/choosing-the-runner-for-a-job
+# https://github.com/actions/upload-artifact?tab=readme-ov-file#not-uploading-to-the-same-artifact
+# https://github.com/actions/upload-artifact/issues/480
+#
+# AppImage References
+#
+# https://github.com/probonopd/linuxdeployqt
+# https://specifications.freedesktop.org/desktop-entry-spec/1.0/recognized-keys.html
+# https://specifications.freedesktop.org/icon-theme-spec/latest/
+# https://specifications.freedesktop.org/menu-spec/latest/category-registry.html
+# https://github.com/probonopd/go-appimage
+# https://github.com/probonopd/go-appimage/blob/master/src/appimagetool/README.md
+# https://appimage-builder.readthedocs.io/en/latest/intro/tutorial.html
+#
+
+name: Build & Publish OpenSprite
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+  workflow_dispatch:
+
+env:
+  PRODUCT_NAME: OpenSprite
+  QT_VERSION: 6.6.3
+  AQT_PLATFORM_MACOS: clang_64
+  # for QT < 6.8
+  AQT_PLATFORM_WINDOWS: win64_msvc2019_64
+  AQT_PLATFORM_LINUX: gcc_64
+  # for QT >= 6.8
+  #AQT_PLATFORM_WINDOWS: win64_msvc2022_64
+  #AQT_PLATFORM_LINUX: linux_gcc_64
+  WINDOWS_COMPILER: msvc
+
+jobs:
+
+  build:
+
+    permissions:
+      contents: write
+
+    strategy:
+      matrix:
+        os:
+          - windows-latest
+          # For Intel MACs
+          - macos-13
+          # For ARM64 MACs
+          - macos-14
+          - ubuntu-22.04
+
+    runs-on: ${{ matrix.os }}
+
+    outputs:
+      short-sha: ${{ steps.short-hash.outputs.short-sha }}
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    #region Environment variables
+
+    - name: Set short commit hash variable
+      id: short-hash
+      shell: pwsh
+      run: |
+        $shortHash = ${Env:GITHUB_SHA}.Substring(0, 7)
+
+        Write-Output "SHORT_SHA=$shortHash" >> "${Env:GITHUB_ENV}"
+        Write-Output "short-sha=$shortHash" >> "${Env:GITHUB_OUTPUT}"
+
+    - name: Set version name variable
+      shell: pwsh
+      run: |
+        $versionName = ${Env:SHORT_SHA}
+        
+        if (${Env:GITHUB_REF} -match '^refs/tags/v')
+        {
+          $versionName = ${Env:GITHUB_REF_NAME}
+        }
+
+        Write-Output "VERSION_NAME=$versionName" >> "${Env:GITHUB_ENV}"
+
+    - name: Set environment variables common to all OS
+      shell: pwsh
+      run: |
+        $architecture = ${Env:PROCESSOR_ARCHITECTURE}
+
+        if ([String]::IsNullOrEmpty($architecture))
+        {
+          # We must be on Linux or macOS, try this ...
+          $architecture = $(uname -m)
+        }
+
+        $architecture = $architecture.ToLower()
+
+        $osVersion = ('${{ matrix.os }}' -split '-')[1]
+
+        Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
+
+        # Exclude OS version for now, looks a bit weird
+        # and macOS-13-x86_64 also runs on macOS 12.7.x
+        #Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${osVersion}-${architecture}-${Env:VERSION_NAME}" >> "${Env:GITHUB_ENV}"
+
+        Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${architecture}-${Env:VERSION_NAME}" >> "${Env:GITHUB_ENV}"
+
+    - name: Set Windows environment variables
+      if: ${{ runner.os == 'Windows' }}
+      shell: pwsh
+      run: |
+        Write-Output "BINARY_NAME=${Env:PRODUCT_NAME}.exe" >> "${Env:GITHUB_ENV}"
+        Write-Output "AQT_PLATFORM=${Env:AQT_PLATFORM_WINDOWS}" >> "${Env:GITHUB_ENV}"
+
+    - name: Set macOS & Linux environment variables
+      if: ${{ runner.os != 'Windows' }}
+      shell: pwsh
+      run: |
+        Write-Output "BINARY_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
+
+    - name: Set macOS environment variables
+      if: ${{ runner.os == 'macOS' }}
+      shell: pwsh
+      run: |
+        Write-Output "AQT_PLATFORM=${Env:AQT_PLATFORM_MACOS}" >> "${Env:GITHUB_ENV}"
+
+    - name: Set Linux environment variables
+      if: ${{ runner.os == 'Linux' }}
+      shell: pwsh
+      run: |
+        Write-Output "AQT_PLATFORM=${Env:AQT_PLATFORM_LINUX}" >> "${Env:GITHUB_ENV}"
+  
+    - name: Show build variables
+      shell: pwsh
+      run: |
+        Write-Host "GitHub ref: ${{ github.ref }}"
+        Write-Host "GitHub ref name: ${{ github.ref_name }}"
+        Write-Host "Commit short SHA: ${Env:SHORT_SHA}"
+        Write-Host "Version name: ${Env:VERSION_NAME}"
+        Write-Host "Base name: ${Env:BASE_NAME}"
+        Write-Host "Binary name: ${Env:BINARY_NAME}"
+        Write-Host "Archive name: ${Env:ARCHIVE_NAME}"
+        Write-Host "AQT platform: ${Env:AQT_PLATFORM}"
+
+    #endregion
+
+    #region Compiler Installation
+
+    - name: Install MSVC on Windows
+      if: ${{ runner.os == 'Windows' }}
+      uses: aminya/setup-cpp@v1
+      with:
+        compiler: ${{ env.WINDOWS_COMPILER }}
+        vcvarsall: true
+
+    - name: Install clang on Apple
+      if: ${{ runner.os == 'macOS' }}
+      uses: aminya/setup-cpp@v1
+      with:
+        compiler: apple-clang
+
+    - name: Install GCC on Linux
+      if: ${{ runner.os == 'Linux' }}
+      uses: aminya/setup-cpp@v1
+      with:
+        compiler: gcc
+
+    #endregion
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: ${{ env.QT_VERSION }}
+        target: 'desktop'
+        arch: ${{ env.AQT_PLATFORM }}
+        use-official: false
+        #email: ${{ secrets.QT_EMAIL }}
+        #pw: ${{ secrets.QT_PW }}
+
+    - name: Run qmake
+      shell: pwsh
+      run: |
+        Write-Host 'Running qmake ...'
+
+        # Generate MSBuild VC++ project
+        qmake -Wall -tp vc OpenSprite.pro
+
+        # Generate Makefile for Linux/UNIX
+        qmake -Wall OpenSprite.pro
+
+    - name: Build Windows binary
+      if: ${{ runner.os == 'Windows' }}
+      run: |
+        msbuild OpenSprite.vcxproj -property:Configuration=Release
+
+    - name: Build on macOS/Linux
+      if: ${{ runner.os != 'Windows' }}
+      run: |
+        make
+
+    - name: Provision Qt runtime environment - Windows
+      if: ${{ runner.os == 'Windows' }}
+      shell: pwsh
+      run: |
+        windeployqt --release --no-translations (Join-Path $pwd build\release)
+
+    - name: Provision Qt runtime environment - macOS
+      if: ${{ runner.os == 'macOS' }}
+      shell: pwsh
+      run: |
+        macdeployqt ./build/Release/OpenSprite.app
+
+    - name: Deploy to AppImage skeleton structure - Linux
+      if: ${{ runner.os == 'Linux' }}
+      shell: bash
+      run: |
+        mkdir -p ./AppDir/usr/bin
+
+        cp build/release/OpenSprite ./AppDir/usr/bin/
+
+        strip ./AppDir/usr/bin/OpenSprite
+
+    - name: Download AppImage tool for Linux and set permissions
+      if: ${{ runner.os == 'Linux' }}
+      shell: bash
+      run: |
+        RELATIVE_TOOL_URL=$(wget -q https://github.com/probonopd/go-appimage/releases/expanded_assets/continuous -O - | \
+          grep "appimagetool-.*-x86_64.AppImage" | head -n 1 | cut -d '"' -f 2)
+
+        wget -c https://github.com/${RELATIVE_TOOL_URL}
+        
+        # Make appimagetool executable
+        chmod +x appimagetool-*.AppImage
+
+    - name: Provision Qt runtime environment/AppImage - Linux
+      if: ${{ runner.os == 'Linux' }}
+      shell: bash
+      run: |
+        # Bundle EVERYTHING for maximum Linux compatibility
+        # including parts that come with the base system
+        ./appimagetool-*.AppImage --standalone deploy AppDir/usr/share/applications/*.desktop
+        
+        # Build AppImage - turn AppDir into AppImage
+        VERSION=$VERSION_NAME ./appimagetool-*.AppImage ./AppDir
+
+    - name: Remove quarantine attribute from .app - macOS
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        xattr -r -d com.apple.quarantine ./build/Release/OpenSprite.app
+   
+    - name: Create DMG from .app - macOS
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        hdiutil create \
+          -volname OpenSprite \
+          -srcfolder ./build/Release/OpenSprite.app \
+          -ov \
+          -format UDZO \
+          ${{ env.ARCHIVE_NAME }}.dmg
+
+    #region Build artifacts handling
+
+    - name: List artifacts
+      shell: pwsh
+      run: |
+        Get-ChildItem $pwd -Recurse
+
+    - name: ZIP executable artifacts - Windows
+      if: ${{ runner.os == 'Windows' }}
+      shell: pwsh
+      run: |
+        7z a "${Env:ARCHIVE_NAME}.zip" ./build/release/*
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.PRODUCT_NAME }}-${{ strategy.job-index }}
+        path: |
+          ${{ env.ARCHIVE_NAME }}.zip
+          ${{ env.ARCHIVE_NAME }}.dmg
+          ${{ env.PRODUCT_NAME }}-*-x86_64.AppImage
+
+    #endregion
+
+  publish:
+
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+
+    - name: Create dist directory
+      run: mkdir dist
+
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        pattern: ${{ env.PRODUCT_NAME }}-*
+        path: dist
+
+    - name: Display structure of downloaded files
+      run: ls -R
+      working-directory: dist
+  
+    - name: Publish on-demand release
+      if: ${{ ! startsWith(github.ref, 'refs/tags/v') }}
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: "ondemand"
+        prerelease: true
+        name: "Development Release ${{ needs.build.outputs.short-sha }}"
+        files: |
+          dist/${{ env.PRODUCT_NAME }}-*/*.zip
+          dist/${{ env.PRODUCT_NAME }}-*/*.dmg
+          dist/${{ env.PRODUCT_NAME }}-*/${{ env.PRODUCT_NAME }}-*-x86_64.AppImage
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish version release
+      if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ github.ref_name }}
+        prerelease: false
+        name: "${{ env.PRODUCT_NAME }} ${{ github.ref_name }}"
+        files: |
+          dist/${{ env.PRODUCT_NAME }}-*/*.zip
+          dist/${{ env.PRODUCT_NAME }}-*/*.dmg
+          dist/${{ env.PRODUCT_NAME }}-*/${{ env.PRODUCT_NAME }}-*-x86_64.AppImage
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
