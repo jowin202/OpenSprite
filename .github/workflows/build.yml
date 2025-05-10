@@ -111,7 +111,11 @@ jobs:
 
         Write-Output "BASE_NAME=${Env:PRODUCT_NAME}" >> "${Env:GITHUB_ENV}"
 
-        Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${osVersion}-${architecture}-${Env:VERSION_NAME}" >> "${Env:GITHUB_ENV}"
+        # Exclude OS version for now, looks a bit weird
+        # and macOS-13-x86_64 also runs on macOS 12.7.x
+        #Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${osVersion}-${architecture}-${Env:VERSION_NAME}" >> "${Env:GITHUB_ENV}"
+
+        Write-Output "ARCHIVE_NAME=${Env:PRODUCT_NAME}-${Env:RUNNER_OS}-${architecture}-${Env:VERSION_NAME}" >> "${Env:GITHUB_ENV}"
 
     - name: Set Windows environment variables
       if: ${{ runner.os == 'Windows' }}
