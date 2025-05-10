@@ -248,11 +248,9 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       shell: bash
       run: |
-        # Either bundle EVERYTHING
+        # Bundle EVERYTHING for maximum Linux compatibility
+        # including parts that come with the base system
         ./appimagetool-*.AppImage --standalone deploy AppDir/usr/share/applications/*.desktop
-        # or 
-        # bundle everything except what comes with the base system
-        #./appimagetool-*.AppImage deploy AppDir/usr/share/applications/*.desktop
         
         # Build AppImage - turn AppDir into AppImage
         VERSION=$VERSION_NAME ./appimagetool-*.AppImage ./AppDir
