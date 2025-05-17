@@ -297,13 +297,21 @@ void Sprite::mousePressEvent(QGraphicsSceneMouseEvent *ev)
     //update current
     this->update();
 
+
     if (ev->button() == Qt::LeftButton)
         this->left_pressed = true;
     else if (ev->button() == Qt::RightButton)
         this->right_pressed = true;
 
     opt->undoDB.append(opt->data);
-    this->change_tile(ev->pos());
+    if (opt->pen == PEN::DEFAULT)
+    {
+        this->change_tile(ev->pos());
+    }
+    else if (opt->pen == PEN::FLOOD)
+    {
+        this->flood_fill(ev->pos());
+    }
 }
 
 void Sprite::mouseMoveEvent(QGraphicsSceneMouseEvent *ev)

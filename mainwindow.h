@@ -107,6 +107,8 @@ private slots:
 
     void on_actionSelect_All_triggered();
 
+    void on_actionFlood_Fill_triggered();
+
 private:
     Ui::MainWindow *ui;
     AnimationDialog *animation_dialog = 0;

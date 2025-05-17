@@ -675,6 +675,8 @@
    <addaction name="actionCopy"/>
    <addaction name="actionPaste"/>
    <addaction name="separator"/>
+   <addaction name="actionFlood_Fill"/>
+   <addaction name="separator"/>
    <addaction name="actionSlide_Up"/>
    <addaction name="actionSlide_Down"/>
    <addaction name="actionSlide_Left"/>
@@ -974,6 +976,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionFlood_Fill">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/floodfill.svg</normaloff>:/icons/floodfill.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Flood Fill</string>
    </property>
   </action>
  </widget>

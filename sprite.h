@@ -14,12 +14,14 @@
 #include <QSettings>
 
 enum BUTTONS {TRANSPARENT, COLOR, MC1, MC2, OVERLAY_COLOR, OVERLAY_TRANSPARENT };
+enum PEN { DEFAULT, FLOOD };
 
 class SpriteView;
 class Sprite;
 struct options {
     int left_button = BUTTONS::COLOR;
     int right_button = BUTTONS::TRANSPARENT;
+    int pen = PEN::DEFAULT;
     QJsonObject data;
     int selection_from = 0;
     int selection_to = 0;
@@ -300,6 +302,148 @@ public:
                     }
                 }
             }
+        }
+    }
+
+
+    void flood_fill(QPointF pos)
+    {
+        bool expand_x = this->opt->data.value("sprites").toArray().at(id).toObject().value("exp_x").toBool();
+        bool expand_y = this->opt->data.value("sprites").toArray().at(id).toObject().value("exp_y").toBool();
+
+        if (this->opt->data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool())
+        {
+            //multi col
+            int w = 20 * (expand_y ? 0.5 : 1);
+            int h = 10 * (expand_x ? 0.5 : 1);
+
+            int x = pos.x()/w;
+            int y = pos.y()/h;
+
+
+            QList<QPoint> points;
+            bool from_col_1 = this->get_bit(2*x,y);
+            bool from_col_2 = this->get_bit(2*x+1,y);
+            bool to_col_1 = true;
+            bool to_col_2 = true;
+
+            if ((left_pressed && opt->left_button == TRANSPARENT) ||
+                (right_pressed && opt->right_button == TRANSPARENT))
+            {
+                to_col_1 = false;
+                to_col_2 = false;
+            }
+            else if ((left_pressed && opt->left_button == COLOR) ||
+                     (right_pressed && opt->right_button == COLOR))
+            {
+                to_col_1 = true;
+                to_col_2 = false;
+            }
+            else if ((left_pressed && opt->left_button == MC1) ||
+                     (right_pressed && opt->right_button == MC1))
+            {
+                to_col_1 = false;
+                to_col_2 = true;
+            }
+            else if ((left_pressed && opt->left_button == MC2) ||
+                     (right_pressed && opt->right_button == MC2))
+            {
+                to_col_1 = true;
+                to_col_2 = true;
+            }
+
+
+            if (from_col_1 == to_col_1 && from_col_2 == to_col_2) return; // nothing to do
+            points << QPoint(x,y);
+            this->set_bit(2*x,y,to_col_1);
+            this->set_bit(2*x+1,y,to_col_2);
+
+            do
+            {
+                x = points.first().x();
+                y = points.first().y();
+                points.removeFirst();
+
+                if (x > 0 && this->get_bit(2*x-2,y) == from_col_1 && this->get_bit(2*x-1,y) == from_col_2 && !points.contains(QPoint(x-1,y)))
+                {
+                    points << QPoint(x-1,y);
+                    this->set_bit(2*x-2,y,to_col_1);
+                    this->set_bit(2*x-1,y,to_col_2);
+                }
+                if (x < 11 && this->get_bit(2*x+2,y) == from_col_1 && this->get_bit(2*x+3,y) == from_col_2 && !points.contains(QPoint(x+1,y)))
+                {
+                    points << QPoint(x+1,y);
+                    this->set_bit(2*x+2,y,to_col_1);
+                    this->set_bit(2*x+3,y,to_col_2);
+                }
+                if (y > 0 && this->get_bit(2*x,y-1) == from_col_1 && this->get_bit(2*x+1,y-1) == from_col_2 && !points.contains(QPoint(x,y-1)))
+                {
+                    points << QPoint(x,y-1);
+                    this->set_bit(2*x,y-1,to_col_1);
+                    this->set_bit(2*x+1,y-1,to_col_2);
+                }
+
+                if (y < 20 && this->get_bit(2*x,y+1) == from_col_1 && this->get_bit(2*x+1,y+1) == from_col_2 && !points.contains(QPoint(x,y+1)))
+                {
+                    points << QPoint(x,y+1);
+                    this->set_bit(2*x,y+1,to_col_1);
+                    this->set_bit(2*x+1,y+1,to_col_2);
+                }
+            }
+            while(points.count() > 0);
+        }
+        else
+        {
+            //single col
+            int w = 10 * (expand_y ? 0.5 : 1);
+            int h = 10 * (expand_x ? 0.5 : 1);
+
+            int x = pos.x()/w;
+            int y = pos.y()/h;
+
+            QList<QPoint> points;
+            bool from_col = this->get_bit(x,y);
+            bool to_col = true;
+            if ((left_pressed && opt->left_button == TRANSPARENT) ||
+                (right_pressed && opt->right_button == TRANSPARENT))
+            {
+                to_col = false;
+            }
+            //else true
+
+
+            if (from_col == to_col) return; // nothing to do
+            points << QPoint(x,y);
+            this->set_bit(x,y,to_col);
+
+            do
+            {
+                x = points.first().x();
+                y = points.first().y();
+                points.removeFirst();
+
+                if (x > 0 && this->get_bit(x-1,y) == from_col && !points.contains(QPoint(x-1,y)))
+                {
+                    points << QPoint(x-1,y);
+                    this->set_bit(x-1,y,to_col);
+                }
+                if (x < 23 && this->get_bit(x+1,y) == from_col && !points.contains(QPoint(x+1,y)))
+                {
+                    points << QPoint(x+1,y);
+                    this->set_bit(x+1,y,to_col);
+                }
+                if (y > 0 && this->get_bit(x,y-1) == from_col && !points.contains(QPoint(x,y-1)))
+                {
+                    points << QPoint(x,y-1);
+                    this->set_bit(x,y-1,to_col);
+                }
+                if (y < 20 && this->get_bit(x,y+1) == from_col && !points.contains(QPoint(x,y+1)))
+                {
+                    points << QPoint(x,y+1);
+                    this->set_bit(x,y+1,to_col);
+                }
+            }
+            while(points.count() > 0);
         }
     }
 

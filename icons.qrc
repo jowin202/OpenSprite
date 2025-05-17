@@ -22,5 +22,6 @@
         <file>icons/opensprite96x96.ico</file>
         <file>icons/plus.svg</file>
         <file>icons/save_exp.svg</file>
+        <file>icons/floodfill.svg</file>
     </qresource>
 </RCC>

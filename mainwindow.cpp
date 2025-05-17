@@ -875,3 +875,16 @@ void MainWindow::on_actionSelect_All_triggered()
     this->ui->graphicsView->redraw();
 }
 
+
+void MainWindow::on_actionFlood_Fill_triggered()
+{
+    if (this->ui->actionFlood_Fill->isChecked())
+    {
+        this->opt.pen = PEN::FLOOD;
+    }
+    else
+    {
+        this->opt.pen = PEN::DEFAULT;
+    }
+}
+
