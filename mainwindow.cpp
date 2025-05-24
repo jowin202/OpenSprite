@@ -30,9 +30,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->addAction(&num3);
     this->addAction(&num4);
     this->addAction(&num5);
-
-    this->addAction(this->ui->actionZoomIn);
-    this->addAction(this->ui->actionZoomOut);
     connect(&num0, &QAction::triggered, [=]() {
         this->ui->radio_transparent_left->setChecked(true);
     });
@@ -717,7 +714,7 @@ void MainWindow::on_actionAbout_triggered()
     QMessageBox msgBox(this);
     msgBox.setTextFormat(Qt::RichText);
     msgBox.setText(
-        "Version: 1.50 (05 / 2025)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a "
+        "Version: 1.70 (05 / 2025)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a "
         "href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
@@ -894,12 +891,12 @@ void MainWindow::on_actionFlood_Fill_triggered()
 
 void MainWindow::on_actionZoomIn_triggered()
 {
-    this->ui->slider_scale->setValue(this->ui->slider_scale->value()+1);
+    this->ui->slider_scale->setValue(this->ui->slider_scale->value()+5);
 }
 
 
 void MainWindow::on_actionZoomOut_triggered()
 {
-    this->ui->slider_scale->setValue(this->ui->slider_scale->value()-1);
+    this->ui->slider_scale->setValue(this->ui->slider_scale->value()-5);
 }
 

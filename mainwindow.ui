@@ -597,6 +597,9 @@
     <addaction name="separator"/>
     <addaction name="actionAnimations_Editor"/>
     <addaction name="actionPreferences"/>
+    <addaction name="separator"/>
+    <addaction name="actionZoomIn"/>
+    <addaction name="actionZoomOut"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -992,7 +995,7 @@
   </action>
   <action name="actionZoomIn">
    <property name="text">
-    <string>ZoomIn</string>
+    <string>Zoom In</string>
    </property>
    <property name="shortcut">
     <string>Ctrl++</string>
@@ -1000,13 +1003,13 @@
   </action>
   <action name="actionZoomOut">
    <property name="text">
-    <string>ZoomOut</string>
+    <string>Zoom Out</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::MenuRole::TextHeuristicRole</enum>
    </property>
   </action>
  </widget>
