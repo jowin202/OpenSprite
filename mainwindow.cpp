@@ -30,6 +30,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->addAction(&num3);
     this->addAction(&num4);
     this->addAction(&num5);
+
+    this->addAction(this->ui->actionZoomIn);
+    this->addAction(this->ui->actionZoomOut);
     connect(&num0, &QAction::triggered, [=]() {
         this->ui->radio_transparent_left->setChecked(true);
     });
@@ -886,5 +889,17 @@ void MainWindow::on_actionFlood_Fill_triggered()
     {
         this->opt.pen = PEN::DEFAULT;
     }
+}
+
+
+void MainWindow::on_actionZoomIn_triggered()
+{
+    this->ui->slider_scale->setValue(this->ui->slider_scale->value()+1);
+}
+
+
+void MainWindow::on_actionZoomOut_triggered()
+{
+    this->ui->slider_scale->setValue(this->ui->slider_scale->value()-1);
 }
 

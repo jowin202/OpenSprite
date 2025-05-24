@@ -78,15 +78,15 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                 {
                     if (opt->sprite_list.at(id+1)->get_bit(2*x,y)== 1 && opt->sprite_list.at(id+1)->get_bit(2*x+1,y) == 0)
                     {
-                        painter->fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
+                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
                     }
                     else if (opt->sprite_list.at(id+1)->get_bit(2*x,y) == 0 && opt->sprite_list.at(id+1)->get_bit(2*x+1,y) == 1)
                     {
-                        painter->fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc1").toInt()));
+                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("mc1").toInt()));
                     }
                     else if (opt->sprite_list.at(id+1)->get_bit(2*x,y) == 1 && opt->sprite_list.at(id+1)->get_bit(2*x+1,y) == 1)
                     {
-                        painter->fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc2").toInt()));
+                        painter->fillRect(x*w,y*h,w,h,this->opt->col_list.at(this->opt->data.value("mc2").toInt()));
                     }
 
                 }
@@ -102,7 +102,7 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                 {
                     if (opt->sprite_list.at(id+1)->get_bit(x,y) == 1)
                     {
-                        painter->fillRect(w*x,h*y,w+1,h+1,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
+                        painter->fillRect(w*x,h*y,w,h,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(id+1).toObject().value("sprite_color").toInt()));
                     }
                 }
             }

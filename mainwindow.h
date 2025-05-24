@@ -109,6 +109,10 @@ private slots:
 
     void on_actionFlood_Fill_triggered();
 
+    void on_actionZoomIn_triggered();
+
+    void on_actionZoomOut_triggered();
+
 private:
     Ui::MainWindow *ui;
     AnimationDialog *animation_dialog = 0;
