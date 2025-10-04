@@ -40,6 +40,7 @@ private slots:
 
     QImage draw_sprite(int sprite_id);
     int get_sprite_bit(int sprite_id, int x, int y);
+    int get_overlay_bit(int sprite_id, int x, int y);
 
     void on_button_cancel_clicked();
     void on_button_ok_clicked();
@@ -50,9 +51,11 @@ signals:
 
 private:
     QList<QJsonObject> result_list;
+    QList<QJsonObject> overlay_list;
     Ui::RotationDialog *ui;
     options *opt;
     QJsonObject base_sprite;
+    QJsonObject overlay_sprite;
     QSettings settings;
 };
 

@@ -16,6 +16,11 @@ RotationDialog::RotationDialog(options *opt, QWidget *parent) :
     this->opt = opt;
 
     this->base_sprite = opt->data.value("sprites").toArray().at(opt->selection_from).toObject();
+    if (this->base_sprite.value("overlay_next").toBool() && opt->data.value("sprites").toArray().count() > opt->selection_from+1)
+    {
+        this->overlay_sprite = opt->data.value("sprites").toArray().at(opt->selection_from+1).toObject();
+    }
+
 
     connect(this->ui->spin_angle, SIGNAL(valueChanged(int)), this, SLOT(update_rotation()));
     connect(this->ui->spin_steps, SIGNAL(valueChanged(int)), this, SLOT(update_rotation()));
@@ -31,12 +36,15 @@ RotationDialog::~RotationDialog()
 void RotationDialog::update_rotation()
 {
     this->result_list.clear();
+    this->overlay_list.clear();
     int angle = this->ui->spin_angle->value();
     int steps = this->ui->spin_steps->value();
 
     for (int i = 0; i < steps; i++)
     {
         this->result_list.append(this->rotate_by(this->base_sprite,i*angle));
+        if (!this->overlay_sprite.isEmpty())
+            this->overlay_list.append(this->rotate_by(this->overlay_sprite,i*angle));
     }
 
 
@@ -56,6 +64,17 @@ void RotationDialog::update_rotation()
 
 QJsonObject RotationDialog::rotate_by(QJsonObject sprite, int angle)
 {
+    /*
+    qDebug() << sprite;
+    qDebug() << sprite.value("mc_mode").toBool();
+    if (sprite.value("mc_mode").toBool())
+    {
+        // this is mc
+        //TODO
+    }
+    */
+
+
     int rotated[WIDTH + 2 * BORDER_SIZE][HEIGHT + 2 * BORDER_SIZE];
     float temp1[WIDTH + 2 * BORDER_SIZE][HEIGHT + 2 * BORDER_SIZE];
     float temp2[WIDTH + 2 * BORDER_SIZE][HEIGHT + 2 * BORDER_SIZE];
@@ -173,6 +192,13 @@ int RotationDialog::get_sprite_bit(int sprite_id, int x, int y)
     return this->result_list.at(sprite_id).value("sprite_data").toArray().at(y).toArray().at(x).toInt() > 0;
 }
 
+int RotationDialog::get_overlay_bit(int sprite_id, int x, int y)
+{
+    if (x < 0 || y < 0 || x >= 24 || y >= 21) return false;
+    if (this->overlay_list.count() <= sprite_id) return false;
+    return this->overlay_list.at(sprite_id).value("sprite_data").toArray().at(y).toArray().at(x).toInt() > 0;
+}
+
 
 QImage RotationDialog::draw_sprite(int sprite_id)
 {
@@ -232,26 +258,26 @@ QImage RotationDialog::draw_sprite(int sprite_id)
     }
 
 
-    /*
-    if (this->result_list.at(sprite_id).value("overlay_next").toBool() && opt->sprite_list.length() > sprite_id+1)
+    if (this->result_list.at(sprite_id).value("overlay_next").toBool() && !overlay_sprite.isEmpty())
     {
-        if (this->result_list.at(sprite_id+1).value("mc_mode").toBool())
+        if (this->overlay_sprite.value("mc_mode").toBool())
         {
+            qDebug() << "this happens";
             int w = 20 * (expand_y ? 0.5 : 1);
             int h = 10 * (expand_x ? 0.5 : 1);
             for (int y = 0; y < 21; y++)
             {
                 for (int x = 0; x < 12; x++)
                 {
-                    if (opt->sprite_list.at(sprite_id+1)->get_bit(2*x,y)== 1 && opt->sprite_list.at(sprite_id+1)->get_bit(2*x+1,y) == 0)
+                    if (this->get_overlay_bit(sprite_id,2*x,y)== 1 && this->get_overlay_bit(sprite_id,2*x+1,y) == 0)
                     {
-                        painter.fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->result_list.at(sprite_id+1).value("sprite_color").toInt()));
+                        painter.fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->overlay_list.at(sprite_id).value("sprite_color").toInt()));
                     }
-                    else if (opt->sprite_list.at(sprite_id+1)->get_bit(2*x,y) == 0 && opt->sprite_list.at(sprite_id+1)->get_bit(2*x+1,y) == 1)
+                    else if (this->get_overlay_bit(sprite_id,2*x,y) == 0 && this->get_overlay_bit(sprite_id,2*x+1,y) == 1)
                     {
                         painter.fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc1").toInt()));
                     }
-                    else if (opt->sprite_list.at(sprite_id+1)->get_bit(2*x,y) == 1 && opt->sprite_list.at(sprite_id+1)->get_bit(2*x+1,y) == 1)
+                    else if (this->get_overlay_bit(sprite_id,2*x,y) == 1 && this->get_overlay_bit(sprite_id,2*x+1,y) == 1)
                     {
                         painter.fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc2").toInt()));
                     }
@@ -267,15 +293,14 @@ QImage RotationDialog::draw_sprite(int sprite_id)
             {
                 for (int x = 0; x < 24; x++)
                 {
-                    if (opt->sprite_list.at(sprite_id+1)->get_bit(x,y) == 1)
+                    if (this->get_overlay_bit(sprite_id,x,y) == 1)
                     {
-                        painter.fillRect(w*x,h*y,w+1,h+1,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(sprite_id+1).toObject().value("sprite_color").toInt()));
+                        painter.fillRect(w*x,h*y,w+1,h+1,this->opt->col_list.at(this->overlay_list.at(sprite_id).value("sprite_color").toInt()));
                     }
                 }
             }
         }
     }
-    */
 
 
 
@@ -315,10 +340,22 @@ void RotationDialog::on_button_ok_clicked()
 {
     opt->undoDB.append(opt->data);
 
+
     QJsonArray sprites = opt->data.value("sprites").toArray();
-    for (int i = 1; i < result_list.count(); i++)
+    if (this->base_sprite.value("overlay_next").toBool())
     {
-        sprites.insert(opt->selection_from+i, result_list.at(i));
+        for (int i = 1; i < result_list.count(); i++)
+        {
+            sprites.insert(opt->selection_from+2*i, result_list.at(i));
+            sprites.insert(opt->selection_from+2*i+1, overlay_list.at(i));
+        }
+    }
+    else
+    {
+        for (int i = 1; i < result_list.count(); i++)
+        {
+            sprites.insert(opt->selection_from+i, result_list.at(i));
+        }
     }
 
     opt->data.insert("sprites", sprites);
