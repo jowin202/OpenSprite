@@ -1,4 +1,4 @@
-#ifndef ROTATIONDIALOG_H
+                                                                                     #ifndef ROTATIONDIALOG_H
 #define ROTATIONDIALOG_H
 
 #include <QWidget>
@@ -36,7 +36,8 @@ public:
 private slots:
     void update_rotation();
     QJsonObject rotate_by(QJsonObject sprite, int angle);
-
+    QJsonObject rotate_hires_sprite(QJsonObject sprite, int angle);
+    QJsonObject rotate_multicolor_sprite(QJsonObject sprite, int angle);
 
     QImage draw_sprite(int sprite_id);
     int get_sprite_bit(int sprite_id, int x, int y);
@@ -44,7 +45,6 @@ private slots:
 
     void on_button_cancel_clicked();
     void on_button_ok_clicked();
-
 
 signals:
     void finished();
