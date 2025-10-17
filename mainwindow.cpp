@@ -8,6 +8,8 @@
 #include "settingsdialog.h"
 #include "rotations/rotationdialog.h"
 
+#include "scale/scalingdialog.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -714,7 +716,7 @@ void MainWindow::on_actionAbout_triggered()
     QMessageBox msgBox(this);
     msgBox.setTextFormat(Qt::RichText);
     msgBox.setText(
-        "Version: 1.80 (10 / 2025)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a "
+        "Version: 1.90 (10 / 2025)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a "
         "href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
@@ -898,5 +900,14 @@ void MainWindow::on_actionZoomIn_triggered()
 void MainWindow::on_actionZoomOut_triggered()
 {
     this->ui->slider_scale->setValue(this->ui->slider_scale->value()-5);
+}
+
+
+void MainWindow::on_actionScale_Dialog_triggered()
+{
+    ScalingDialog *dialog = new ScalingDialog(&this->opt);
+    dialog->show();
+    connect(dialog, &ScalingDialog::finished, [=]() { this->ui->graphicsView->redraw(); });
+
 }
 

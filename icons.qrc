@@ -23,5 +23,6 @@
         <file>icons/plus.svg</file>
         <file>icons/save_exp.svg</file>
         <file>icons/floodfill.svg</file>
+        <file>icons/scale.svg</file>
     </qresource>
 </RCC>

@@ -691,6 +691,7 @@
    <addaction name="actionReflect_Left_To_Right"/>
    <addaction name="separator"/>
    <addaction name="actionRotate"/>
+   <addaction name="actionScale_Dialog"/>
    <addaction name="separator"/>
    <addaction name="actionSelection_to_Animation"/>
   </widget>
@@ -1010,6 +1011,18 @@
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::TextHeuristicRole</enum>
+   </property>
+  </action>
+  <action name="actionScale_Dialog">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/scale.svg</normaloff>:/icons/scale.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Scale Dialog</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
  </widget>

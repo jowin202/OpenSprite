@@ -113,6 +113,8 @@ private slots:
 
     void on_actionZoomOut_triggered();
 
+    void on_actionScale_Dialog_triggered();
+
 private:
     Ui::MainWindow *ui;
     AnimationDialog *animation_dialog = 0;
