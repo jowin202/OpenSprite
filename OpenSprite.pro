@@ -24,6 +24,7 @@ SOURCES += \
     mainwindow.cpp \
     palette.cpp \
     rotations/rotationdialog.cpp \
+    scale/scalingdialog.cpp \
     settingsdialog.cpp \
     sprite.cpp \
     spriteview.cpp
@@ -37,6 +38,7 @@ HEADERS += \
     mainwindow.h \
     palette.h \
     rotations/rotationdialog.h \
+    scale/scalingdialog.h \
     settingsdialog.h \
     sprite.h \
     spriteview.h
@@ -47,6 +49,7 @@ FORMS += \
     exportdialog.ui \
     mainwindow.ui \
     rotations/rotationdialog.ui \
+    scale/scalingdialog.ui \
     settingsdialog.ui
 
 
