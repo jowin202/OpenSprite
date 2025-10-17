@@ -1,15 +1,12 @@
 # OpenSprite
 
-[![Windows C++ Qt Build](https://github.com/jowin202/OpenSprite/actions/workflows/windows-build.yml/badge.svg)](https://github.com/jowin202/OpenSprite/actions/workflows/windows-build.yml)
-
-[![Mac OS C++ Qt Build](https://github.com/jowin202/OpenSprite/actions/workflows/mac-build.yml/badge.svg)](https://github.com/jowin202/OpenSprite/actions/workflows/mac-build.yml)
-
 An open source sprite editor to generate sprites for the Commodore C64!
 
 This GPL3 project uses the open source version of the [Qt Framework](https://download.qt.io).
 
+[![Windows C++ Qt Build](https://github.com/jowin202/OpenSprite/actions/workflows/windows-build.yml/badge.svg)](https://github.com/jowin202/OpenSprite/actions/workflows/windows-build.yml)
 
-
+[![Mac OS C++ Qt Build](https://github.com/jowin202/OpenSprite/actions/workflows/mac-build.yml/badge.svg)](https://github.com/jowin202/OpenSprite/actions/workflows/mac-build.yml)
 
 ### 🧑‍💻 macOS: First-time Launch Instructions
 
@@ -28,3 +25,12 @@ To fix this, follow these steps:
 ```bash
 xattr -d com.apple.quarantine /path/to/OpenSprite.app
 ```
+
+### Linux C++ Qt Build:
+
+```bash
+cd /path/to/OpenSprite
+qmake OpenSprite.pro
+make
+```
+The binary will be created in the build/release subdirectory.
