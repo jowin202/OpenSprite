@@ -292,12 +292,13 @@ MainWindow::MainWindow(QWidget *parent)
             }
             opt.data.insert("sprites", sprites_array);
 
-            this->ui->combo_overlay_color->setCurrentIndex(opt.data.value("sprites")
-                                                               .toArray()
-                                                               .at(i + 1)
-                                                               .toObject()
-                                                               .value("sprite_color")
-                                                               .toInt());
+            if (i + 1 < opt.data.value("sprites").toArray().count())
+                this->ui->combo_overlay_color->setCurrentIndex(opt.data.value("sprites")
+                                                                   .toArray()
+                                                                   .at(i + 1)
+                                                                   .toObject()
+                                                                   .value("sprite_color")
+                                                                   .toInt());
         }
 
         this->ui->graphicsView->scene()->update();
