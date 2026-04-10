@@ -23,6 +23,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     palette.cpp \
+    quickeditor.cpp \
     rotations/rotationdialog.cpp \
     scale/scalingdialog.cpp \
     settingsdialog.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     fileio.h \
     mainwindow.h \
     palette.h \
+    quickeditor.h \
     rotations/rotationdialog.h \
     scale/scalingdialog.h \
     settingsdialog.h \

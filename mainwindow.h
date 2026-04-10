@@ -17,6 +17,7 @@
 #include <QPushButton>
 
 #include "sprite.h"
+#include "quickeditor.h"
 
 class AnimationDialog;
 
@@ -115,9 +116,13 @@ private slots:
 
     void on_actionScale_Dialog_triggered();
 
+    void on_actionQuickEditor_triggered();
+
 private:
     Ui::MainWindow *ui;
     AnimationDialog *animation_dialog = 0;
+    QuickEditorWidget *quickEditor = nullptr;
+    QAction *actionQuickEditor = nullptr;
 
     QButtonGroup leftradio;
     QButtonGroup rightradio;

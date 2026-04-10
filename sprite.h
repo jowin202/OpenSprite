@@ -91,6 +91,10 @@ public:
     bool get_bit(int x, int y);
     void set_bit(int x, int y, bool value);
 
+    // Used by QuickEditorWidget to simulate mouse button state
+    void set_left_pressed(bool v)  { left_pressed  = v; }
+    void set_right_pressed(bool v) { right_pressed = v; }
+
     void slide_up(){
         bool tmp[24];
 

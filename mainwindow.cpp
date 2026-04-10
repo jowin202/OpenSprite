@@ -340,6 +340,62 @@ MainWindow::MainWindow(QWidget *parent)
         this->opt.show_numbers = val;
         this->ui->graphicsView->scene()->update();
     });
+
+    // ── Quick Editor ──────────────────────────────────────────────────────────
+    quickEditor = new QuickEditorWidget(this->ui->groupBox);
+    quickEditor->set_opt(&opt);
+    quickEditor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    // Shift all existing sidebar items down by one row to make room at row 0
+    QGridLayout *sideLayout = qobject_cast<QGridLayout*>(this->ui->groupBox->layout());
+    for (int i = sideLayout->count() - 1; i >= 0; i--) {
+        int r, c, rs, cs;
+        sideLayout->getItemPosition(i, &r, &c, &rs, &cs);
+        QLayoutItem *item = sideLayout->takeAt(i);
+        sideLayout->addItem(item, r + 1, c, rs, cs);
+    }
+    sideLayout->addWidget(quickEditor, 0, 0, 1, 3);
+
+    // Create View > Quick Editor menu action entirely in code —
+    // no dependency on mainwindow.ui generating this action.
+    // Insert View menu before Help to get order: File Edit View Help
+    QAction *helpMenuAction = nullptr;
+    for (QAction *a : this->menuBar()->actions())
+        if (a->text() == tr("Help")) { helpMenuAction = a; break; }
+    QMenu *viewMenu = new QMenu(tr("View"), this);
+    this->menuBar()->insertMenu(helpMenuAction, viewMenu);
+    actionQuickEditor = new QAction(tr("Quick Editor"), this);
+    actionQuickEditor->setCheckable(true);
+    viewMenu->addAction(actionQuickEditor);
+    connect(actionQuickEditor, &QAction::triggered,
+            this, &MainWindow::on_actionQuickEditor_triggered);
+
+    // Restore saved visibility state (default: off)
+    QSettings qeSettings;
+    bool qeEnabled = qeSettings.value("quickeditor_visible", false).toBool();
+    actionQuickEditor->setChecked(qeEnabled);
+    quickEditor->setVisible(qeEnabled);
+    this->ui->groupBox->setTitle(qeEnabled ? tr("Quick Editor and Options") : tr("Options"));
+
+    // Refresh Quick Editor when active sprite changes
+    connect(this->ui->graphicsView, &SpriteView::current_sprite_changed, this, [=](int) {
+        if (quickEditor->isVisible()) quickEditor->update();
+    });
+
+    // Sync Quick Editor whenever the scene updates (catches all edits + redraws)
+    connect(this->ui->graphicsView->scene(), &QGraphicsScene::changed, this, [=]() {
+        if (quickEditor->isVisible()) quickEditor->update();
+    });
+
+    // After a Quick Editor edit, sync the main scene
+    connect(quickEditor, &QuickEditorWidget::spriteEdited, this, [=]() {
+        this->ui->graphicsView->scene()->update();
+        if (!opt.sprite_list.isEmpty()) {
+            int id = opt.selection_from;
+            if (id >= 0 && id < opt.sprite_list.size())
+                opt.sprite_list.at(id)->update();
+        }
+    });
 }
 
 MainWindow::~MainWindow()
@@ -717,7 +773,7 @@ void MainWindow::on_actionAbout_triggered()
     QMessageBox msgBox(this);
     msgBox.setTextFormat(Qt::RichText);
     msgBox.setText(
-        "Version: 1.90 (10 / 2025)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a "
+        "Version: 1.95 (04 / 2026)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a "
         "href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
@@ -912,3 +968,12 @@ void MainWindow::on_actionScale_Dialog_triggered()
 
 }
 
+
+void MainWindow::on_actionQuickEditor_triggered()
+{
+    QSettings settings;
+    bool nowVisible = actionQuickEditor->isChecked();
+    quickEditor->setVisible(nowVisible);
+    this->ui->groupBox->setTitle(nowVisible ? tr("Quick Editor and Options") : tr("Options"));
+    settings.setValue("quickeditor_visible", nowVisible);
+}
