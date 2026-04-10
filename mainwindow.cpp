@@ -356,10 +356,19 @@ MainWindow::MainWindow(QWidget *parent)
     }
     sideLayout->addWidget(quickEditor, 0, 0, 1, 3);
 
+    // Create View > Quick Editor menu action entirely in code —
+    // no dependency on mainwindow.ui generating this action.
+    QMenu *viewMenu = this->menuBar()->addMenu(tr("View"));
+    actionQuickEditor = new QAction(tr("Quick Editor"), this);
+    actionQuickEditor->setCheckable(true);
+    viewMenu->addAction(actionQuickEditor);
+    connect(actionQuickEditor, &QAction::triggered,
+            this, &MainWindow::on_actionQuickEditor_triggered);
+
     // Restore saved visibility state (default: off)
     QSettings qeSettings;
     bool qeEnabled = qeSettings.value("quickeditor_visible", false).toBool();
-    this->ui->actionQuickEditor->setChecked(qeEnabled);
+    actionQuickEditor->setChecked(qeEnabled);
     quickEditor->setVisible(qeEnabled);
 
     // Refresh Quick Editor when active sprite changes
@@ -957,7 +966,7 @@ void MainWindow::on_actionScale_Dialog_triggered()
 void MainWindow::on_actionQuickEditor_triggered()
 {
     QSettings settings;
-    bool nowVisible = this->ui->actionQuickEditor->isChecked();
+    bool nowVisible = actionQuickEditor->isChecked();
     quickEditor->setVisible(nowVisible);
     settings.setValue("quickeditor_visible", nowVisible);
 }

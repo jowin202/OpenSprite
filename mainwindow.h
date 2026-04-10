@@ -122,6 +122,7 @@ private:
     Ui::MainWindow *ui;
     AnimationDialog *animation_dialog = 0;
     QuickEditorWidget *quickEditor = nullptr;
+    QAction *actionQuickEditor = nullptr;
 
     QButtonGroup leftradio;
     QButtonGroup rightradio;
