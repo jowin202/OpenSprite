@@ -356,6 +356,34 @@ xattr -d com.apple.quarantine /path/to/OpenSprite.app
 
 ---
 
+## Linux Build Instructions
+
+On Linux, install Qt 5.15 or Qt 6.x using your package manager.
+
+For example, on Ubuntu/Debian:
+
+```bash
+sudo apt update
+sudo apt install qt5-default qtcreator
+```
+
+Or for Qt 6:
+
+```bash
+sudo apt install qt6-base-dev qtcreator
+```
+
+Then build as follows:
+
+```bash
+git clone https://github.com/jowin202/OpenSprite.git
+cd OpenSprite
+qmake OpenSprite.pro
+make
+```
+
+---
+
 ## License
 
 OpenSprite is released under the [GNU General Public License v3](LICENSE).
