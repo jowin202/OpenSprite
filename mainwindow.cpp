@@ -773,7 +773,7 @@ void MainWindow::on_actionAbout_triggered()
     QMessageBox msgBox(this);
     msgBox.setTextFormat(Qt::RichText);
     msgBox.setText(
-        "Version: 1.95 (10 / 2025)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a "
+        "Version: 1.95 (04 / 2026)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a "
         "href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
