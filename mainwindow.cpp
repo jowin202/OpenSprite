@@ -358,7 +358,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Create View > Quick Editor menu action entirely in code —
     // no dependency on mainwindow.ui generating this action.
-    QMenu *viewMenu = this->menuBar()->addMenu(tr("View"));
+    // Insert View menu before Help to get order: File Edit View Help
+    QAction *helpMenuAction = nullptr;
+    for (QAction *a : this->menuBar()->actions())
+        if (a->text() == tr("Help")) { helpMenuAction = a; break; }
+    QMenu *viewMenu = new QMenu(tr("View"), this);
+    this->menuBar()->insertMenu(helpMenuAction, viewMenu);
     actionQuickEditor = new QAction(tr("Quick Editor"), this);
     actionQuickEditor->setCheckable(true);
     viewMenu->addAction(actionQuickEditor);
@@ -370,6 +375,7 @@ MainWindow::MainWindow(QWidget *parent)
     bool qeEnabled = qeSettings.value("quickeditor_visible", false).toBool();
     actionQuickEditor->setChecked(qeEnabled);
     quickEditor->setVisible(qeEnabled);
+    this->ui->groupBox->setTitle(qeEnabled ? tr("Quick Editor and Options") : tr("Options"));
 
     // Refresh Quick Editor when active sprite changes
     connect(this->ui->graphicsView, &SpriteView::current_sprite_changed, this, [=](int) {
@@ -767,7 +773,7 @@ void MainWindow::on_actionAbout_triggered()
     QMessageBox msgBox(this);
     msgBox.setTextFormat(Qt::RichText);
     msgBox.setText(
-        "Version: 1.90 (10 / 2025)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a "
+        "Version: 1.95 (10 / 2025)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a "
         "href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
@@ -968,5 +974,6 @@ void MainWindow::on_actionQuickEditor_triggered()
     QSettings settings;
     bool nowVisible = actionQuickEditor->isChecked();
     quickEditor->setVisible(nowVisible);
+    this->ui->groupBox->setTitle(nowVisible ? tr("Quick Editor and Options") : tr("Options"));
     settings.setValue("quickeditor_visible", nowVisible);
 }
