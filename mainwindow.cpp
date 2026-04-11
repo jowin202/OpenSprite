@@ -683,6 +683,9 @@ void MainWindow::on_slider_scale_valueChanged(int value)
     QTransform matrix;
     matrix.scale(scale, scale);
     this->ui->graphicsView->setTransform(matrix);
+
+    if (QSettings().value("sprites_per_row_auto", false).toBool())
+        this->ui->graphicsView->redraw();
 }
 
 void MainWindow::on_actionFlip_Top_to_Bottom_triggered()

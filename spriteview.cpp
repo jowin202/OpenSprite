@@ -23,7 +23,7 @@ void SpriteView::redraw()
 
     if (settings.value("sprites_per_row_auto", false).toBool()) {
         int sprite_width = 10 * 24;
-        int available = this->viewport()->width() - sprite_spacing_x;
+        int available = (int)(this->viewport()->width() / this->transform().m11()) - sprite_spacing_x;
         sprites_per_row = qMax(1, available / (sprite_width + sprite_spacing_x));
     } else {
         sprites_per_row = settings.value("sprites_per_row").toInt();
