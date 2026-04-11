@@ -19,7 +19,15 @@ void SpriteView::redraw()
 
     int sprite_spacing_x = settings.value("sprite_spacing_x").toInt();
     int sprite_spacing_y = settings.value("sprite_spacing_y").toInt();
-    int sprites_per_row = settings.value("sprites_per_row").toInt();
+    int sprites_per_row;
+
+    if (settings.value("sprites_per_row_auto", false).toBool()) {
+        int sprite_width = 10 * 24;
+        int available = this->viewport()->width() - sprite_spacing_x;
+        sprites_per_row = qMax(1, available / (sprite_width + sprite_spacing_x));
+    } else {
+        sprites_per_row = settings.value("sprites_per_row").toInt();
+    }
 
 
     int max_x = sprite_spacing_x+(10*24+sprite_spacing_x)*(sprites_per_row);
@@ -41,6 +49,13 @@ void SpriteView::redraw()
     this->scene()->addItem(add_button);
 
     this->update();
+}
+
+void SpriteView::resizeEvent(QResizeEvent *event)
+{
+    QGraphicsView::resizeEvent(event);
+    if (settings.value("sprites_per_row_auto", false).toBool() && opt)
+        redraw();
 }
 
 void SpriteView::wheelEvent(QWheelEvent *event)

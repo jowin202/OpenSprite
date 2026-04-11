@@ -38,6 +38,8 @@ private slots:
 
     void on_button_defaults_clicked();
 
+    void on_check_sprites_per_row_auto_toggled(bool checked);
+
 signals:
     void finished();
 

@@ -15,6 +15,10 @@ SettingsDialog::SettingsDialog(options *opt, QWidget *parent)
     this->ui->spin_vertical_spacing->setValue(settings.value("sprite_spacing_y").toInt());
     this->ui->spin_sprites_per_row->setValue(settings.value("sprites_per_row").toInt());
 
+    bool auto_mode = settings.value("sprites_per_row_auto", false).toBool();
+    this->ui->check_sprites_per_row_auto->setChecked(auto_mode);
+    this->ui->spin_sprites_per_row->setEnabled(!auto_mode);
+
     this->ui->widget_selection_color->setStyleSheet(QString("background-color: #%1").arg(QString::number(settings.value("selection_color").toInt(),16),6,QChar('0')));
     this->ui->widget_spacing_color->setStyleSheet(QString("background-color: #%1").arg(QString::number(settings.value("bgcolor").toInt(),16),6,QChar('0')));
 }
@@ -35,6 +39,7 @@ void SettingsDialog::on_button_ok_clicked()
     settings.setValue("sprite_spacing_x", this->ui->spin_horizontal_spacing->value());
     settings.setValue("sprite_spacing_y", this->ui->spin_vertical_spacing->value());
     settings.setValue("sprites_per_row", this->ui->spin_sprites_per_row->value());
+    settings.setValue("sprites_per_row_auto", this->ui->check_sprites_per_row_auto->isChecked());
 
     if (select_color.isValid())
         settings.setValue("selection_color", select_color.red() << 16 | select_color.green() << 8 | select_color.blue());
@@ -62,6 +67,11 @@ void SettingsDialog::on_button_selection_color_clicked()
 }
 
 
+void SettingsDialog::on_check_sprites_per_row_auto_toggled(bool checked)
+{
+    this->ui->spin_sprites_per_row->setEnabled(!checked);
+}
+
 void SettingsDialog::on_button_defaults_clicked()
 {
     settings.setValue("bgcolor", 0xd9d6c8);
@@ -69,6 +79,7 @@ void SettingsDialog::on_button_defaults_clicked()
     settings.setValue("sprite_spacing_x", 30);
     settings.setValue("sprite_spacing_y", 30);
     settings.setValue("sprites_per_row", 4);
+    settings.setValue("sprites_per_row_auto", false);
     emit finished();
     this->close();
 }

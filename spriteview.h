@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QWidget>
 #include <QWheelEvent>
+#include <QResizeEvent>
 #include <QPainter>
 
 #include <QJsonObject>
@@ -27,6 +28,7 @@ public:
     void change_current_sprite(int id) { emit current_sprite_changed(id); }
 
     void wheelEvent(QWheelEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
     void dragEnterEvent(QDragEnterEvent *event) override {
             event->acceptProposedAction();

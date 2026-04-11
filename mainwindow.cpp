@@ -356,24 +356,10 @@ MainWindow::MainWindow(QWidget *parent)
     }
     sideLayout->addWidget(quickEditor, 0, 0, 1, 3);
 
-    // Create View > Quick Editor menu action entirely in code —
-    // no dependency on mainwindow.ui generating this action.
-    // Insert View menu before Help to get order: File Edit View Help
-    QAction *helpMenuAction = nullptr;
-    for (QAction *a : this->menuBar()->actions())
-        if (a->text() == tr("Help")) { helpMenuAction = a; break; }
-    QMenu *viewMenu = new QMenu(tr("View"), this);
-    this->menuBar()->insertMenu(helpMenuAction, viewMenu);
-    actionQuickEditor = new QAction(tr("Quick Editor"), this);
-    actionQuickEditor->setCheckable(true);
-    viewMenu->addAction(actionQuickEditor);
-    connect(actionQuickEditor, &QAction::triggered,
-            this, &MainWindow::on_actionQuickEditor_triggered);
-
     // Restore saved visibility state (default: off)
     QSettings qeSettings;
     bool qeEnabled = qeSettings.value("quickeditor_visible", false).toBool();
-    actionQuickEditor->setChecked(qeEnabled);
+    this->ui->actionQuick_Editor->setChecked(qeEnabled);
     quickEditor->setVisible(qeEnabled);
     this->ui->groupBox->setTitle(qeEnabled ? tr("Quick Editor and Options") : tr("Options"));
 
@@ -773,7 +759,7 @@ void MainWindow::on_actionAbout_triggered()
     QMessageBox msgBox(this);
     msgBox.setTextFormat(Qt::RichText);
     msgBox.setText(
-        "Version: 1.95 (04 / 2026)<br>Author: Johannes Winkler<br>License: GNU GPL License<br><a "
+        "Version: 1.95 (04 / 2026)<br>Author:<br>Johannes Winkler<br>Wilfried Elmenreich<br>License: GNU GPL License<br><a "
         "href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
@@ -969,11 +955,13 @@ void MainWindow::on_actionScale_Dialog_triggered()
 }
 
 
-void MainWindow::on_actionQuickEditor_triggered()
+void MainWindow::on_actionQuick_Editor_triggered()
 {
+
     QSettings settings;
-    bool nowVisible = actionQuickEditor->isChecked();
+    bool nowVisible = this->ui->actionQuick_Editor->isChecked();
     quickEditor->setVisible(nowVisible);
     this->ui->groupBox->setTitle(nowVisible ? tr("Quick Editor and Options") : tr("Options"));
     settings.setValue("quickeditor_visible", nowVisible);
 }
+

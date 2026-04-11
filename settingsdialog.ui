@@ -50,14 +50,25 @@
       </widget>
      </item>
      <item row="4" column="1">
-      <widget class="QSpinBox" name="spin_sprites_per_row">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>4</number>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_sprites_per_row">
+       <item>
+        <widget class="QSpinBox" name="spin_sprites_per_row">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>4</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="check_sprites_per_row_auto">
+         <property name="text">
+          <string>Auto</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="2" column="1">
       <widget class="QPushButton" name="button_spacing_color">
