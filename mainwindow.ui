@@ -89,7 +89,7 @@
          <item row="4" column="0" colspan="3">
           <layout class="QGridLayout" name="gridLayout_5">
            <property name="verticalSpacing">
-            <number>5</number>
+            <number>8</number>
            </property>
            <property name="horizontalSpacing">
             <number>8</number>
@@ -370,6 +370,48 @@
              </property>
             </widget>
            </item>
+           <item row="2" column="6">
+            <widget class="QLabel" name="label_transparent_name">
+             <property name="text">
+              <string>Transparent</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="6">
+            <widget class="QLabel" name="label_sprite_col_name">
+             <property name="text">
+              <string>Sprite Color</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="6">
+            <widget class="QLabel" name="label_mc1_name">
+             <property name="text">
+              <string>Multi-Color 1</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="6">
+            <widget class="QLabel" name="label_mc2_name">
+             <property name="text">
+              <string>Multi-Color 2</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="6">
+            <widget class="QLabel" name="label_oc_name">
+             <property name="text">
+              <string>Overlay Color</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="6">
+            <widget class="QLabel" name="label_ot_name">
+             <property name="text">
+              <string>Overlay Transparent</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item row="9" column="0">
@@ -500,7 +542,6 @@
     <addaction name="actionExport_as"/>
     <addaction name="separator"/>
     <addaction name="actionAnimations_Editor"/>
-    <addaction name="actionPreferences"/>
     <addaction name="separator"/>
     <addaction name="actionZoomIn"/>
     <addaction name="actionZoomOut"/>
@@ -557,6 +598,8 @@
     </property>
     <addaction name="actionQuick_Editor"/>
     <addaction name="actionColor_Bar"/>
+    <addaction name="separator"/>
+    <addaction name="actionPreferences"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>

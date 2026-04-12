@@ -15,6 +15,9 @@ SettingsDialog::SettingsDialog(options *opt, QWidget *parent)
     this->ui->spin_vertical_spacing->setValue(settings.value("sprite_spacing_y").toInt());
     this->ui->spin_sprites_per_row->setValue(settings.value("sprites_per_row").toInt());
 
+    this->ui->spin_sprite_number_size->setValue(
+        settings.value("sprite_number_size", 100).toInt());
+
     bool auto_mode = settings.value("sprites_per_row_auto", false).toBool();
     this->ui->check_sprites_per_row_auto->setChecked(auto_mode);
     this->ui->spin_sprites_per_row->setEnabled(!auto_mode);
@@ -40,6 +43,8 @@ void SettingsDialog::on_button_ok_clicked()
     settings.setValue("sprite_spacing_y", this->ui->spin_vertical_spacing->value());
     settings.setValue("sprites_per_row", this->ui->spin_sprites_per_row->value());
     settings.setValue("sprites_per_row_auto", this->ui->check_sprites_per_row_auto->isChecked());
+    settings.setValue("sprite_number_size",
+        this->ui->spin_sprite_number_size->value());
 
     if (select_color.isValid())
         settings.setValue("selection_color", select_color.red() << 16 | select_color.green() << 8 | select_color.blue());
@@ -80,6 +85,7 @@ void SettingsDialog::on_button_defaults_clicked()
     settings.setValue("sprite_spacing_y", 30);
     settings.setValue("sprites_per_row", 4);
     settings.setValue("sprites_per_row_auto", false);
+    settings.setValue("sprite_number_size", 100);
     emit finished();
     this->close();
 }

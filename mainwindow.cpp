@@ -331,6 +331,11 @@ MainWindow::MainWindow(QWidget *parent)
         this->opt.show_numbers = val;
         this->ui->graphicsView->scene()->update();
     });
+    // Load sprite number size from settings
+    {
+        QSettings s;
+        this->opt.sprite_number_size = s.value("sprite_number_size", 100).toInt();
+    }
 
     // ── Quick Editor ──────────────────────────────────────────────────────────
     quickEditor = new QuickEditorWidget(this->ui->groupBox);
@@ -893,7 +898,11 @@ void MainWindow::on_actionPreferences_triggered()
 {
     SettingsDialog *dialog = new SettingsDialog(&opt);
     dialog->show();
-    connect(dialog, &SettingsDialog::finished, [=]() { this->ui->graphicsView->redraw(); });
+    connect(dialog, &SettingsDialog::finished, [=]() {
+        QSettings s;
+        this->opt.sprite_number_size = s.value("sprite_number_size", 100).toInt();
+        this->ui->graphicsView->redraw();
+    });
 }
 
 

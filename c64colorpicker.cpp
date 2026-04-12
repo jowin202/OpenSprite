@@ -121,12 +121,14 @@ void C64ColorPicker::paintEvent(QPaintEvent *)
     }
 }
 
-// ── mouse ─────────────────────────────────────────────────────────────────────
-
 void C64ColorPicker::mousePressEvent(QMouseEvent *ev)
 {
     if (!m_enabled || m_colors.isEmpty()) return;
     if (ev->button() != Qt::LeftButton) return;
+
+    // Only trigger on the colour patch itself
+    QRect patch(patchX(), kGap, patchW(), patchH());
+    if (!patch.contains(ev->pos())) return;
 
     auto *popup = new C64ColorPopup(this);
     connect(popup, &C64ColorPopup::colorChosen, this, [=](int idx) {

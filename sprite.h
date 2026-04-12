@@ -29,6 +29,7 @@ struct options {
     SpriteView *spriteview;
     bool show_grid_lines = true;
     bool show_numbers = false;
+    int  sprite_number_size = 100; // percentage: 100 = full sprite, smaller = top-left aligned
 
 
     //auto export
