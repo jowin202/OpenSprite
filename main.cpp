@@ -4,6 +4,8 @@
 
 int main(int argc, char *argv[])
 {
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication a(argc, argv);
     QCoreApplication::setOrganizationName("jowin202");
     QCoreApplication::setOrganizationDomain("github.com/jowin202");

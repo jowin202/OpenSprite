@@ -88,6 +88,12 @@
          </item>
          <item row="4" column="0" colspan="3">
           <layout class="QGridLayout" name="gridLayout_5">
+           <property name="verticalSpacing">
+            <number>5</number>
+           </property>
+           <property name="horizontalSpacing">
+            <number>8</number>
+           </property>
            <item row="6" column="3">
             <widget class="QRadioButton" name="radio_overlay_color_right">
              <property name="enabled">
@@ -98,19 +104,7 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="4">
-            <widget class="QLabel" name="label_9">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Overlay Color</string>
-             </property>
-            </widget>
-           </item>
+
            <item row="7" column="2">
             <widget class="QRadioButton" name="radio_overlay_transparent_left">
              <property name="enabled">
@@ -121,55 +115,13 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="4">
-            <widget class="QLabel" name="label_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Transparent</string>
-             </property>
+
+
+           <item row="3" column="4" colspan="2">
+            <widget class="C64ColorPicker" name="combo_sprite_col">
             </widget>
            </item>
-           <item row="5" column="4">
-            <widget class="QLabel" name="label_5">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Multi-Color 2</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="5">
-            <widget class="QComboBox" name="combo_sprite_col">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="4">
-            <widget class="QLabel" name="label_4">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Multi-Color 1</string>
-             </property>
-            </widget>
-           </item>
+
            <item row="5" column="3">
             <widget class="QRadioButton" name="radio_mc2_right">
              <property name="text">
@@ -177,14 +129,8 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="5">
-            <widget class="QComboBox" name="combo_multicol_1">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+           <item row="4" column="4" colspan="2">
+            <widget class="C64ColorPicker" name="combo_multicol_1">
             </widget>
            </item>
            <item row="5" column="1">
@@ -302,29 +248,11 @@
              </property>
             </widget>
            </item>
-           <item row="5" column="5">
-            <widget class="QComboBox" name="combo_multicol_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+           <item row="5" column="4" colspan="2">
+            <widget class="C64ColorPicker" name="combo_multicol_2">
             </widget>
            </item>
-           <item row="3" column="4">
-            <widget class="QLabel" name="label_3">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Sprite Color</string>
-             </property>
-            </widget>
-           </item>
+
            <item row="4" column="1">
             <widget class="QLabel" name="label_17">
              <property name="maximumSize">
@@ -384,29 +312,11 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="5">
-            <widget class="QComboBox" name="combo_transparent">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+           <item row="2" column="4" colspan="2">
+            <widget class="C64ColorPicker" name="combo_transparent">
             </widget>
            </item>
-           <item row="7" column="4">
-            <widget class="QLabel" name="label_10">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Overlay Transparent</string>
-             </property>
-            </widget>
-           </item>
+
            <item row="6" column="2">
             <widget class="QRadioButton" name="radio_overlay_color_left">
              <property name="enabled">
@@ -427,16 +337,10 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="5">
-            <widget class="QComboBox" name="combo_overlay_color">
+           <item row="6" column="4" colspan="2">
+            <widget class="C64ColorPicker" name="combo_overlay_color">
              <property name="enabled">
               <bool>false</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
              </property>
             </widget>
            </item>
@@ -652,6 +556,7 @@
      <string>View</string>
     </property>
     <addaction name="actionQuick_Editor"/>
+    <addaction name="actionColor_Bar"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -1043,8 +948,21 @@
     <string>Quick Editor</string>
    </property>
   </action>
+  <action name="actionColor_Bar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Color Bar</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>C64ColorPicker</class>
+   <extends>QWidget</extends>
+   <header>c64colorpicker.h</header>
+  </customwidget>
   <customwidget>
    <class>SpriteView</class>
    <extends>QGraphicsView</extends>
