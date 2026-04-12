@@ -152,12 +152,13 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                               Qt::AlignVCenter | Qt::AlignHCenter,
                               QString::number(id));
         } else {
-            // Smaller: top-left aligned, indented by half a pixel-cell width
-            int marginTop  = 2;
+            // Smaller: top-left, indented half a pixel-cell from left.
+            // Use explicit baseline to avoid Qt's internal descent offset.
+            QFontMetrics fm(painter->font());
             int marginLeft = w / 2;
-            painter->drawText(marginLeft, marginTop, 24*w - marginLeft, 21*h - marginTop,
-                              Qt::AlignTop | Qt::AlignLeft,
-                              QString::number(id));
+            int marginTop  = 2;
+            int baseline   = marginTop + fm.ascent();
+            painter->drawText(marginLeft, baseline, QString::number(id));
         }
     }
 

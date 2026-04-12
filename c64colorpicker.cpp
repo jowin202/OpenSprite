@@ -49,7 +49,7 @@ int C64ColorPicker::patchH() const
     // Patch height = font height — makes each picker row as compact as a text line.
     // patchW = 1.3 * patchH gives a slightly landscape rectangle like a C64 colour chip.
     QFontMetrics fm(font());
-    return qRound(fm.height() * 1.1);
+    return qRound(fm.height() * 1.155);
 }
 
 int C64ColorPicker::patchW() const { return qRound(patchH() * 1.3); }
@@ -150,8 +150,8 @@ C64ColorPopup::C64ColorPopup(C64ColorPicker *owner)
     setFocusPolicy(Qt::StrongFocus);
 }
 
-int C64ColorPopup::cellW() const { return m_owner->patchW() + 2; }  // 1px gap each side
-int C64ColorPopup::cellH() const { return m_owner->patchH() + 2; }  // 1px gap each side
+int C64ColorPopup::cellW() const { return m_owner->patchW(); }
+int C64ColorPopup::cellH() const { return m_owner->patchH(); }
 
 void C64ColorPopup::popup()
 {
@@ -163,8 +163,8 @@ void C64ColorPopup::popup()
     int col = cur % kCols;
     int row = cur / kCols;
 
-    int x = pickerGlobal.x() + m_owner->patchX() - col * cellW() - 1;
-    int y = pickerGlobal.y() + 1                - row * cellH();
+    int x = pickerGlobal.x() + m_owner->patchX() - col * cellW();
+    int y = pickerGlobal.y() + m_owner->kGap    - row * cellH();
 
     // Keep on the screen the picker is actually on
     QPoint pickerCenter = m_owner->mapToGlobal(m_owner->rect().center());
@@ -195,7 +195,7 @@ void C64ColorPopup::paintEvent(QPaintEvent *)
         QRect cell(col * cw, row * ch, cw, ch);
         p.fillRect(cell, palette().color(QPalette::Window));
 
-        QRect patch(col * cw + 1, row * ch + 1, cw - 2, ph);
+        QRect patch(col * cw, row * ch, cw, ph);
         p.fillRect(patch, m_owner->m_colors.at(i));
 
         if (i == m_owner->m_index) {
