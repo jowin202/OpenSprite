@@ -48,6 +48,9 @@
          <string>Options</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_4">
+         <property name="verticalSpacing">
+          <number>2</number>
+         </property>
          <item row="1" column="0">
           <widget class="QCheckBox" name="check_exp_x">
            <property name="text">
@@ -89,7 +92,7 @@
          <item row="4" column="0" colspan="3">
           <layout class="QGridLayout" name="gridLayout_5">
            <property name="verticalSpacing">
-            <number>8</number>
+            <number>2</number>
            </property>
            <property name="horizontalSpacing">
             <number>8</number>
@@ -117,7 +120,7 @@
            </item>
 
 
-           <item row="3" column="4" colspan="2">
+           <item row="3" column="5" colspan="2">
             <widget class="C64ColorPicker" name="combo_sprite_col">
             </widget>
            </item>
@@ -129,7 +132,7 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="4" colspan="2">
+           <item row="4" column="5" colspan="2">
             <widget class="C64ColorPicker" name="combo_multicol_1">
             </widget>
            </item>
@@ -248,7 +251,7 @@
              </property>
             </widget>
            </item>
-           <item row="5" column="4" colspan="2">
+           <item row="5" column="5" colspan="2">
             <widget class="C64ColorPicker" name="combo_multicol_2">
             </widget>
            </item>
@@ -312,7 +315,7 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="4" colspan="2">
+           <item row="2" column="5" colspan="2">
             <widget class="C64ColorPicker" name="combo_transparent">
             </widget>
            </item>
@@ -337,7 +340,7 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="4" colspan="2">
+           <item row="6" column="5" colspan="2">
             <widget class="C64ColorPicker" name="combo_overlay_color">
              <property name="enabled">
               <bool>false</bool>
@@ -370,42 +373,42 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="6">
+           <item row="2" column="4">
             <widget class="QLabel" name="label_transparent_name">
              <property name="text">
               <string>Transparent</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="6">
+           <item row="3" column="4">
             <widget class="QLabel" name="label_sprite_col_name">
              <property name="text">
               <string>Sprite Color</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="6">
+           <item row="4" column="4">
             <widget class="QLabel" name="label_mc1_name">
              <property name="text">
               <string>Multi-Color 1</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="6">
+           <item row="5" column="4">
             <widget class="QLabel" name="label_mc2_name">
              <property name="text">
               <string>Multi-Color 2</string>
              </property>
             </widget>
            </item>
-           <item row="6" column="6">
+           <item row="6" column="4">
             <widget class="QLabel" name="label_oc_name">
              <property name="text">
               <string>Overlay Color</string>
              </property>
             </widget>
            </item>
-           <item row="7" column="6">
+           <item row="7" column="4">
             <widget class="QLabel" name="label_ot_name">
              <property name="text">
               <string>Overlay Transparent</string>

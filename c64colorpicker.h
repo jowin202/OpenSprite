@@ -44,7 +44,7 @@ private:
     int           m_index   = 0;
     bool          m_enabled = true;
 
-    static constexpr int kGap      = 4;   // px gap above/below patch
+    static constexpr int kGap      = 2;   // px gap above/below patch
     static constexpr int kNumWidth = 24;  // fixed px for number column
     static constexpr int kNameGap  = 6;   // gap between patch and name
 

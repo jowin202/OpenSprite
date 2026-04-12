@@ -46,10 +46,10 @@ void C64ColorPicker::setEnabled(bool enabled)
 
 int C64ColorPicker::patchH() const
 {
+    // Patch height = font height — makes each picker row as compact as a text line.
+    // patchW = 1.3 * patchH gives a slightly landscape rectangle like a C64 colour chip.
     QFontMetrics fm(font());
-    // Row height = font height + 2*gap on each side; patch fills the interior.
-    // The extra constant adds comfortable height so patches are clearly visible.
-    return fm.height() + 8;
+    return fm.height();
 }
 
 int C64ColorPicker::patchW() const { return qRound(patchH() * 1.3); }

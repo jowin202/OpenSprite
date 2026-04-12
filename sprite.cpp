@@ -152,9 +152,10 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                               Qt::AlignVCenter | Qt::AlignHCenter,
                               QString::number(id));
         } else {
-            // Smaller: top-left aligned with small margin
-            int margin = 2;
-            painter->drawText(margin, margin, 24*w - margin, 21*h - margin,
+            // Smaller: top-left aligned, indented by half a pixel-cell width
+            int marginTop  = 2;
+            int marginLeft = w / 2;
+            painter->drawText(marginLeft, marginTop, 24*w - marginLeft, 21*h - marginTop,
                               Qt::AlignTop | Qt::AlignLeft,
                               QString::number(id));
         }
