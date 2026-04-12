@@ -202,12 +202,15 @@ MainWindow::MainWindow(QWidget *parent)
     });
     connect(this->ui->combo_overlay_color,
             qOverload<int>(&C64ColorPicker::currentIndexChanged), this, [=](int index) {
+        // Overlay colour is the sprite_color of the next sprite (id+1).
         QJsonArray sprites_array = opt.data.value("sprites").toArray();
         for (int i = opt.selection_from; i <= opt.selection_to; i++) {
-            QJsonObject current_sprite_obj = opt.data.value("sprites").toArray().at(i).toObject();
-            current_sprite_obj.insert("overlay_color", index);
-            sprites_array.removeAt(i);
-            sprites_array.insert(i, current_sprite_obj);
+            int nextIdx = i + 1;
+            if (nextIdx >= sprites_array.size()) continue;
+            QJsonObject next_sprite_obj = sprites_array.at(nextIdx).toObject();
+            next_sprite_obj.insert("sprite_color", index);
+            sprites_array.removeAt(nextIdx);
+            sprites_array.insert(nextIdx, next_sprite_obj);
         }
         opt.data.insert("sprites", sprites_array);
         this->ui->graphicsView->scene()->update();
