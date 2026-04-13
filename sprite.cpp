@@ -134,14 +134,32 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     if (opt->show_numbers)
     {
-
         int w = 10 * (expand_y ? 0.5 : 1);
         int h = 10 * (expand_x ? 0.5 : 1);
 
+        int pct = opt->sprite_number_size;  // 1..100
+        // Font size scales with percentage
+        int fontPx = qRound(qMin(0.8 * 24 * w, 0.8 * 21 * h) * pct / 100.0);
+        fontPx = qMax(fontPx, 6);
+
         QFont font = painter->font();
-        font.setPixelSize(qMin(0.8*24*w, 0.8*21*h));
+        font.setPixelSize(fontPx);
         painter->setFont(font);
-        painter->drawText(0,0,24*w,21*h, Qt::AlignVCenter | Qt::AlignHCenter, QString::number(id));
+
+        if (pct >= 100) {
+            // Full size: centered over the whole sprite
+            painter->drawText(0, 0, 24*w, 21*h,
+                              Qt::AlignVCenter | Qt::AlignHCenter,
+                              QString::number(id));
+        } else {
+            // Smaller: top-left, indented half a pixel-cell from left.
+            // Use explicit baseline to avoid Qt's internal descent offset.
+            QFontMetrics fm(painter->font());
+            int marginLeft = w / 2;
+            int marginTop  = 2;
+            int baseline   = marginTop + fm.ascent();
+            painter->drawText(marginLeft, baseline, QString::number(id));
+        }
     }
 
 

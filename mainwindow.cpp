@@ -164,61 +164,55 @@ MainWindow::MainWindow(QWidget *parent)
         this->import(file);
     });
 
-    //combos
-    for (int i = 0; i < 16; i++) {
-        this->ui->combo_transparent->addItem(opt.col_names.at(i));
-        this->ui->combo_transparent->setItemIcon(i, this->createIconFromColor(opt.col_list.at(i)));
-        this->ui->combo_sprite_col->addItem(opt.col_names.at(i));
-        this->ui->combo_sprite_col->setItemIcon(i, this->createIconFromColor(opt.col_list.at(i)));
-        this->ui->combo_multicol_1->addItem(opt.col_names.at(i));
-        this->ui->combo_multicol_1->setItemIcon(i, this->createIconFromColor(opt.col_list.at(i)));
-        this->ui->combo_multicol_2->addItem(opt.col_names.at(i));
-        this->ui->combo_multicol_2->setItemIcon(i, this->createIconFromColor(opt.col_list.at(i)));
-        this->ui->combo_overlay_color->addItem(opt.col_names.at(i));
-        this->ui->combo_overlay_color->setItemIcon(i, this->createIconFromColor(opt.col_list.at(i)));
-    }
-    connect(this->ui->combo_transparent, &QComboBox::currentIndexChanged, this, [=](int index) {
+    // Populate colour pickers with colours and names
+    auto setPickerColors = [&](C64ColorPicker *p) {
+        p->setColors(opt.col_list, opt.col_names);
+    };
+    setPickerColors(this->ui->combo_transparent);
+    setPickerColors(this->ui->combo_sprite_col);
+    setPickerColors(this->ui->combo_multicol_1);
+    setPickerColors(this->ui->combo_multicol_2);
+    setPickerColors(this->ui->combo_overlay_color);
+    connect(this->ui->combo_transparent,
+            qOverload<int>(&C64ColorPicker::currentIndexChanged), this, [=](int index) {
         opt.data.insert("background", index);
         this->ui->graphicsView->redraw();
     });
-    connect(this->ui->combo_sprite_col, &QComboBox::currentIndexChanged, this, [=](int index) {
-
-        for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        {
-            QJsonObject current_sprite_obj
-                = opt.data.value("sprites").toArray().at(i).toObject();
+    connect(this->ui->combo_sprite_col,
+            qOverload<int>(&C64ColorPicker::currentIndexChanged), this, [=](int index) {
+        QJsonArray sprites_array = opt.data.value("sprites").toArray();
+        for (int i = opt.selection_from; i <= opt.selection_to; i++) {
+            QJsonObject current_sprite_obj = opt.data.value("sprites").toArray().at(i).toObject();
             current_sprite_obj.insert("sprite_color", index);
-            QJsonArray sprites_array = opt.data.value("sprites").toArray();
             sprites_array.removeAt(i);
             sprites_array.insert(i, current_sprite_obj);
-            opt.data.insert("sprites", sprites_array);
         }
-
+        opt.data.insert("sprites", sprites_array);
         this->ui->graphicsView->scene()->update();
     });
-    connect(this->ui->combo_multicol_1, &QComboBox::currentIndexChanged, this, [=](int index) {
+    connect(this->ui->combo_multicol_1,
+            qOverload<int>(&C64ColorPicker::currentIndexChanged), this, [=](int index) {
         opt.data.insert("mc1", index);
         this->ui->graphicsView->scene()->update();
     });
-    connect(this->ui->combo_multicol_2, &QComboBox::currentIndexChanged, this, [=](int index) {
+    connect(this->ui->combo_multicol_2,
+            qOverload<int>(&C64ColorPicker::currentIndexChanged), this, [=](int index) {
         opt.data.insert("mc2", index);
         this->ui->graphicsView->scene()->update();
     });
-    connect(this->ui->combo_overlay_color, &QComboBox::currentIndexChanged, this, [=](int index) {
-
-        for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        {
-            if (this->opt.data.value("sprites").toArray().count() > i + 1) {
-                QJsonObject current_sprite_obj
-                    = opt.data.value("sprites").toArray().at(i + 1).toObject();
-                current_sprite_obj.insert("sprite_color", index);
-                QJsonArray sprites_array = opt.data.value("sprites").toArray();
-                sprites_array.removeAt(i + 1);
-                sprites_array.insert(i + 1, current_sprite_obj);
-                opt.data.insert("sprites", sprites_array);
-            }
+    connect(this->ui->combo_overlay_color,
+            qOverload<int>(&C64ColorPicker::currentIndexChanged), this, [=](int index) {
+        // Overlay colour is the sprite_color of the next sprite (id+1).
+        QJsonArray sprites_array = opt.data.value("sprites").toArray();
+        for (int i = opt.selection_from; i <= opt.selection_to; i++) {
+            int nextIdx = i + 1;
+            if (nextIdx >= sprites_array.size()) continue;
+            QJsonObject next_sprite_obj = sprites_array.at(nextIdx).toObject();
+            next_sprite_obj.insert("sprite_color", index);
+            sprites_array.removeAt(nextIdx);
+            sprites_array.insert(nextIdx, next_sprite_obj);
         }
-
+        opt.data.insert("sprites", sprites_array);
         this->ui->graphicsView->scene()->update();
     });
 
@@ -340,6 +334,11 @@ MainWindow::MainWindow(QWidget *parent)
         this->opt.show_numbers = val;
         this->ui->graphicsView->scene()->update();
     });
+    // Load sprite number size from settings
+    {
+        QSettings s;
+        this->opt.sprite_number_size = s.value("sprite_number_size", 100).toInt();
+    }
 
     // ── Quick Editor ──────────────────────────────────────────────────────────
     quickEditor = new QuickEditorWidget(this->ui->groupBox);
@@ -382,7 +381,14 @@ MainWindow::MainWindow(QWidget *parent)
                 opt.sprite_list.at(id)->update();
         }
     });
+
+    // ── Color Bar ────────────────────────────────────────────────────────
+    QSettings cbSettings;
+    bool cbEnabled = cbSettings.value("colorbar_visible", false).toBool();
+    this->ui->actionColor_Bar->setChecked(cbEnabled);
+    this->ui->label_palette->setVisible(cbEnabled);
 }
+
 
 MainWindow::~MainWindow()
 {
@@ -762,7 +768,7 @@ void MainWindow::on_actionAbout_triggered()
     QMessageBox msgBox(this);
     msgBox.setTextFormat(Qt::RichText);
     msgBox.setText(
-        "Version: 1.95 (04 / 2026)<br>Author:<br>Johannes Winkler<br>Wilfried Elmenreich<br>License: GNU GPL License<br><a "
+        "Version: 1.97 (04 / 2026)<br>Author:<br>Johannes Winkler<br>Wilfried Elmenreich<br>License: GNU GPL License<br><a "
         "href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
@@ -895,7 +901,11 @@ void MainWindow::on_actionPreferences_triggered()
 {
     SettingsDialog *dialog = new SettingsDialog(&opt);
     dialog->show();
-    connect(dialog, &SettingsDialog::finished, [=]() { this->ui->graphicsView->redraw(); });
+    connect(dialog, &SettingsDialog::finished, [=]() {
+        QSettings s;
+        this->opt.sprite_number_size = s.value("sprite_number_size", 100).toInt();
+        this->ui->graphicsView->redraw();
+    });
 }
 
 
@@ -968,3 +978,11 @@ void MainWindow::on_actionQuick_Editor_triggered()
     settings.setValue("quickeditor_visible", nowVisible);
 }
 
+
+void MainWindow::on_actionColor_Bar_triggered()
+{
+    QSettings settings;
+    bool nowVisible = this->ui->actionColor_Bar->isChecked();
+    this->ui->label_palette->setVisible(nowVisible);
+    settings.setValue("colorbar_visible", nowVisible);
+}

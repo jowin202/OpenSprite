@@ -16,6 +16,7 @@ CONFIG(debug, debug|release) {
 
 SOURCES += \
     addbutton.cpp \
+    c64colorpicker.cpp \
     animations/animationdialog.cpp \
     animations/animationform.cpp \
     exportdialog.cpp \
@@ -32,6 +33,7 @@ SOURCES += \
 
 HEADERS += \
     addbutton.h \
+    c64colorpicker.h \
     animations/animationdialog.h \
     animations/animationform.h \
     exportdialog.h \
