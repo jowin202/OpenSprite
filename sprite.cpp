@@ -45,12 +45,27 @@ void Sprite::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                        opt->show_grid_lines);
 
     if (opt->show_numbers) {
+        const int pct = opt->sprite_number_size; // 1..100
+        // Font size scales with percentage
+        const int fontPx = qMax(6, qRound(qMin(0.8 * WIDTH * cw, 0.8 * HEIGHT * ch) * pct / 100.0));
+
         QFont font = painter->font();
-        font.setPixelSize(qMax(1, int(qMin(0.8 * WIDTH * cw, 0.8 * HEIGHT * ch))));
+        font.setPixelSize(fontPx);
         painter->setFont(font);
-        painter->drawText(QRectF(0, 0, WIDTH * cw, HEIGHT * ch),
-                          Qt::AlignVCenter | Qt::AlignHCenter,
-                          QString::number(id));
+
+        if (pct >= 100) {
+            // Full size: centered over the whole sprite
+            painter->drawText(QRectF(0, 0, WIDTH * cw, HEIGHT * ch),
+                              Qt::AlignVCenter | Qt::AlignHCenter,
+                              QString::number(id));
+        } else {
+            // Smaller: top-left, indented half a pixel-cell from left.
+            // Use explicit baseline to avoid Qt's internal descent offset.
+            const QFontMetrics fm(painter->font());
+            const int marginLeft = int(cw / 2);
+            const int marginTop = 2;
+            painter->drawText(marginLeft, marginTop + fm.ascent(), QString::number(id));
+        }
     }
 
     if (id >= opt->selection_from && id <= opt->selection_to) {

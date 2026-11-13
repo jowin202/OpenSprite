@@ -118,32 +118,29 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(this->ui->graphicsView, &SpriteView::droppedFile, this, &MainWindow::open_file);
 
-    //combos
-    QComboBox *combos[] = {this->ui->combo_transparent,
-                           this->ui->combo_sprite_col,
-                           this->ui->combo_multicol_1,
-                           this->ui->combo_multicol_2,
-                           this->ui->combo_overlay_color};
-    for (int i = 0; i < opt.col_list.size(); i++) {
-        const QIcon icon = this->createIconFromColor(opt.col_list.at(i));
-        for (QComboBox *combo : combos)
-            combo->addItem(icon, opt.col_names.at(i));
-    }
+    // Populate colour pickers with colours and names
+    C64ColorPicker *pickers[] = {this->ui->combo_transparent,
+                                 this->ui->combo_sprite_col,
+                                 this->ui->combo_multicol_1,
+                                 this->ui->combo_multicol_2,
+                                 this->ui->combo_overlay_color};
+    for (C64ColorPicker *picker : pickers)
+        picker->setColors(opt.col_list, opt.col_names);
 
-    connect(this->ui->combo_transparent, &QComboBox::currentIndexChanged, this, [=](int index) {
+    connect(this->ui->combo_transparent, &C64ColorPicker::currentIndexChanged, this, [=](int index) {
         set_project_value("background", index);
     });
-    connect(this->ui->combo_multicol_1, &QComboBox::currentIndexChanged, this, [=](int index) {
+    connect(this->ui->combo_multicol_1, &C64ColorPicker::currentIndexChanged, this, [=](int index) {
         set_project_value("mc1", index);
     });
-    connect(this->ui->combo_multicol_2, &QComboBox::currentIndexChanged, this, [=](int index) {
+    connect(this->ui->combo_multicol_2, &C64ColorPicker::currentIndexChanged, this, [=](int index) {
         set_project_value("mc2", index);
     });
-    connect(this->ui->combo_sprite_col, &QComboBox::currentIndexChanged, this, [=](int index) {
+    connect(this->ui->combo_sprite_col, &C64ColorPicker::currentIndexChanged, this, [=](int index) {
         if (index >= 0 && set_selection_value("sprite_color", index))
             this->ui->graphicsView->scene()->update();
     });
-    connect(this->ui->combo_overlay_color, &QComboBox::currentIndexChanged, this, [=](int index) {
+    connect(this->ui->combo_overlay_color, &C64ColorPicker::currentIndexChanged, this, [=](int index) {
         // the overlay color is the color of the next sprite
         if (index >= 0 && set_selection_value("sprite_color", index, 1))
             this->ui->graphicsView->scene()->update();
@@ -192,6 +189,8 @@ MainWindow::MainWindow(QWidget *parent)
         this->opt.show_numbers = val;
         this->ui->graphicsView->scene()->update();
     });
+    // Load sprite number size from settings
+    this->opt.sprite_number_size = QSettings().value("sprite_number_size", 100).toInt();
 
     // ── Quick Editor ──────────────────────────────────────────────────────────
     quickEditor = new QuickEditorWidget(this->ui->groupBox);
@@ -225,6 +224,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(quickEditor, &QuickEditorWidget::spriteEdited, this, [=]() {
         this->ui->graphicsView->scene()->update();
     });
+
+    // ── Color Bar ────────────────────────────────────────────────────────
+    bool cbEnabled = qeSettings.value("colorbar_visible", false).toBool();
+    this->ui->actionColor_Bar->setChecked(cbEnabled);
+    this->ui->label_palette->setVisible(cbEnabled);
 }
 
 MainWindow::~MainWindow()
@@ -850,7 +854,10 @@ void MainWindow::on_actionScale_Dialog_triggered()
 void MainWindow::on_actionPreferences_triggered()
 {
     SettingsDialog *dialog = new SettingsDialog(&opt, this);
-    connect(dialog, &SettingsDialog::finished, this, [=]() { this->ui->graphicsView->redraw(); });
+    connect(dialog, &SettingsDialog::finished, this, [=]() {
+        this->opt.sprite_number_size = QSettings().value("sprite_number_size", 100).toInt();
+        this->ui->graphicsView->redraw();
+    });
     show_dialog(dialog);
 }
 
@@ -885,4 +892,12 @@ void MainWindow::on_actionQuick_Editor_triggered()
     quickEditor->setVisible(nowVisible);
     this->ui->groupBox->setTitle(nowVisible ? tr("Quick Editor and Options") : tr("Options"));
     settings.setValue("quickeditor_visible", nowVisible);
+}
+
+void MainWindow::on_actionColor_Bar_triggered()
+{
+    QSettings settings;
+    bool nowVisible = this->ui->actionColor_Bar->isChecked();
+    this->ui->label_palette->setVisible(nowVisible);
+    settings.setValue("colorbar_visible", nowVisible);
 }

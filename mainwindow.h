@@ -17,6 +17,7 @@
 #include <QPushButton>
 
 #include "sprite.h"
+#include "c64colorpicker.h"
 #include "quickeditor.h"
 
 class AnimationDialog;
@@ -104,6 +105,7 @@ private slots:
     void on_actionZoomOut_triggered();
     void on_actionScale_Dialog_triggered();
     void on_actionQuick_Editor_triggered();
+    void on_actionColor_Bar_triggered();
 
 private:
     // save handling; return false if the user cancelled or saving failed

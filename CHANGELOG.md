@@ -3,7 +3,7 @@
 ## Version 2.0 (11/2026)
 
 A large internal overhaul: faster, more robust, and with a few new features.
-Everything that worked in 1.95 still works. Existing `.spd`, `.spm`, `.prg` and `.bin` files load as before, and saved/exported files are byte-identical to 1.95.
+Everything that worked in 1.97 still works. Existing `.spd`, `.spm`, `.prg` and `.bin` files load as before, and saved/exported files are byte-identical to 1.97.
 
 ### New features
 
