@@ -10,9 +10,9 @@
 #include <QInputDialog>
 #include <QMainWindow>
 #include <QMimeData>
+#include <QPointer>
 #include <QSettings>
 
-#include <QCryptographicHash>
 #include <QJsonDocument>
 #include <QPushButton>
 
@@ -36,7 +36,7 @@ public:
     ~MainWindow();
     options opt;
 
-    void closeEvent(QCloseEvent *ev);
+    void closeEvent(QCloseEvent *ev) override;
 
 public slots:
     QIcon createIconFromColor(QColor col)
@@ -50,17 +50,20 @@ public slots:
         return QIcon(QPixmap::fromImage(img));
     }
 
-    void dragEnterEvent(QDragEnterEvent *event) { event->acceptProposedAction(); }
-    void dropEvent(QDropEvent *event)
+    void dragEnterEvent(QDragEnterEvent *event) override { event->acceptProposedAction(); }
+    void dropEvent(QDropEvent *event) override
     {
         const QMimeData *mimeData = event->mimeData();
         if (mimeData->hasUrls() && mimeData->urls().length() == 1)
-            this->import(mimeData->urls().at(0).toLocalFile());
+            this->open_file(mimeData->urls().at(0).toLocalFile());
     }
 
 public slots:
-    void import(QString path);
+    // loads a file without asking to save; returns false on error (project unchanged)
+    bool import(QString path);
     void new_project();
+    // asks to save changes, then loads the file
+    void open_file(const QString &path);
 
 private slots:
     void on_actionOpenProject_triggered();
@@ -83,45 +86,49 @@ private slots:
     void on_actionAbout_triggered();
     void on_actionExport_as_triggered();
     void on_actionExport_triggered();
-
     void on_actionReflect_Left_To_Right_triggered();
-
     void on_actionReflect_Top_to_Bottom_triggered();
-
     void on_actionNew_triggered();
-
     void on_actionUndo_triggered();
-
+    void on_actionRedo_triggered();
     void on_actionAnimations_Editor_triggered();
-
     void on_actionSprite_Color_MC_1_triggered();
-
     void on_actionSprite_Color_MC_2_triggered();
-
     void on_actionMC_1_MC_2_triggered();
-
     void on_actionRotate_triggered();
-
     void on_actionPreferences_triggered();
-
     void on_actionSelection_to_Animation_triggered();
-
     void on_actionSelect_All_triggered();
-
     void on_actionFlood_Fill_triggered();
-
     void on_actionZoomIn_triggered();
-
     void on_actionZoomOut_triggered();
-
     void on_actionScale_Dialog_triggered();
-
     void on_actionQuick_Editor_triggered();
 
 private:
+    // save handling; return false if the user cancelled or saving failed
+    bool save_project();
+    bool save_project_as();
+    bool maybe_save(const QString &question);
+
+    // ui <-> data synchronisation
+    void sync_ui_from_sprite(int id);
+    void sync_global_ui();
+    void update_mode_controls();
+    void update_window_title();
+    void data_replaced(); // after undo/redo/import: rebuild view and ui
+
+    // helpers for operations on the selected sprites
+    void apply_to_selection(void (Sprite::*fn)(), bool twice_in_mc_mode = false);
+    bool set_selection_value(const QString &key, const QJsonValue &value, int offset = 0);
+    void set_project_value(const QString &key, int value);
+    void show_dialog(QWidget *dialog);
+    QJsonArray copied_sprites() const;
+
     Ui::MainWindow *ui;
-    AnimationDialog *animation_dialog = 0;
+    QPointer<AnimationDialog> animation_dialog;
     QuickEditorWidget *quickEditor = nullptr;
+    QString current_file; // last opened / saved file (any format), for the title
 
     QButtonGroup leftradio;
     QButtonGroup rightradio;
@@ -132,7 +139,5 @@ private:
     QAction num3;
     QAction num4;
     QAction num5;
-
-    //QJsonObject copied_sprite;
 };
 #endif // MAINWINDOW_H

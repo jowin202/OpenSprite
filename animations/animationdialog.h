@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 
 struct options;
+class AnimationForm;
 
 namespace Ui {
 class AnimationDialog;
@@ -15,17 +16,17 @@ class AnimationDialog : public QWidget
     Q_OBJECT
 
 public:
-    explicit AnimationDialog(options *opt);
+    explicit AnimationDialog(options *opt, QWidget *parent = nullptr);
     ~AnimationDialog();
 
 
-    void closeEvent(QCloseEvent *ev)
+    void closeEvent(QCloseEvent *ev) override
     {
         emit dialog_closed();
         ev->accept();
     }
 
-    void keyPressEvent(QKeyEvent *e) {
+    void keyPressEvent(QKeyEvent *e) override {
         if(e->key() == Qt::Key_Escape)
             this->close();
         else if (e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter)
@@ -44,6 +45,8 @@ private slots:
     void on_button_add_animation_clicked();
 
 private:
+    AnimationForm *add_form(int animation_id);
+
     Ui::AnimationDialog *ui;
     options *opt;
 };

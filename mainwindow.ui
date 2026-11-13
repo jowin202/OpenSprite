@@ -621,6 +621,7 @@
     <addaction name="actionSelect_All"/>
     <addaction name="separator"/>
     <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
     <addaction name="separator"/>
     <addaction name="actionAdd_Sprite"/>
     <addaction name="actionDelete_Sprite"/>
@@ -638,6 +639,7 @@
     <addaction name="menuColor_Switch"/>
     <addaction name="separator"/>
     <addaction name="actionRotate"/>
+    <addaction name="actionScale_Dialog"/>
     <addaction name="separator"/>
     <addaction name="actionSelection_to_Animation"/>
    </widget>
@@ -747,9 +749,6 @@
    </property>
   </action>
   <action name="actionPaste_Into">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/icons/paste.svg</normaloff>:/icons/paste.svg</iconset>
@@ -933,6 +932,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
    </property>
   </action>
   <action name="actionAnimations_Editor">

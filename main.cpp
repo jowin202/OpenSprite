@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "settingsdialog.h"
 
 #include <QApplication>
 
@@ -8,37 +9,16 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("jowin202");
     QCoreApplication::setOrganizationDomain("github.com/jowin202");
     QCoreApplication::setApplicationName("OpenSprite");
-
+    QCoreApplication::setApplicationVersion(APP_VERSION);
 
     //set default settings if not set
     QSettings settings;
-    if (!settings.contains("bgcolor"))
-        settings.setValue("bgcolor", 0xd9d6c8);
-
-    if (!settings.contains("selection_color"))
-        settings.setValue("selection_color", 0x00ff00);
-
-    if (!settings.contains("sprite_spacing_x"))
-        settings.setValue("sprite_spacing_x", 30);
-
-    if (!settings.contains("sprite_spacing_y"))
-        settings.setValue("sprite_spacing_y", 30);
-
-    if (!settings.contains("sprites_per_row"))
-        settings.setValue("sprites_per_row", 4);
-
-
-
+    SettingsDialog::apply_defaults(settings, false);
 
     MainWindow w;
-    if (argc > 1)
-    {
-        w.import(QString(argv[1]));
-    }
-    else
-    {
+    const QStringList args = QCoreApplication::arguments();
+    if (args.size() < 2 || !w.import(args.at(1)))
         w.new_project();
-    }
     w.show();
     return a.exec();
 }

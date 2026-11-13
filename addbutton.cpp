@@ -2,7 +2,6 @@
 
 AddButton::AddButton()
 {
-
 }
 
 void AddButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -10,8 +9,9 @@ void AddButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     Q_UNUSED(widget);
     Q_UNUSED(option);
 
-    painter->drawRect(QRectF(0,0,10*24, 10*21));
-    painter->drawImage(QRectF(0,0,10*24, 10*21), QImage(":/icons/plus.svg"));
+    static const QImage plus(":/icons/plus.svg"); // load only once
+    painter->drawRect(boundingRect());
+    painter->drawImage(boundingRect(), plus);
 }
 
 QRectF AddButton::boundingRect() const

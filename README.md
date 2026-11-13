@@ -99,7 +99,10 @@ Click a sprite in the sprite strip to select it. To select a range, click the fi
 | Copy | `Ctrl+C` |
 | Cut | `Ctrl+X` |
 | Paste | `Ctrl+V` |
+| Paste Into | `Ctrl+Shift+V` |
 | Select All | `Ctrl+A` |
+
+**Paste** inserts the copied sprites before the current sprite. **Paste Into** draws the non-transparent pixels of the copied sprite(s) over the selected sprites.
 
 ---
 
@@ -281,9 +284,11 @@ Drag a `.spd`, `.prg`, `.bin`, or `.spm` file onto the OpenSprite window to impo
 | Action | Shortcut |
 |--------|----------|
 | Undo | `Ctrl+Z` |
+| Redo | `Ctrl+Y` / `Ctrl+Shift+Z` |
 | Cut | `Ctrl+X` |
 | Copy | `Ctrl+C` |
 | Paste | `Ctrl+V` |
+| Paste Into | `Ctrl+Shift+V` |
 | Select All | `Ctrl+A` |
 | Delete Sprite | `Del` |
 | Slide Up | `Ctrl+U` |

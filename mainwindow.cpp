@@ -7,8 +7,12 @@
 #include "exportdialog.h"
 #include "settingsdialog.h"
 #include "rotations/rotationdialog.h"
-
 #include "scale/scalingdialog.h"
+
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QSignalBlocker>
+#include <QtMath>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,32 +24,30 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->graphicsView->set_opt(&opt);
     this->ui->label_palette->showPalette(&opt);
 
-    num0.setShortcut(Qt::Key_0);
-    num1.setShortcut(Qt::Key_1);
-    num2.setShortcut(Qt::Key_2);
-    num3.setShortcut(Qt::Key_3);
-    num4.setShortcut(Qt::Key_4);
-    num5.setShortcut(Qt::Key_5);
-    this->addAction(&num0);
-    this->addAction(&num1);
-    this->addAction(&num2);
-    this->addAction(&num3);
-    this->addAction(&num4);
-    this->addAction(&num5);
-    connect(&num0, &QAction::triggered, [=]() {
-        this->ui->radio_transparent_left->setChecked(true);
-    });
-    connect(&num1, &QAction::triggered, [=]() { this->ui->radio_sprite_left->setChecked(true); });
-    connect(&num2, &QAction::triggered, [=]() { this->ui->radio_mc1_left->setChecked(true); });
-    connect(&num3, &QAction::triggered, [=]() { this->ui->radio_mc2_left->setChecked(true); });
-    connect(&num4, &QAction::triggered, [=]() {
-        if (this->ui->radio_overlay_color_left->isEnabled())
-            this->ui->radio_overlay_color_left->setChecked(true);
-    });
-    connect(&num5, &QAction::triggered, [=]() {
-        if (this->ui->radio_overlay_transparent_left->isEnabled())
-            this->ui->radio_overlay_transparent_left->setChecked(true);
-    });
+    // Redo: Ctrl+Y (from the ui file) plus the platform default (e.g. Ctrl+Shift+Z)
+    QList<QKeySequence> redo_keys = {this->ui->actionRedo->shortcut()};
+    for (const QKeySequence &k : QKeySequence::keyBindings(QKeySequence::Redo))
+        if (!redo_keys.contains(k))
+            redo_keys.append(k);
+    this->ui->actionRedo->setShortcuts(redo_keys);
+
+    // number keys select the tool of the left mouse button
+    QAction *num_actions[] = {&num0, &num1, &num2, &num3, &num4, &num5};
+    QRadioButton *num_radios[] = {this->ui->radio_transparent_left,
+                                  this->ui->radio_sprite_left,
+                                  this->ui->radio_mc1_left,
+                                  this->ui->radio_mc2_left,
+                                  this->ui->radio_overlay_color_left,
+                                  this->ui->radio_overlay_transparent_left};
+    for (int i = 0; i < 6; i++) {
+        num_actions[i]->setShortcut(Qt::Key_0 + i);
+        this->addAction(num_actions[i]);
+        QRadioButton *radio = num_radios[i];
+        connect(num_actions[i], &QAction::triggered, this, [radio]() {
+            if (radio->isEnabled())
+                radio->setChecked(true);
+        });
+    }
 
     connect(this->ui->graphicsView, &SpriteView::zoom_in, this, [=]() {
         this->ui->slider_scale->setValue(this->ui->slider_scale->value() + 10);
@@ -57,33 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->graphicsView, &SpriteView::current_sprite_changed, this, [=](int id) {
         opt.selection_from = id;
         opt.selection_to = id;
-        this->ui->combo_sprite_col->setCurrentIndex(
-            opt.data.value("sprites").toArray().at(id).toObject().value("sprite_color").toInt());
-        this->ui->check_multicolor->setChecked(
-            opt.data.value("sprites").toArray().at(id).toObject().value("mc_mode").toBool());
-        this->ui->check_overlay->setChecked(
-            opt.data.value("sprites").toArray().at(id).toObject().value("overlay_next").toBool());
-        this->ui->check_exp_x->setChecked(
-            opt.data.value("sprites").toArray().at(id).toObject().value("exp_x").toBool());
-        this->ui->check_exp_y->setChecked(
-            opt.data.value("sprites").toArray().at(id).toObject().value("exp_y").toBool());
-
-        if (opt.data.value("sprites").toArray().at(id).toObject().value("overlay_next").toBool()
-            && this->opt.data.value("sprites").toArray().count() > id + 1)
-            this->ui->combo_overlay_color->setCurrentIndex(opt.data.value("sprites")
-                                                               .toArray()
-                                                               .at(id + 1)
-                                                               .toObject()
-                                                               .value("sprite_color")
-                                                               .toInt());
-
-        if (leftradio.checkedId() == BUTTONS::OVERLAY_COLOR
-            || leftradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT)
-            this->ui->radio_sprite_left->setChecked(true);
-        if (rightradio.checkedId() == BUTTONS::OVERLAY_COLOR
-            || rightradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT)
-            this->ui->radio_transparent_right->setChecked(true);
-        this->ui->statusbar->showMessage(QString("Current Sprite: %1").arg(id));
+        this->sync_ui_from_sprite(id);
     });
 
     leftradio.addButton(this->ui->radio_transparent_left, BUTTONS::TRANSPARENT);
@@ -110,233 +86,109 @@ MainWindow::MainWindow(QWidget *parent)
             this->opt.right_button = id;
     });
 
-    //palettes
+    //palettes: a click sets the color of the tool on that mouse button
     connect(this->ui->label_palette, &Palette::palette_clicked, this, [=](int button, int id) {
-        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::TRANSPARENT)
-            || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::TRANSPARENT))
-            this->ui->combo_transparent->setCurrentIndex(id);
+        int tool;
+        if (button == Qt::LeftButton)
+            tool = leftradio.checkedId();
+        else if (button == Qt::RightButton)
+            tool = rightradio.checkedId();
+        else
+            return;
 
-        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::COLOR)
-            || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::COLOR))
+        switch (tool) {
+        case BUTTONS::TRANSPARENT:
+        case BUTTONS::OVERLAY_TRANSPARENT:
+            this->ui->combo_transparent->setCurrentIndex(id);
+            break;
+        case BUTTONS::COLOR:
             this->ui->combo_sprite_col->setCurrentIndex(id);
-
-        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::MC1)
-            || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::MC1))
+            break;
+        case BUTTONS::MC1:
             this->ui->combo_multicol_1->setCurrentIndex(id);
-
-        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::MC2)
-            || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::MC2))
+            break;
+        case BUTTONS::MC2:
             this->ui->combo_multicol_2->setCurrentIndex(id);
-
-        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::OVERLAY_COLOR)
-            || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::OVERLAY_COLOR))
+            break;
+        case BUTTONS::OVERLAY_COLOR:
             this->ui->combo_overlay_color->setCurrentIndex(id);
-
-        if ((button == Qt::LeftButton && leftradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT)
-            || (button == Qt::RightButton && rightradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT))
-            this->ui->combo_transparent->setCurrentIndex(id);
-    });
-
-    connect(this->ui->graphicsView, &SpriteView::droppedFile, [=](QString file) {
-        //ask question
-        QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
-        hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
-        QByteArray current_hash = hash1.result().toHex();
-
-        if (opt.last_hash != current_hash) {
-            QMessageBox box;
-            box.setWindowTitle("OpenSprite");
-            box.setText("Save changes?");
-            QPushButton *yes = box.addButton("Yes", QMessageBox::YesRole);
-            QPushButton *no = box.addButton("No", QMessageBox::NoRole);
-            QPushButton *cancel = box.addButton("Cancel", QMessageBox::RejectRole);
-            box.exec();
-
-            if (box.clickedButton() == cancel)
-                return; //dont create new project
-            else if (box.clickedButton() == no) {
-            } // go on
-            else if (box.clickedButton() == yes) {
-                this->on_actionSave_Project_triggered();
-            }
+            break;
         }
-
-        this->import(file);
     });
+
+    connect(this->ui->graphicsView, &SpriteView::droppedFile, this, &MainWindow::open_file);
 
     //combos
-    for (int i = 0; i < 16; i++) {
-        this->ui->combo_transparent->addItem(opt.col_names.at(i));
-        this->ui->combo_transparent->setItemIcon(i, this->createIconFromColor(opt.col_list.at(i)));
-        this->ui->combo_sprite_col->addItem(opt.col_names.at(i));
-        this->ui->combo_sprite_col->setItemIcon(i, this->createIconFromColor(opt.col_list.at(i)));
-        this->ui->combo_multicol_1->addItem(opt.col_names.at(i));
-        this->ui->combo_multicol_1->setItemIcon(i, this->createIconFromColor(opt.col_list.at(i)));
-        this->ui->combo_multicol_2->addItem(opt.col_names.at(i));
-        this->ui->combo_multicol_2->setItemIcon(i, this->createIconFromColor(opt.col_list.at(i)));
-        this->ui->combo_overlay_color->addItem(opt.col_names.at(i));
-        this->ui->combo_overlay_color->setItemIcon(i, this->createIconFromColor(opt.col_list.at(i)));
+    QComboBox *combos[] = {this->ui->combo_transparent,
+                           this->ui->combo_sprite_col,
+                           this->ui->combo_multicol_1,
+                           this->ui->combo_multicol_2,
+                           this->ui->combo_overlay_color};
+    for (int i = 0; i < opt.col_list.size(); i++) {
+        const QIcon icon = this->createIconFromColor(opt.col_list.at(i));
+        for (QComboBox *combo : combos)
+            combo->addItem(icon, opt.col_names.at(i));
     }
+
     connect(this->ui->combo_transparent, &QComboBox::currentIndexChanged, this, [=](int index) {
-        opt.data.insert("background", index);
-        this->ui->graphicsView->redraw();
-    });
-    connect(this->ui->combo_sprite_col, &QComboBox::currentIndexChanged, this, [=](int index) {
-
-        for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        {
-            QJsonObject current_sprite_obj
-                = opt.data.value("sprites").toArray().at(i).toObject();
-            current_sprite_obj.insert("sprite_color", index);
-            QJsonArray sprites_array = opt.data.value("sprites").toArray();
-            sprites_array.removeAt(i);
-            sprites_array.insert(i, current_sprite_obj);
-            opt.data.insert("sprites", sprites_array);
-        }
-
-        this->ui->graphicsView->scene()->update();
+        set_project_value("background", index);
     });
     connect(this->ui->combo_multicol_1, &QComboBox::currentIndexChanged, this, [=](int index) {
-        opt.data.insert("mc1", index);
-        this->ui->graphicsView->scene()->update();
+        set_project_value("mc1", index);
     });
     connect(this->ui->combo_multicol_2, &QComboBox::currentIndexChanged, this, [=](int index) {
-        opt.data.insert("mc2", index);
-        this->ui->graphicsView->scene()->update();
+        set_project_value("mc2", index);
+    });
+    connect(this->ui->combo_sprite_col, &QComboBox::currentIndexChanged, this, [=](int index) {
+        if (index >= 0 && set_selection_value("sprite_color", index))
+            this->ui->graphicsView->scene()->update();
     });
     connect(this->ui->combo_overlay_color, &QComboBox::currentIndexChanged, this, [=](int index) {
-
-        for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        {
-            if (this->opt.data.value("sprites").toArray().count() > i + 1) {
-                QJsonObject current_sprite_obj
-                    = opt.data.value("sprites").toArray().at(i + 1).toObject();
-                current_sprite_obj.insert("sprite_color", index);
-                QJsonArray sprites_array = opt.data.value("sprites").toArray();
-                sprites_array.removeAt(i + 1);
-                sprites_array.insert(i + 1, current_sprite_obj);
-                opt.data.insert("sprites", sprites_array);
-            }
-        }
-
-        this->ui->graphicsView->scene()->update();
+        // the overlay color is the color of the next sprite
+        if (index >= 0 && set_selection_value("sprite_color", index, 1))
+            this->ui->graphicsView->scene()->update();
     });
 
     connect(this->ui->check_multicolor, &QCheckBox::toggled, this, [=](bool val) {
-        for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        {
-            QJsonObject current_sprite_obj
-                = opt.data.value("sprites").toArray().at(i).toObject();
-            current_sprite_obj.insert("mc_mode", val);
-            QJsonArray sprites_array = opt.data.value("sprites").toArray();
-            sprites_array.removeAt(i);
-            sprites_array.insert(i, current_sprite_obj);
-            opt.data.insert("sprites", sprites_array);
-        }
-
-        this->ui->radio_mc1_left->setEnabled(val);
-        this->ui->radio_mc1_right->setEnabled(val);
-        this->ui->radio_mc2_left->setEnabled(val);
-        this->ui->radio_mc2_right->setEnabled(val);
-        this->ui->combo_multicol_1->setEnabled(val);
-        this->ui->combo_multicol_2->setEnabled(val);
-
-        if (!val && this->ui->radio_mc1_left->isChecked())
-            this->ui->radio_sprite_left->setChecked(true);
-        if (!val && this->ui->radio_mc1_right->isChecked())
-            this->ui->radio_transparent_right->setChecked(true);
-
-        if (!val && this->ui->radio_mc2_left->isChecked())
-            this->ui->radio_sprite_left->setChecked(true);
-        if (!val && this->ui->radio_mc2_right->isChecked())
-            this->ui->radio_transparent_right->setChecked(true);
-
-
+        set_selection_value("mc_mode", val);
+        update_mode_controls();
         this->ui->graphicsView->scene()->update();
     });
 
     connect(this->ui->check_overlay, &QCheckBox::toggled, this, [=](bool val) {
-        this->ui->radio_overlay_color_left->setEnabled(val);
-        this->ui->radio_overlay_color_right->setEnabled(val);
-        this->ui->radio_overlay_transparent_left->setEnabled(val);
-        this->ui->radio_overlay_transparent_right->setEnabled(val);
-        this->ui->combo_overlay_color->setEnabled(val);
+        opt.push_undo();
+        for (int i = opt.selection_from; i <= opt.selection_to && i < opt.sprite_count(); i++) {
+            SpriteData::set_sprite_value(opt.data, i, "overlay_next", val);
+            if (i + 1 < opt.sprite_count()) {
+                //next sprite should be single color
+                if (val && this->ui->check_force_single_color->isChecked())
+                    SpriteData::set_sprite_value(opt.data, i + 1, "mc_mode", false);
 
-        if (!val && this->ui->radio_overlay_color_left->isChecked())
-            this->ui->radio_sprite_left->setChecked(true);
-        if (!val && this->ui->radio_overlay_color_right->isChecked())
-            this->ui->radio_sprite_right->setChecked(true);
-
-        if (!val && this->ui->radio_overlay_transparent_left->isChecked())
-            this->ui->radio_transparent_left->setChecked(true);
-        if (!val && this->ui->radio_overlay_transparent_right->isChecked())
-            this->ui->radio_transparent_right->setChecked(true);
-
-
-        for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        {
-            QJsonObject current_sprite_obj
-                = opt.data.value("sprites").toArray().at(i).toObject();
-            current_sprite_obj.insert("overlay_next", val);
-            QJsonArray sprites_array = opt.data.value("sprites").toArray();
-            sprites_array.removeAt(i);
-            sprites_array.insert(i, current_sprite_obj);
-            //next sprite should be single color
-            if (val && this->ui->check_force_single_color->isChecked()
-                && i + 1 < opt.data.value("sprites").toArray().count()) {
-                QJsonObject next_sprite_obj
-                    = opt.data.value("sprites").toArray().at(i + 1).toObject();
-                next_sprite_obj.insert("mc_mode", false);
-                sprites_array.removeAt(i + 1);
-                sprites_array.insert(i + 1, next_sprite_obj);
+                const QSignalBlocker blocker(this->ui->combo_overlay_color);
+                this->ui->combo_overlay_color->setCurrentIndex(
+                    SpriteData::sprite_at(opt.data, i + 1).value("sprite_color").toInt());
             }
-            opt.data.insert("sprites", sprites_array);
-
-            if (i + 1 < opt.data.value("sprites").toArray().count())
-                this->ui->combo_overlay_color->setCurrentIndex(opt.data.value("sprites")
-                                                                   .toArray()
-                                                                   .at(i + 1)
-                                                                   .toObject()
-                                                                   .value("sprite_color")
-                                                                   .toInt());
         }
-
+        update_mode_controls();
         this->ui->graphicsView->scene()->update();
     });
 
+    // expansion changes the size of the sprite items, so the view is rebuilt
     connect(this->ui->check_exp_x, &QCheckBox::toggled, this, [=](bool val) {
-        for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        {
-            QJsonObject current_sprite_obj
-                = opt.data.value("sprites").toArray().at(i).toObject();
-            current_sprite_obj.insert("exp_x", val);
-            QJsonArray sprites_array = opt.data.value("sprites").toArray();
-            sprites_array.removeAt(i);
-            sprites_array.insert(i, current_sprite_obj);
-            opt.data.insert("sprites", sprites_array);
-        }
-        this->ui->graphicsView->scene()->update();
+        if (set_selection_value("exp_x", val))
+            this->ui->graphicsView->redraw();
     });
     connect(this->ui->check_exp_y, &QCheckBox::toggled, this, [=](bool val) {
-
-        for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        {
-            QJsonObject current_sprite_obj
-                = opt.data.value("sprites").toArray().at(i).toObject();
-            current_sprite_obj.insert("exp_y", val);
-            QJsonArray sprites_array = opt.data.value("sprites").toArray();
-            sprites_array.removeAt(i);
-            sprites_array.insert(i, current_sprite_obj);
-            opt.data.insert("sprites", sprites_array);
-        }
-        this->ui->graphicsView->scene()->update();
+        if (set_selection_value("exp_y", val))
+            this->ui->graphicsView->redraw();
     });
 
-    connect(this->ui->checkBox_editor_grid_lines, &QCheckBox::toggled, [=](bool val) {
+    connect(this->ui->checkBox_editor_grid_lines, &QCheckBox::toggled, this, [=](bool val) {
         this->opt.show_grid_lines = val;
         this->ui->graphicsView->scene()->update();
+        quickEditor->update();
     });
-    connect(this->ui->check_sprite_numbers, &QCheckBox::toggled, [=](bool val) {
+    connect(this->ui->check_sprite_numbers, &QCheckBox::toggled, this, [=](bool val) {
         this->opt.show_numbers = val;
         this->ui->graphicsView->scene()->update();
     });
@@ -363,24 +215,15 @@ MainWindow::MainWindow(QWidget *parent)
     quickEditor->setVisible(qeEnabled);
     this->ui->groupBox->setTitle(qeEnabled ? tr("Quick Editor and Options") : tr("Options"));
 
-    // Refresh Quick Editor when active sprite changes
-    connect(this->ui->graphicsView, &SpriteView::current_sprite_changed, this, [=](int) {
-        if (quickEditor->isVisible()) quickEditor->update();
-    });
-
-    // Sync Quick Editor whenever the scene updates (catches all edits + redraws)
+    // Sync Quick Editor and title whenever the scene updates (catches all edits + redraws)
     connect(this->ui->graphicsView->scene(), &QGraphicsScene::changed, this, [=]() {
         if (quickEditor->isVisible()) quickEditor->update();
+        update_window_title();
     });
 
     // After a Quick Editor edit, sync the main scene
     connect(quickEditor, &QuickEditorWidget::spriteEdited, this, [=]() {
         this->ui->graphicsView->scene()->update();
-        if (!opt.sprite_list.isEmpty()) {
-            int id = opt.selection_from;
-            if (id >= 0 && id < opt.sprite_list.size())
-                opt.sprite_list.at(id)->update();
-        }
     });
 }
 
@@ -389,164 +232,392 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::closeEvent(QCloseEvent *ev)
+// ── save handling ─────────────────────────────────────────────────────────────
+
+bool MainWindow::maybe_save(const QString &question)
 {
-    QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
-    hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
-    QByteArray current_hash = hash1.result().toHex();
+    opt.end_edit();
+    if (!opt.is_modified())
+        return true;
 
-    if (opt.last_hash != current_hash) {
-        QMessageBox box;
-        box.setWindowTitle("OpenSprite");
-        box.setText("Save changes before closing?");
-        QPushButton *yes = box.addButton("Yes", QMessageBox::YesRole);
-        QPushButton *no = box.addButton("No", QMessageBox::NoRole);
-        QPushButton *cancel = box.addButton("Cancel", QMessageBox::RejectRole);
-        box.exec();
+    QMessageBox box(this);
+    box.setWindowTitle("OpenSprite");
+    box.setText(question);
+    QPushButton *yes = box.addButton("Yes", QMessageBox::YesRole);
+    QPushButton *no = box.addButton("No", QMessageBox::NoRole);
+    QPushButton *cancel = box.addButton("Cancel", QMessageBox::RejectRole);
+    box.setDefaultButton(yes);
+    box.setEscapeButton(cancel);
+    box.exec();
 
-        if (box.clickedButton() == cancel) {
-            ev->ignore();
-            return;
-        } else if (box.clickedButton() == no) {
-            ev->accept();
-            qApp->quit();
-        } else if (box.clickedButton() == yes) {
-            this->on_actionSave_Project_triggered();
-            if (opt.last_hash == current_hash) {
-                ev->accept();
-                qApp->quit();
-            } else
-                ev->ignore();
-        }
-    } else
-        qApp->quit();
+    if (box.clickedButton() == no)
+        return true;
+    if (box.clickedButton() == yes)
+        return save_project(); // false if "save as" was cancelled or saving failed
+    return false;
 }
 
-void MainWindow::import(QString path)
+bool MainWindow::save_project()
 {
-    QSettings settings;
-    if (path != "") {
-        int address = 0;
-        if (path.endsWith(".spd", Qt::CaseInsensitive))
-        {
-            opt.data = FileIO().read_spd(path);
-            //TODO REMOVE THIS //
-            if (opt.data.value("version").toInt() > 1)
-            {
-                QMessageBox::critical(this, "Unsupported format", "Attention! Your file is in a newer spd version format. It will be saved in spd V1 format.", QMessageBox::Ok);
-            }
-            //TODO REMOVE THIS
-        }
-        else if (path.endsWith(".bin", Qt::CaseInsensitive)
-                 || path.endsWith(".prg", Qt::CaseInsensitive))
-            opt.data = FileIO().read_prg_bin(path, &address);
-        else if (path.endsWith(".spm"))
-        {
-            opt.data = FileIO().read_spm(path);
-            //qDebug() << opt.data;
-        }
+    if (opt.last_saved_file.isEmpty())
+        return save_project_as();
 
-        if (address != 0)
-            opt.export_address = address;
+    //auto save
+    opt.end_edit();
+    if (!FileIO::write_spd(opt.last_saved_file, opt.data, this))
+        return false;
+    opt.mark_saved();
+    current_file = opt.last_saved_file;
+    this->statusBar()->showMessage("Saved to: " + opt.last_saved_file);
+    update_window_title();
+    return true;
+}
 
-        //detect changes
-        QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
-        hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
-        opt.last_hash = hash1.result().toHex();
-
-        settings.setValue("last_file", path);
-
-        if (path.endsWith(".spd", Qt::CaseInsensitive) || path.endsWith(".spm", Qt::CaseInsensitive)) //only changes preset when spd or spm
-        {
-            this->ui->combo_multicol_1->setCurrentIndex(opt.data.value("mc1").toInt());
-            this->ui->combo_multicol_2->setCurrentIndex(opt.data.value("mc2").toInt());
-            this->ui->combo_transparent->setCurrentIndex(opt.data.value("background").toInt());
-
-            opt.last_saved_file = path;  //activate autosave on spd files
-            opt.last_exported_file = ""; //reset export
-        } else {
-            opt.data.insert("background", this->ui->combo_transparent->currentIndex());
-            opt.data.insert("mc1", this->ui->combo_multicol_1->currentIndex());
-            opt.data.insert("mc2", this->ui->combo_multicol_2->currentIndex());
-
-            opt.last_saved_file = "";    //reset save
-            opt.last_exported_file = ""; //reset export
-        }
-
-        //close animations
-        if (this->animation_dialog != 0)
-            this->animation_dialog->close();
-
-        opt.undoDB.clear();
-        this->ui->graphicsView->change_current_sprite(0);
-        this->ui->graphicsView->redraw();
+bool MainWindow::save_project_as()
+{
+    QString suggestion = opt.last_saved_file;
+    if (suggestion.isEmpty()) {
+        QFileInfo info(current_file);
+        suggestion = current_file.isEmpty()
+                         ? QDir::homePath() + QDir::separator() + "Untitled.spd"
+                         : info.absolutePath() + QDir::separator() + info.completeBaseName() + ".spd";
     }
+    QString path = QFileDialog::getSaveFileName(this, "Save Project As", suggestion, "OpenSprite file (*.spd)");
+    if (path.isEmpty())
+        return false;
+    if (!path.endsWith(".spd", Qt::CaseInsensitive))
+        path += ".spd";
+
+    opt.end_edit();
+    if (!FileIO::write_spd(path, opt.data, this))
+        return false;
+    opt.last_saved_file = path;
+    opt.mark_saved();
+    current_file = path;
+    this->statusBar()->showMessage("Saved to: " + opt.last_saved_file);
+    update_window_title();
+    return true;
+}
+
+void MainWindow::closeEvent(QCloseEvent *ev)
+{
+    if (!maybe_save("Save changes before closing?")) {
+        ev->ignore();
+        return;
+    }
+    ev->accept();
+    qApp->quit();
+}
+
+// ── ui <-> data ───────────────────────────────────────────────────────────────
+
+void MainWindow::update_mode_controls()
+{
+    const bool mc = this->ui->check_multicolor->isChecked();
+    this->ui->radio_mc1_left->setEnabled(mc);
+    this->ui->radio_mc1_right->setEnabled(mc);
+    this->ui->radio_mc2_left->setEnabled(mc);
+    this->ui->radio_mc2_right->setEnabled(mc);
+    this->ui->combo_multicol_1->setEnabled(mc);
+    this->ui->combo_multicol_2->setEnabled(mc);
+    if (!mc) {
+        if (this->ui->radio_mc1_left->isChecked() || this->ui->radio_mc2_left->isChecked())
+            this->ui->radio_sprite_left->setChecked(true);
+        if (this->ui->radio_mc1_right->isChecked() || this->ui->radio_mc2_right->isChecked())
+            this->ui->radio_transparent_right->setChecked(true);
+    }
+
+    const bool overlay = this->ui->check_overlay->isChecked();
+    this->ui->radio_overlay_color_left->setEnabled(overlay);
+    this->ui->radio_overlay_color_right->setEnabled(overlay);
+    this->ui->radio_overlay_transparent_left->setEnabled(overlay);
+    this->ui->radio_overlay_transparent_right->setEnabled(overlay);
+    this->ui->combo_overlay_color->setEnabled(overlay);
+    if (!overlay) {
+        if (this->ui->radio_overlay_color_left->isChecked())
+            this->ui->radio_sprite_left->setChecked(true);
+        if (this->ui->radio_overlay_color_right->isChecked())
+            this->ui->radio_sprite_right->setChecked(true);
+        if (this->ui->radio_overlay_transparent_left->isChecked())
+            this->ui->radio_transparent_left->setChecked(true);
+        if (this->ui->radio_overlay_transparent_right->isChecked())
+            this->ui->radio_transparent_right->setChecked(true);
+    }
+}
+
+// shows the properties of the sprite without modifying the project
+void MainWindow::sync_ui_from_sprite(int id)
+{
+    if (id < 0 || id >= opt.sprite_count())
+        return;
+    const QJsonObject sprite = SpriteData::sprite_at(opt.data, id);
+    {
+        const QSignalBlocker b1(this->ui->combo_sprite_col);
+        const QSignalBlocker b2(this->ui->check_multicolor);
+        const QSignalBlocker b3(this->ui->check_overlay);
+        const QSignalBlocker b4(this->ui->check_exp_x);
+        const QSignalBlocker b5(this->ui->check_exp_y);
+        const QSignalBlocker b6(this->ui->combo_overlay_color);
+
+        this->ui->combo_sprite_col->setCurrentIndex(sprite.value("sprite_color").toInt());
+        this->ui->check_multicolor->setChecked(sprite.value("mc_mode").toBool());
+        this->ui->check_overlay->setChecked(sprite.value("overlay_next").toBool());
+        this->ui->check_exp_x->setChecked(sprite.value("exp_x").toBool());
+        this->ui->check_exp_y->setChecked(sprite.value("exp_y").toBool());
+        if (sprite.value("overlay_next").toBool() && id + 1 < opt.sprite_count())
+            this->ui->combo_overlay_color->setCurrentIndex(
+                SpriteData::sprite_at(opt.data, id + 1).value("sprite_color").toInt());
+    }
+    update_mode_controls();
+
+    if (leftradio.checkedId() == BUTTONS::OVERLAY_COLOR
+        || leftradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT)
+        this->ui->radio_sprite_left->setChecked(true);
+    if (rightradio.checkedId() == BUTTONS::OVERLAY_COLOR
+        || rightradio.checkedId() == BUTTONS::OVERLAY_TRANSPARENT)
+        this->ui->radio_transparent_right->setChecked(true);
+    this->ui->statusbar->showMessage(QString("Current Sprite: %1").arg(id));
+    if (quickEditor)
+        quickEditor->update();
+}
+
+void MainWindow::sync_global_ui()
+{
+    const QSignalBlocker b1(this->ui->combo_transparent);
+    const QSignalBlocker b2(this->ui->combo_multicol_1);
+    const QSignalBlocker b3(this->ui->combo_multicol_2);
+    this->ui->combo_transparent->setCurrentIndex(opt.data.value("background").toInt());
+    this->ui->combo_multicol_1->setCurrentIndex(opt.data.value("mc1").toInt());
+    this->ui->combo_multicol_2->setCurrentIndex(opt.data.value("mc2").toInt());
+}
+
+void MainWindow::update_window_title()
+{
+    const QString name = current_file.isEmpty() ? QString("Untitled") : QFileInfo(current_file).fileName();
+    this->setWindowTitle(name + "[*] - OpenSprite");
+    this->setWindowModified(opt.is_modified());
+}
+
+void MainWindow::data_replaced()
+{
+    opt.clamp_selection();
+    this->ui->graphicsView->redraw();
+    sync_global_ui();
+    sync_ui_from_sprite(opt.selection_from);
+    if (animation_dialog)
+        animation_dialog->fill_list();
+    update_window_title();
+}
+
+// ── helpers ───────────────────────────────────────────────────────────────────
+
+void MainWindow::apply_to_selection(void (Sprite::*fn)(), bool twice_in_mc_mode)
+{
+    opt.push_undo();
+    for (int i = opt.selection_from; i <= opt.selection_to && i < opt.sprite_list.size(); i++) {
+        Sprite *sprite = opt.sprite_list.at(i);
+        (sprite->*fn)();
+        if (twice_in_mc_mode && sprite->is_mc())
+            (sprite->*fn)();
+    }
+    this->ui->graphicsView->scene()->update();
+}
+
+bool MainWindow::set_selection_value(const QString &key, const QJsonValue &value, int offset)
+{
+    QList<int> targets;
+    for (int i = opt.selection_from; i <= opt.selection_to; i++) {
+        const int j = i + offset;
+        if (j >= 0 && j < opt.sprite_count() && SpriteData::sprite_at(opt.data, j).value(key) != value)
+            targets.append(j);
+    }
+    if (targets.isEmpty())
+        return false;
+
+    opt.push_undo();
+    for (int j : targets)
+        SpriteData::set_sprite_value(opt.data, j, key, value);
+    return true;
+}
+
+void MainWindow::set_project_value(const QString &key, int value)
+{
+    if (value < 0 || opt.data.value(key).toInt(-1) == value)
+        return;
+    opt.push_undo();
+    opt.data.insert(key, value);
+    this->ui->graphicsView->scene()->update();
+}
+
+void MainWindow::show_dialog(QWidget *dialog)
+{
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
+}
+
+QJsonArray MainWindow::copied_sprites() const
+{
+    QJsonParseError error;
+    QSettings settings;
+    const QJsonDocument doc = QJsonDocument::fromJson(settings.value("copied_sprites").toByteArray(), &error);
+    if (error.error != QJsonParseError::NoError)
+        return QJsonArray();
+    return doc.array();
+}
+
+// ── file handling ─────────────────────────────────────────────────────────────
+
+bool MainWindow::import(QString path)
+{
+    if (path.isEmpty())
+        return false;
+
+    QJsonObject data;
+    int address = 0;
+    const QString suffix = QFileInfo(path).suffix().toLower();
+    const bool project_file = (suffix == "spd" || suffix == "spm");
+
+    if (suffix == "spd") {
+        data = FileIO::read_spd(path, this);
+        if (data.value("version").toInt() > 1)
+        {
+            QMessageBox::warning(this, "Unsupported format", "Attention! Your file is in a newer spd version format. It will be saved in spd V1 format.", QMessageBox::Ok);
+        }
+    } else if (suffix == "bin" || suffix == "prg") {
+        data = FileIO::read_prg_bin(path, &address, this);
+    } else if (suffix == "spm") {
+        data = FileIO::read_spm(path, this);
+    } else {
+        QMessageBox::critical(this, "Unsupported file", "Unsupported file type: " + path);
+        return false;
+    }
+
+    if (SpriteData::sprite_count(data) == 0)
+        return false; // error was already reported, keep the current project
+
+    if (!data.contains("animations"))
+        data.insert("animations", QJsonArray());
+
+    if (!project_file) {
+        //bin/prg contain no colors: keep the current ones
+        data.insert("background", this->ui->combo_transparent->currentIndex());
+        data.insert("mc1", this->ui->combo_multicol_1->currentIndex());
+        data.insert("mc2", this->ui->combo_multicol_2->currentIndex());
+    }
+
+    opt.data = data;
+    if (address != 0)
+        opt.export_address = address;
+
+    QSettings settings;
+    settings.setValue("last_file", path);
+
+    opt.last_saved_file = project_file ? path : ""; //activate autosave on spd/spm files
+    opt.last_exported_file = "";                    //reset export
+    current_file = path;
+
+    //close animations
+    if (this->animation_dialog)
+        this->animation_dialog->close();
+
+    opt.clear_history();
+    opt.mark_saved();
+    opt.selection_from = 0;
+    opt.selection_to = 0;
+    data_replaced();
+    return true;
 }
 
 void MainWindow::new_project()
 {
     opt.last_exported_file = "";
     opt.last_saved_file = "";
-    opt.undoDB.clear();
-    opt.data.insert("sprites", QJsonArray());
-    this->on_actionAdd_Sprite_triggered();
+    current_file = "";
 
+    QJsonObject data;
+    data.insert("sprites", QJsonArray{SpriteData::new_sprite()});
     //create sample animation (original spritepad wants at least 1 animation)
-    QJsonObject anim;
-    anim.insert("from", 0);
-    anim.insert("to", 0);
-    anim.insert("timer", 16);
-    anim.insert("overlay", false);
-    anim.insert("pingpong", false);
-    anim.insert("valid", false);
-    QJsonArray anim_array;
-    anim_array.append(anim);
-    opt.data.insert("animations", anim_array);
+    data.insert("animations", QJsonArray{SpriteData::new_animation(0, 0, false)});
+    data.insert("background", 6);
+    data.insert("mc1", qMax(0, this->ui->combo_multicol_1->currentIndex()));
+    data.insert("mc2", 1);
+    opt.data = data;
 
-    this->ui->combo_transparent->setCurrentIndex(6);
-    this->ui->combo_multicol_2->setCurrentIndex(1);
-
-    if (this->animation_dialog != 0)
+    if (this->animation_dialog)
         this->animation_dialog->close();
 
-    //detect changes
-    QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
-    hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
-    opt.last_hash = hash1.result().toHex();
+    opt.clear_history();
+    opt.mark_saved();
+    opt.selection_from = 0;
+    opt.selection_to = 0;
+    data_replaced();
+}
+
+void MainWindow::open_file(const QString &path)
+{
+    if (path.isEmpty() || !maybe_save("Save changes?"))
+        return;
+    this->import(path);
 }
 
 void MainWindow::on_actionOpenProject_triggered()
 {
-    //ask question
-    QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
-    hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
-    QByteArray current_hash = hash1.result().toHex();
-
-    if (opt.last_hash != current_hash) {
-        QMessageBox box;
-        box.setWindowTitle("OpenSprite");
-        box.setText("Save changes?");
-        QPushButton *yes = box.addButton("Yes", QMessageBox::YesRole);
-        QPushButton *no = box.addButton("No", QMessageBox::NoRole);
-        QPushButton *cancel = box.addButton("Cancel", QMessageBox::RejectRole);
-        box.exec();
-
-        if (box.clickedButton() == cancel)
-            return; //dont create new project
-        else if (box.clickedButton() == no) {
-        } // go on
-        else if (box.clickedButton() == yes) {
-            this->on_actionSave_Project_triggered();
-        }
-    }
+    if (!maybe_save("Save changes?"))
+        return;
 
     QSettings settings;
     QString path = QFileDialog::getOpenFileName(this,
                                                 "File",
                                                 settings.value("last_file", QVariant()).toString(),
-                                                "Sprite Files(*.spd *.prg);;All Files (*)");
+                                                "Sprite Files (*.spd *.spm *.prg *.bin);;"
+                                                "SpritePad (*.spd);;"
+                                                "Spritemate (*.spm);;"
+                                                "PRG / BIN (*.prg *.bin);;"
+                                                "All Files (*)");
     this->import(path);
 }
+
+void MainWindow::on_actionSave_Project_triggered()
+{
+    save_project();
+}
+
+void MainWindow::on_actionSave_Project_As_triggered()
+{
+    save_project_as();
+}
+
+void MainWindow::on_actionExport_as_triggered()
+{
+    ExportDialog *d = new ExportDialog(&opt, this);
+    connect(d, &ExportDialog::statusmsg, this, [=](QString msg){
+        this->statusBar()->showMessage(msg);
+    });
+    show_dialog(d);
+}
+
+void MainWindow::on_actionExport_triggered()
+{
+    if (opt.last_exported_file.isEmpty()) {
+        this->on_actionExport_as_triggered();
+    } else { //auto export
+        if (FileIO::write_prg(opt.last_exported_file,
+                              opt.data,
+                              opt.export_file_format == 0 ? opt.export_address : -1,
+                              opt.export_attribute_format,
+                              this))
+            this->statusBar()->showMessage("Exported to: " + opt.last_exported_file);
+    }
+}
+
+void MainWindow::on_actionNew_triggered()
+{
+    if (maybe_save("Save changes?"))
+        this->new_project();
+}
+
+// ── clipboard ─────────────────────────────────────────────────────────────────
 
 void MainWindow::on_actionCut_triggered()
 {
@@ -556,125 +627,234 @@ void MainWindow::on_actionCut_triggered()
 
 void MainWindow::on_actionCopy_triggered()
 {
-    //there is no sub-array function
-    QJsonArray copied_sprites;
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        copied_sprites.append(this->opt.data.value("sprites").toArray().at(i).toObject());
+    const QJsonArray sprites = this->opt.data.value("sprites").toArray();
+    QJsonArray copied;
+    for (int i = opt.selection_from; i <= opt.selection_to && i < sprites.count(); i++)
+        copied.append(sprites.at(i));
 
+    // stored in the settings, so it can be pasted into another instance
     QSettings settings;
-    settings.setValue("copied_sprites",
-                      QJsonDocument(copied_sprites)
-                          .toJson(QJsonDocument::Compact));
+    settings.setValue("copied_sprites", QJsonDocument(copied).toJson(QJsonDocument::Compact));
+    this->statusBar()->showMessage(QString("Copied %1 sprite(s)").arg(copied.count()));
 }
 
 void MainWindow::on_actionPaste_triggered()
 {
-    opt.undoDB.append(opt.data);
-    QJsonParseError error;
-    QSettings settings;
-    QJsonArray copied_sprites
-        = QJsonDocument::fromJson(settings.value("copied_sprites").toString().toUtf8(), &error)
-              .array();
-    if (error.error != QJsonParseError::NoError)
+    const QJsonArray copied = copied_sprites();
+    if (copied.isEmpty())
         return;
 
-    QJsonArray sprite_array = this->opt.data.value("sprites").toArray();
-    //this->ui->combo_sprite_col->setCurrentIndex(copied_sprites.value("sprite_color").toInt());
-    //sprite_array.removeAt(current_sprite);
-    for (int i = copied_sprites.count()-1; i >= 0; i--)
-        sprite_array.insert(opt.selection_from, copied_sprites[i]);
+    opt.push_undo();
+    QJsonArray sprite_array = this->opt.data.take("sprites").toArray();
+    const int pos = qBound(0, opt.selection_from, int(sprite_array.count()));
+    for (int i = copied.count()-1; i >= 0; i--)
+        sprite_array.insert(pos, copied.at(i));
     this->opt.data.insert("sprites", sprite_array);
-    this->ui->graphicsView->redraw();
+
+    // select the pasted sprites
+    opt.selection_from = pos;
+    opt.selection_to = pos + copied.count() - 1;
+    data_replaced();
 }
 
+// draws the set pixels of the copied sprites over the selected sprites
 void MainWindow::on_actionPaste_Into_triggered()
 {
-    QMessageBox::information(this, "Not implemented yet", "Not implemented yet");
-    //TODO
-    /*
-    for (int i = 0; i < 64; i++)
-    {
-        if (this->copied_sprite_data[i] != 0)
-            this->opt.sprite_list.at(current_sprite)->sprite_data[i] = this->copied_sprite_data[i];
+    const QJsonArray copied = copied_sprites();
+    if (copied.isEmpty())
+        return;
+
+    opt.push_undo();
+    for (int i = opt.selection_from; i <= opt.selection_to && i < opt.sprite_count(); i++) {
+        const QJsonObject source = copied.at((i - opt.selection_from) % copied.count()).toObject();
+        const SpriteData::Bits src = SpriteData::Bits::from_json(source);
+        SpriteData::Bits dst = SpriteData::bits_at(opt.data, i);
+
+        if (source.value("mc_mode").toBool()) {
+            for (int y = 0; y < SpriteData::HEIGHT; y++)
+                for (int cx = 0; cx < SpriteData::MC_WIDTH; cx++)
+                    if (src.mc(cx, y) != SpriteData::MC_BACKGROUND)
+                        dst.set_mc(cx, y, src.mc(cx, y));
+        } else {
+            for (int y = 0; y < SpriteData::HEIGHT; y++)
+                for (int x = 0; x < SpriteData::WIDTH; x++)
+                    if (src.get(x, y))
+                        dst.set(x, y, true);
+        }
+        SpriteData::set_bits(opt.data, i, dst);
     }
-    */
     this->ui->graphicsView->scene()->update();
 }
 
+// ── sprite operations ─────────────────────────────────────────────────────────
+
 void MainWindow::on_actionClear_triggered()
 {
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-    {
-        QJsonObject current_sprite_obj
-            = opt.data.value("sprites").toArray().at(i).toObject();
-        QJsonArray array_y;
-        for (int y = 0; y < 21; y++) {
-            QJsonArray array_x;
-            for (int x = 0; x < 24; x++) {
-                array_x.append(0);
-            }
-            array_y.append(array_x);
-        }
-        current_sprite_obj.insert("sprite_data", array_y);
-
-        QJsonArray sprites_array = opt.data.value("sprites").toArray();
-        sprites_array.removeAt(i);
-        sprites_array.insert(i, current_sprite_obj);
-        opt.data.insert("sprites", sprites_array);
-    }
+    opt.push_undo();
+    for (int i = opt.selection_from; i <= opt.selection_to && i < opt.sprite_count(); i++)
+        SpriteData::set_bits(opt.data, i, SpriteData::Bits());
     this->ui->graphicsView->scene()->update();
 }
 
 void MainWindow::on_actionSlide_Up_triggered()
 {
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        this->opt.sprite_list.at(i)->slide_up();
-    this->ui->graphicsView->scene()->update();
+    apply_to_selection(&Sprite::slide_up);
 }
 
 void MainWindow::on_actionSlide_Down_triggered()
 {
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        this->opt.sprite_list.at(i)->slide_down();
-    this->ui->graphicsView->scene()->update();
+    apply_to_selection(&Sprite::slide_down);
 }
 
 void MainWindow::on_actionSlide_Left_triggered()
 {
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-    {
-        this->opt.sprite_list.at(i)->slide_left();
-        if (this->opt.data.value("sprites")
-                .toArray()
-                .at(i)
-                .toObject()
-                .value("mc_mode")
-                .toBool())
-            this->opt.sprite_list.at(i)->slide_left();
-    }
-    this->ui->graphicsView->scene()->update();
+    // multicolor pixels are two bits wide
+    apply_to_selection(&Sprite::slide_left, true);
 }
 
 void MainWindow::on_actionSlide_Right_triggered()
 {
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-    {
-        this->opt.sprite_list.at(i)->slide_right();
-        if (this->opt.data.value("sprites")
-                .toArray()
-                .at(i)
-                .toObject()
-                .value("mc_mode")
-                .toBool())
-            this->opt.sprite_list.at(i)->slide_right();
-    }
+    apply_to_selection(&Sprite::slide_right, true);
+}
+
+void MainWindow::on_actionFlip_Top_to_Bottom_triggered()
+{
+    apply_to_selection(&Sprite::flip_top);
+}
+
+void MainWindow::on_actionFlip_Left_to_Right_triggered()
+{
+    apply_to_selection(&Sprite::flip_left);
+}
+
+void MainWindow::on_actionReflect_Left_To_Right_triggered()
+{
+    apply_to_selection(&Sprite::reflect_left);
+}
+
+void MainWindow::on_actionReflect_Top_to_Bottom_triggered()
+{
+    apply_to_selection(&Sprite::reflect_top);
+}
+
+void MainWindow::on_actionSprite_Color_MC_1_triggered()
+{
+    apply_to_selection(&Sprite::switch_col_to_mc1);
+}
+
+void MainWindow::on_actionSprite_Color_MC_2_triggered()
+{
+    apply_to_selection(&Sprite::switch_col_to_mc2);
+}
+
+void MainWindow::on_actionMC_1_MC_2_triggered()
+{
+    apply_to_selection(&Sprite::switch_mc1_to_mc2);
+}
+
+void MainWindow::on_actionDelete_Sprite_triggered()
+{
+    opt.push_undo();
+    QJsonArray sprites_array = opt.data.take("sprites").toArray();
+    for (int i = opt.selection_from; i <= opt.selection_to && opt.selection_from < sprites_array.count(); i++)
+        sprites_array.removeAt(opt.selection_from);
+    // a project always contains at least one sprite
+    if (sprites_array.isEmpty())
+        sprites_array.append(SpriteData::new_sprite());
+    opt.data.insert("sprites", sprites_array);
+
+    opt.selection_from = qMin(opt.selection_from, int(sprites_array.count()) - 1);
+    opt.selection_to = opt.selection_from;
+    data_replaced();
+}
+
+void MainWindow::on_actionAdd_Sprite_triggered()
+{
+    this->ui->graphicsView->add_new_sprite();
+}
+
+void MainWindow::on_actionUndo_triggered()
+{
+    if (opt.undo())
+        data_replaced();
+}
+
+void MainWindow::on_actionRedo_triggered()
+{
+    if (opt.redo())
+        data_replaced();
+}
+
+void MainWindow::on_actionSelect_All_triggered()
+{
+    this->opt.selection_from = 0;
+    this->opt.selection_to = qMax(0, opt.sprite_count() - 1);
     this->ui->graphicsView->scene()->update();
 }
+
+void MainWindow::on_actionFlood_Fill_triggered()
+{
+    this->opt.pen = this->ui->actionFlood_Fill->isChecked() ? PEN::FLOOD : PEN::DEFAULT;
+}
+
+// ── dialogs ───────────────────────────────────────────────────────────────────
+
+void MainWindow::on_actionAbout_triggered()
+{
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("About OpenSprite");
+    msgBox.setTextFormat(Qt::RichText);
+    msgBox.setText(
+        QString("Version: %1 (%2)").arg(QCoreApplication::applicationVersion(), APP_VERSION_DATE) +
+        "<br>Author:<br>Johannes Winkler<br>Wilfried Elmenreich<br>License: GNU GPL License<br><a "
+        "href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.exec();
+}
+
+void MainWindow::on_actionAnimations_Editor_triggered()
+{
+    //doing a singleton.
+    if (!animation_dialog) {
+        animation_dialog = new AnimationDialog(&opt, this);
+    }
+    show_dialog(animation_dialog);
+}
+
+void MainWindow::on_actionSelection_to_Animation_triggered()
+{
+    QJsonArray animation_array = opt.data.value("animations").toArray();
+    animation_array.append(SpriteData::new_animation(opt.selection_from, opt.selection_to, true));
+    opt.data.insert("animations", animation_array);
+
+    // an already open editor has to show the new animation
+    if (animation_dialog)
+        animation_dialog->fill_list();
+    this->on_actionAnimations_Editor_triggered();
+}
+
+void MainWindow::on_actionRotate_triggered()
+{
+    RotationDialog *dialog = new RotationDialog(&opt, this);
+    connect(dialog, &RotationDialog::finished, this, [=]() { data_replaced(); });
+    show_dialog(dialog);
+}
+
+void MainWindow::on_actionScale_Dialog_triggered()
+{
+    ScalingDialog *dialog = new ScalingDialog(&this->opt, this);
+    connect(dialog, &ScalingDialog::finished, this, [=]() { data_replaced(); });
+    show_dialog(dialog);
+}
+
+void MainWindow::on_actionPreferences_triggered()
+{
+    SettingsDialog *dialog = new SettingsDialog(&opt, this);
+    connect(dialog, &SettingsDialog::finished, this, [=]() { this->ui->graphicsView->redraw(); });
+    show_dialog(dialog);
+}
+
+// ── view ──────────────────────────────────────────────────────────────────────
 
 void MainWindow::on_slider_scale_valueChanged(int value)
 {
@@ -688,283 +868,21 @@ void MainWindow::on_slider_scale_valueChanged(int value)
         this->ui->graphicsView->redraw();
 }
 
-void MainWindow::on_actionFlip_Top_to_Bottom_triggered()
-{
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        this->opt.sprite_list.at(i)->flip_top();
-    this->ui->graphicsView->scene()->update();
-}
-
-void MainWindow::on_actionFlip_Left_to_Right_triggered()
-{
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        this->opt.sprite_list.at(i)->flip_left();
-    this->ui->graphicsView->scene()->update();
-}
-
-void MainWindow::on_actionSave_Project_triggered()
-{
-    if (opt.last_saved_file == "") {
-        this->on_actionSave_Project_As_triggered();
-    } else {
-        //auto save
-        FileIO().write_spd(opt.last_saved_file, opt.data);
-        this->statusBar()->showMessage("Saved to: " + opt.last_saved_file);
-
-        //detect changes
-        QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
-        hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
-        opt.last_hash = hash1.result().toHex();
-    }
-}
-
-void MainWindow::on_actionSave_Project_As_triggered()
-{
-    QString path = QFileDialog::getSaveFileName(this,
-                                                "Save Project As",
-                                                opt.last_saved_file == ""
-                                                    ? QDir::homePath() + QDir::separator()
-                                                          + "Untitled.spd"
-                                                    : opt.last_saved_file,
-                                                "OpenSprite file (*.spd)");
-    if (path != "") {
-        FileIO().write_spd(path, opt.data);
-        opt.last_saved_file = path;
-        this->statusBar()->showMessage("Saved to: " + opt.last_saved_file);
-
-        QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
-        hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
-        opt.last_hash = hash1.result().toHex();
-    }
-}
-
-void MainWindow::on_actionDelete_Sprite_triggered()
-{
-    opt.undoDB.append(opt.data);
-    QJsonArray sprites_array = opt.data.value("sprites").toArray();
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        sprites_array.removeAt(opt.selection_from);
-    opt.selection_from = qMin(opt.selection_from, sprites_array.count() - 1);
-    opt.selection_to = qMin(opt.selection_to, sprites_array.count() - 1);
-    opt.data.insert("sprites", sprites_array);
-    this->ui->graphicsView->redraw();
-}
-
-void MainWindow::on_actionAdd_Sprite_triggered()
-{
-    this->ui->graphicsView->add_new_sprite();
-}
-
-void MainWindow::on_actionAbout_triggered()
-{
-    QMessageBox msgBox(this);
-    msgBox.setTextFormat(Qt::RichText);
-    msgBox.setText(
-        "Version: 1.95 (04 / 2026)<br>Author:<br>Johannes Winkler<br>Wilfried Elmenreich<br>License: GNU GPL License<br><a "
-        "href='https://github.com/jowin202/OpenSprite'>https://github.com/jowin202/OpenSprite</a>");
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.exec();
-}
-
-void MainWindow::on_actionExport_as_triggered()
-{
-    ExportDialog *d = new ExportDialog(&opt);
-    connect(d,&ExportDialog::statusmsg, [=](QString msg){
-        this->statusBar()->showMessage(msg);
-    });
-    d->show();
-}
-
-void MainWindow::on_actionExport_triggered()
-{
-    if (opt.last_exported_file == "") {
-        ExportDialog *d = new ExportDialog(&opt);
-        connect(d,&ExportDialog::statusmsg, [=](QString msg){
-            this->statusBar()->showMessage(msg);
-        });
-        d->show();
-    } else { //auto export
-        FileIO().write_prg(opt.last_exported_file,
-                           opt.data,
-                           opt.export_address,
-                           opt.export_attribute_format);
-        this->statusBar()->showMessage("Exported to: " + opt.last_exported_file);
-    }
-}
-
-void MainWindow::on_actionReflect_Left_To_Right_triggered()
-{
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        this->opt.sprite_list.at(i)->reflect_left();
-    this->ui->graphicsView->scene()->update();
-}
-
-void MainWindow::on_actionReflect_Top_to_Bottom_triggered()
-{
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        this->opt.sprite_list.at(i)->reflect_top();
-    this->ui->graphicsView->scene()->update();
-}
-
-void MainWindow::on_actionNew_triggered()
-{
-    //ask question
-    QCryptographicHash hash1(QCryptographicHash::Algorithm::Sha256);
-    hash1.addData(QJsonDocument(opt.data).toJson(QJsonDocument::Compact));
-    QByteArray current_hash = hash1.result().toHex();
-
-    if (opt.last_hash != current_hash) {
-        QMessageBox box;
-        box.setWindowTitle("OpenSprite");
-        box.setText("Save changes?");
-        QPushButton *yes = box.addButton("Yes", QMessageBox::YesRole);
-        QPushButton *no = box.addButton("No", QMessageBox::NoRole);
-        QPushButton *cancel = box.addButton("Cancel", QMessageBox::RejectRole);
-        box.exec();
-
-        if (box.clickedButton() == cancel)
-            return; //dont create new project
-        else if (box.clickedButton() == no) {
-        } // go on
-        else if (box.clickedButton() == yes) {
-            this->on_actionSave_Project_triggered();
-        }
-    }
-    this->new_project();
-}
-
-void MainWindow::on_actionUndo_triggered()
-{
-    if (!opt.undoDB.isEmpty()) {
-        opt.data = opt.undoDB.last();
-        opt.undoDB.removeLast();
-        this->ui->graphicsView->redraw();
-    }
-}
-
-void MainWindow::on_actionAnimations_Editor_triggered()
-{
-    //doing a singleton.
-    if (animation_dialog == 0) {
-        animation_dialog = new AnimationDialog(&opt);
-        connect(animation_dialog, &AnimationDialog::dialog_closed, [=]() {
-            this->animation_dialog = 0;
-        });
-        animation_dialog->show();
-    } else {
-        animation_dialog->raise();
-    }
-}
-
-void MainWindow::on_actionSprite_Color_MC_1_triggered()
-{
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        this->opt.sprite_list.at(i)->switch_col_to_mc1();
-    this->ui->graphicsView->scene()->update();
-}
-
-void MainWindow::on_actionSprite_Color_MC_2_triggered()
-{
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        this->opt.sprite_list.at(i)->switch_col_to_mc2();
-    this->ui->graphicsView->scene()->update();
-}
-
-void MainWindow::on_actionMC_1_MC_2_triggered()
-{
-    opt.undoDB.append(opt.data);
-    for (int i = opt.selection_from; i <= opt.selection_to; i++)
-        this->opt.sprite_list.at(i)->switch_mc1_to_mc2();
-    this->ui->graphicsView->scene()->update();
-}
-
-void MainWindow::on_actionRotate_triggered()
-{
-    RotationDialog *dialog = new RotationDialog(&opt);
-    dialog->show();
-    connect(dialog, &RotationDialog::finished, [=]() { this->ui->graphicsView->redraw(); });
-}
-
-void MainWindow::on_actionPreferences_triggered()
-{
-    SettingsDialog *dialog = new SettingsDialog(&opt);
-    dialog->show();
-    connect(dialog, &SettingsDialog::finished, [=]() { this->ui->graphicsView->redraw(); });
-}
-
-
-void MainWindow::on_actionSelection_to_Animation_triggered()
-{
-    QJsonArray animation_array = opt.data.value("animations").toArray();
-    QJsonObject new_animation;
-    new_animation.insert("from", opt.selection_from);
-    new_animation.insert("to", opt.selection_to);
-    new_animation.insert("overlay", false);
-    new_animation.insert("pingpong", false);
-    new_animation.insert("valid", true);
-    new_animation.insert("timer", 16);
-    animation_array.append(new_animation);
-    opt.data.insert("animations", animation_array);
-
-    this->on_actionAnimations_Editor_triggered();
-}
-
-
-void MainWindow::on_actionSelect_All_triggered()
-{
-    this->opt.selection_from = 0;
-    this->opt.selection_to = this->opt.sprite_list.length()-1;
-    this->ui->graphicsView->redraw();
-}
-
-
-void MainWindow::on_actionFlood_Fill_triggered()
-{
-    if (this->ui->actionFlood_Fill->isChecked())
-    {
-        this->opt.pen = PEN::FLOOD;
-    }
-    else
-    {
-        this->opt.pen = PEN::DEFAULT;
-    }
-}
-
-
 void MainWindow::on_actionZoomIn_triggered()
 {
     this->ui->slider_scale->setValue(this->ui->slider_scale->value()+5);
 }
-
 
 void MainWindow::on_actionZoomOut_triggered()
 {
     this->ui->slider_scale->setValue(this->ui->slider_scale->value()-5);
 }
 
-
-void MainWindow::on_actionScale_Dialog_triggered()
-{
-    ScalingDialog *dialog = new ScalingDialog(&this->opt);
-    dialog->show();
-    connect(dialog, &ScalingDialog::finished, [=]() { this->ui->graphicsView->redraw(); });
-
-}
-
-
 void MainWindow::on_actionQuick_Editor_triggered()
 {
-
     QSettings settings;
     bool nowVisible = this->ui->actionQuick_Editor->isChecked();
     quickEditor->setVisible(nowVisible);
     this->ui->groupBox->setTitle(nowVisible ? tr("Quick Editor and Options") : tr("Options"));
     settings.setValue("quickeditor_visible", nowVisible);
 }
-

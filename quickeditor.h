@@ -30,8 +30,8 @@ protected:
 private:
     options *opt = nullptr;
 
-    // Map widget position → Sprite-local coordinate (240×210 space, no expand)
-    QPointF toSpriteLocal(QPoint widgetPos) const;
+    // Map widget position → Sprite-local item coordinate
+    QPointF toSpriteLocal(Sprite *s, QPoint widgetPos) const;
     Sprite *activeSprite() const;
 };
 

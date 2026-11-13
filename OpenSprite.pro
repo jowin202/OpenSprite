@@ -2,7 +2,12 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17
+
+# application version (single source: used in the About dialog and file properties)
+VERSION = 2.0.0
+VERSION_DATE = 11/2026
+DEFINES += APP_VERSION=\\\"$$VERSION\\\" APP_VERSION_DATE=\\\"$$VERSION_DATE\\\"
 
 CONFIG(debug, debug|release) {
     DESTDIR = build/debug
@@ -26,8 +31,10 @@ SOURCES += \
     quickeditor.cpp \
     rotations/rotationdialog.cpp \
     scale/scalingdialog.cpp \
+    seriesutil.cpp \
     settingsdialog.cpp \
     sprite.cpp \
+    spritedata.cpp \
     spriteview.cpp
 
 HEADERS += \
@@ -41,8 +48,10 @@ HEADERS += \
     quickeditor.h \
     rotations/rotationdialog.h \
     scale/scalingdialog.h \
+    seriesutil.h \
     settingsdialog.h \
     sprite.h \
+    spritedata.h \
     spriteview.h
 
 FORMS += \

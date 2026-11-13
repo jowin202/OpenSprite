@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QImage>
+#include <QJsonObject>
 
 struct options;
 
@@ -19,7 +21,6 @@ public:
     ~AnimationForm();
 
     QImage draw_sprite(int sprite_id);
-    int get_sprite_bit(int sprite_id, int x, int y);
 
     QJsonObject get_animation();
 
@@ -46,7 +47,6 @@ private slots:
 private:
     Ui::AnimationForm *ui;
     options *opt;
-    //int current_id;
     int current_pic = 0;
     QTimer timer;
 

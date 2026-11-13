@@ -1,28 +1,33 @@
 #ifndef FILEIO_H
 #define FILEIO_H
 
-#include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QMessageBox>
-#include <QObject>
+#include <QString>
 
-class FileIO : public QObject
+class QWidget;
+
+// Reading and writing of the supported file formats.
+// Read functions return an empty object on error (after showing a message).
+// Write functions return false on error (after showing a message).
+class FileIO
 {
-    Q_OBJECT
 public:
-    explicit FileIO(QObject *parent = nullptr);
+    static QJsonObject read_spd(const QString &path, QWidget *parent = nullptr);
+    static bool write_spd(const QString &path, const QJsonObject &file_obj, QWidget *parent = nullptr);
 
-    QJsonObject read_spd(QString path);
-    void write_spd(QString path, QJsonObject file_obj);
+    // address < 0: no load address (bin file)
+    // attribute: 0 = none, 1 = spritepad, 2 = seuck
+    static bool write_prg(const QString &path,
+                          const QJsonObject &file_obj,
+                          int address,
+                          int attribute,
+                          QWidget *parent = nullptr);
+    static QJsonObject read_prg_bin(const QString &path, int *address, QWidget *parent = nullptr);
 
-    void write_prg(QString path, QJsonObject file_obj, int address, int attribute);
-    QJsonObject read_prg_bin(QString path, int *address);
+    static QJsonObject read_spm(const QString &path, QWidget *parent = nullptr);
 
-
-    QJsonObject read_spm(QString path);
-
-signals:
+    static constexpr int SPD_V1_MAX_SPRITES = 256;
 };
 
 #endif // FILEIO_H

@@ -10,34 +10,41 @@ AnimationForm::AnimationForm(options *opt, int animation_id) :
     ui->setupUi(this);
 
     this->opt = opt;
-    this->ui->spin_from->setMaximum(opt->data.value("sprites").toArray().count()-1);
-    this->ui->spin_to->setMaximum(opt->data.value("sprites").toArray().count()-1);
+    const int max_sprite = qMax(0, opt->sprite_count()-1);
+    this->ui->spin_from->setMaximum(max_sprite);
+    this->ui->spin_to->setMaximum(max_sprite);
 
-    this->ui->spin_from->setValue(opt->data.value("animations").toArray().at(animation_id).toObject().value("from").toInt());
-    this->ui->spin_to->setValue(opt->data.value("animations").toArray().at(animation_id).toObject().value("to").toInt());
+    const QJsonObject animation = opt->data.value("animations").toArray().at(animation_id).toObject();
+    this->ui->spin_from->setValue(animation.value("from").toInt());
+    this->ui->spin_to->setValue(animation.value("to").toInt());
 
-    int delay = opt->data.value("animations").toArray().at(animation_id).toObject().value("timer").toInt();
+    int delay = animation.value("timer").toInt();
     this->ui->spin_timer->setValue( delay == 0 ? 16 : delay);
 
-    this->ui->check_overlay->setChecked(opt->data.value("animations").toArray().at(animation_id).toObject().value("overlay").toBool());
-    this->ui->check_pingpong->setChecked(opt->data.value("animations").toArray().at(animation_id).toObject().value("pingpong").toBool());
+    this->ui->check_overlay->setChecked(animation.value("overlay").toBool());
+    this->ui->check_pingpong->setChecked(animation.value("pingpong").toBool());
 
 
-    this->timer.setInterval(opt->data.value("animations").toArray().at(animation_id).toObject().value("timer").toInt() * 20);
-    connect(&this->timer, &QTimer::timeout, [=](){
+    this->timer.setInterval(this->ui->spin_timer->value() * 20);
+    connect(&this->timer, &QTimer::timeout, this, [=](){
+        if (this->animation_images.isEmpty())
+            return;
+        // forward frames are followed by the backward frames; without pingpong only the forward part is used
+        const int frames = this->ui->check_pingpong->isChecked() ? this->animation_images.count() : 1+( this->animation_images.count()>>1);
+        current_pic %= frames;
         this->ui->label_img->setPixmap(QPixmap::fromImage(this->animation_images.at(current_pic)));
-        current_pic = (current_pic+1) % (this->ui->check_pingpong->isChecked() ? this->animation_images.count() : 1+( this->animation_images.count()>>1));
+        current_pic = (current_pic+1) % frames;
     });
 
     this->reload_images();
 
-    connect(this->ui->spin_from, &QSpinBox::valueChanged, [=](){ this->update_animation(); });
-    connect(this->ui->spin_to, &QSpinBox::valueChanged, [=](){ this->update_animation(); });
-    connect(this->ui->spin_timer, &QSpinBox::valueChanged, [=](){ this->update_animation(); });
+    connect(this->ui->spin_from, &QSpinBox::valueChanged, this, [=](){ this->update_animation(); });
+    connect(this->ui->spin_to, &QSpinBox::valueChanged, this, [=](){ this->update_animation(); });
+    connect(this->ui->spin_timer, &QSpinBox::valueChanged, this, [=](){ this->update_animation(); });
 
 
-    connect(this->ui->check_overlay, &QCheckBox::toggled, [=](){ this->update_animation(); });
-    connect(this->ui->check_pingpong, &QCheckBox::toggled, [=](){ this->update_animation(); });
+    connect(this->ui->check_overlay, &QCheckBox::toggled, this, [=](){ this->update_animation(); });
+    connect(this->ui->check_pingpong, &QCheckBox::toggled, this, [=](){ this->update_animation(); });
 }
 
 AnimationForm::~AnimationForm()
@@ -54,152 +61,54 @@ void AnimationForm::update_animation()
 void AnimationForm::reload_images()
 {
     this->animation_images.clear();
+    this->current_pic = 0;
+
+    const QJsonArray sprites = this->opt->data.value("sprites").toArray();
+    // sprites that are an overlay of the previous sprite are drawn together with it
+    auto is_overlay = [&](int i) {
+        return i > 0 && sprites.at(i-1).toObject().value("overlay_next").toBool();
+    };
+
     for (int i = this->ui->spin_from->value(); i <= this->ui->spin_to->value(); i++)
     {
-        if (this->opt->data.value("sprites").toArray().at(i-1).toObject().value("overlay_next").toBool())
+        if (is_overlay(i))
             continue;
         this->animation_images.append(this->draw_sprite(i));
     }
 
     for (int i = this->ui->spin_to->value()-1; i >= this->ui->spin_from->value(); i--)
     {
-        if (this->opt->data.value("sprites").toArray().at(i-1).toObject().value("overlay_next").toBool())
+        if (is_overlay(i))
             continue;
         this->animation_images.append(this->draw_sprite(i));
     }
-    this->ui->label_img->setPixmap(QPixmap::fromImage(this->animation_images.first()));
+
+    if (this->animation_images.isEmpty())
+        this->ui->label_img->clear();
+    else
+        this->ui->label_img->setPixmap(QPixmap::fromImage(this->animation_images.first()));
 }
 
 QImage AnimationForm::draw_sprite(int sprite_id)
 {
-    QPainter painter;
-    QImage img(10*24, 10*21, QImage::Format_RGB16);
-    painter.begin(&img);
-    bool expand_x = this->opt->data.value("sprites").toArray().at(sprite_id).toObject().value("exp_x").toBool();
-    bool expand_y = this->opt->data.value("sprites").toArray().at(sprite_id).toObject().value("exp_y").toBool();
+    QImage img(10*24, 10*21, QImage::Format_RGB32);
+    const QJsonObject sprite = SpriteData::sprite_at(opt->data, sprite_id);
+    img.fill(SpriteData::color(opt->col_list, opt->data.value("background").toInt()));
 
+    // expansion changes the aspect ratio inside the fixed 240x210 frame
+    const qreal cw = sprite.value("exp_y").toBool() ? 5 : 10;
+    const qreal ch = sprite.value("exp_x").toBool() ? 5 : 10;
 
-    if (this->opt->data.value("sprites").toArray().at(sprite_id).toObject().value("mc_mode").toBool())
-    {
-        int w = 20 * (expand_y ? 0.5 : 1);
-        int h = 10 * (expand_x ? 0.5 : 1);
-        for (int y = 0; y < 21; y++)
-        {
-            for (int x = 0; x < 12; x++)
-            {
-                if (this->get_sprite_bit(sprite_id,2*x,y)== 0 && this->get_sprite_bit(sprite_id,2*x+1,y) == 0)
-                {
-                    painter.fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(opt->data.value("background").toInt()));
-                }
-                else if (this->get_sprite_bit(sprite_id,2*x,y)== 1 && this->get_sprite_bit(sprite_id,2*x+1,y) == 0)
-                {
-                    painter.fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(sprite_id).toObject().value("sprite_color").toInt()));
-                }
-                else if (this->get_sprite_bit(sprite_id,2*x,y) == 0 && this->get_sprite_bit(sprite_id,2*x+1,y) == 1)
-                {
-                    painter.fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc1").toInt()));
-                }
-                else if (this->get_sprite_bit(sprite_id,2*x,y) == 1 && this->get_sprite_bit(sprite_id,2*x+1,y) == 1)
-                {
-                    painter.fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc2").toInt()));
-                }
+    QJsonObject overlay;
+    const bool has_overlay = sprite.value("overlay_next").toBool() && sprite_id + 1 < opt->sprite_count();
+    if (has_overlay)
+        overlay = SpriteData::sprite_at(opt->data, sprite_id + 1);
 
-            }
-        }
-    }
-    else //not multicol
-    {
-        int w = 10 * (expand_y ? 0.5 : 1);
-        int h = 10 * (expand_x ? 0.5 : 1);
-        for (int y = 0; y < 21; y++)
-        {
-            for (int x = 0; x < 24; x++)
-            {
-                if (this->get_sprite_bit(sprite_id,x,y) == 1)
-                {
-                    painter.fillRect(w*x,h*y,w+1,h+1,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(sprite_id).toObject().value("sprite_color").toInt()));
-                }
-                else
-                {
-                    painter.fillRect(w*x,h*y,w+1,h+1,this->opt->col_list.at(opt->data.value("background").toInt()));
-                }
-            }
-        }
-    }
-
-
-    if (this->opt->data.value("sprites").toArray().at(sprite_id).toObject().value("overlay_next").toBool() && opt->sprite_list.length() > sprite_id+1)
-    {
-        if (this->opt->data.value("sprites").toArray().at(sprite_id+1).toObject().value("mc_mode").toBool())
-        {
-            int w = 20 * (expand_y ? 0.5 : 1);
-            int h = 10 * (expand_x ? 0.5 : 1);
-            for (int y = 0; y < 21; y++)
-            {
-                for (int x = 0; x < 12; x++)
-                {
-                    if (opt->sprite_list.at(sprite_id+1)->get_bit(2*x,y)== 1 && opt->sprite_list.at(sprite_id+1)->get_bit(2*x+1,y) == 0)
-                    {
-                        painter.fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(sprite_id+1).toObject().value("sprite_color").toInt()));
-                    }
-                    else if (opt->sprite_list.at(sprite_id+1)->get_bit(2*x,y) == 0 && opt->sprite_list.at(sprite_id+1)->get_bit(2*x+1,y) == 1)
-                    {
-                        painter.fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc1").toInt()));
-                    }
-                    else if (opt->sprite_list.at(sprite_id+1)->get_bit(2*x,y) == 1 && opt->sprite_list.at(sprite_id+1)->get_bit(2*x+1,y) == 1)
-                    {
-                        painter.fillRect(x*w,y*h,w+1,h+1,this->opt->col_list.at(this->opt->data.value("mc2").toInt()));
-                    }
-
-                }
-            }
-        }
-        else
-        {
-            int w = 10 * (expand_y ? 0.5 : 1);
-            int h = 10 * (expand_x ? 0.5 : 1);
-            for (int y = 0; y < 21; y++)
-            {
-                for (int x = 0; x < 24; x++)
-                {
-                    if (opt->sprite_list.at(sprite_id+1)->get_bit(x,y) == 1)
-                    {
-                        painter.fillRect(w*x,h*y,w+1,h+1,this->opt->col_list.at(this->opt->data.value("sprites").toArray().at(sprite_id+1).toObject().value("sprite_color").toInt()));
-                    }
-                }
-            }
-        }
-    }
-
-
-
-    if (opt->show_grid_lines)
-    {
-
-        int w = 10 * (expand_y ? 0.5 : 1);
-        int h = 10 * (expand_x ? 0.5 : 1);
-
-        QPen pen;
-        pen.setColor(Qt::gray);
-        pen.setWidthF(0.5);
-        painter.setPen(pen);
-        for (int y = 0; y < 21; y++)
-            painter.drawLine(0, h*y, 24*w, h*y);
-        for (int x = 0; x < 24; x+=2)
-            painter.drawLine(w*x, 0, w*x, h*21);
-
-        if (!this->opt->data.value("sprites").toArray().at(sprite_id).toObject().value("mc_mode").toBool())
-            for (int x = 1; x < 24; x+=2)
-                painter.drawLine(w*x, 0, w*x, h*21);
-    }
+    QPainter painter(&img);
+    SpriteData::render(&painter, opt->col_list, opt->data, sprite,
+                       has_overlay ? &overlay : nullptr, cw, ch, opt->show_grid_lines);
+    painter.end();
     return img;
-}
-
-int AnimationForm::get_sprite_bit(int sprite_id, int x, int y)
-{
-    if (x < 0 || y < 0 || x >= 24 || y >= 21) return false;
-    if (opt->data.value("sprites").toArray().count() <= sprite_id) return false;
-    return opt->data.value("sprites").toArray().at(sprite_id).toObject().value("sprite_data").toArray().at(y).toArray().at(x).toInt() > 0;
 }
 
 QJsonObject AnimationForm::get_animation()
@@ -218,6 +127,7 @@ QJsonObject AnimationForm::get_animation()
 
 void AnimationForm::on_button_delete_clicked()
 {
+    this->timer.stop();
     this->delete_this = true;
     emit changed();
     emit rewrite_list();
@@ -226,7 +136,6 @@ void AnimationForm::on_button_delete_clicked()
 
 void AnimationForm::on_button_play_clicked()
 {
-    this->reload_images();
     if (this->timer.isActive())
     {
         this->timer.stop();
@@ -234,6 +143,7 @@ void AnimationForm::on_button_play_clicked()
     }
     else
     {
+        this->reload_images();
         this->timer.start();
         this->ui->button_play->setText("Stop");
     }
@@ -256,4 +166,3 @@ void AnimationForm::on_spin_to_valueChanged(int arg1)
     if (this->ui->spin_to->value() <= this->ui->spin_from->value())
         this->ui->spin_from->setValue(this->ui->spin_to->value()-1);
 }
-

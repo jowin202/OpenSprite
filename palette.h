@@ -15,10 +15,10 @@ class Palette : public QLabel
 {
     Q_OBJECT
 public:
-    Palette(QWidget *parent = 0);
+    Palette(QWidget *parent = nullptr);
     void showPalette(options *opt);
 
-    void mousePressEvent(QMouseEvent *ev);
+    void mousePressEvent(QMouseEvent *ev) override;
 
 signals:
     void palette_clicked(int,int);
@@ -28,7 +28,7 @@ signals:
 private:
     int width = 352;
     int height = 56;
-    options *opt;
+    options *opt = nullptr;
 
 
 

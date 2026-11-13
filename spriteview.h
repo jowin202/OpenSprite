@@ -55,7 +55,7 @@ signals:
     void droppedFile(QString file);
 
 private:
-    options *opt;
+    options *opt = nullptr;
     QSettings settings;
 
 };

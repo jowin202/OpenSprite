@@ -4,10 +4,12 @@
 
 #include "animationform.h"
 
-AnimationDialog::AnimationDialog(options *opt) : QWidget(),
+AnimationDialog::AnimationDialog(options *opt, QWidget *parent) : QWidget(parent),
     ui(new Ui::AnimationDialog)
 {
     ui->setupUi(this);
+    setWindowFlag(Qt::Window);
+    setAttribute(Qt::WA_DeleteOnClose);
     this->opt = opt;
 
     this->fill_list();
@@ -18,24 +20,31 @@ AnimationDialog::~AnimationDialog()
     delete ui;
 }
 
+AnimationForm *AnimationDialog::add_form(int animation_id)
+{
+    AnimationForm *item = new AnimationForm(opt, animation_id);
+    connect(item, &AnimationForm::changed, this, &AnimationDialog::save_data);
+    // queued: the list is rebuilt after the emitting form has returned (it gets deleted)
+    connect(item, &AnimationForm::rewrite_list, this, &AnimationDialog::fill_list, Qt::QueuedConnection);
+    this->ui->verticalLayout->addWidget(item);
+    return item;
+}
+
 void AnimationDialog::fill_list()
 {
     QLayoutItem *item;
-    while ( (item = this->ui->verticalLayout->takeAt(0)) != 0)
-        delete item->widget();
+    while ( (item = this->ui->verticalLayout->takeAt(0)) != nullptr)
+    {
+        if (QWidget *w = item->widget())
+        {
+            w->hide();
+            w->deleteLater();
+        }
+        delete item;
+    }
 
     for (int i = 0; i < opt->data.value("animations").toArray().count(); i++)
-    {
-        AnimationForm *item = new AnimationForm(opt, i);
-        connect(item, &AnimationForm::changed, [=](){
-            this->save_data();
-        });
-
-        connect(item, &AnimationForm::rewrite_list, [=](){
-            this->fill_list();
-        });
-        this->ui->verticalLayout->addWidget(item);
-    }
+        add_form(i);
 }
 
 void AnimationDialog::save_data()
@@ -44,11 +53,11 @@ void AnimationDialog::save_data()
 
     for (int i = 0; i < this->ui->verticalLayout->count(); i++)
     {
-        if (((AnimationForm*)this->ui->verticalLayout->itemAt(i)->widget())->delete_this)
+        AnimationForm *form = qobject_cast<AnimationForm*>(this->ui->verticalLayout->itemAt(i)->widget());
+        if (form == nullptr || form->delete_this)
             continue; //do not store this if marked for deletion
 
-        QJsonObject o = ((AnimationForm*)this->ui->verticalLayout->itemAt(i)->widget())->get_animation();
-        new_animations.append(o);
+        new_animations.append(form->get_animation());
     }
     opt->data.insert("animations", new_animations);
 }
@@ -56,11 +65,6 @@ void AnimationDialog::save_data()
 
 void AnimationDialog::on_button_add_animation_clicked()
 {
-    AnimationForm *item = new AnimationForm(opt, opt->data.value("animations").toArray().count());
-    connect(item, &AnimationForm::changed, [=](){
-        this->save_data();
-    });
-    this->ui->verticalLayout->addWidget(item);
+    add_form(opt->data.value("animations").toArray().count());
     this->save_data();
 }
-

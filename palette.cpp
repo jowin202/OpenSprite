@@ -23,9 +23,10 @@ void Palette::showPalette(options *opt)
 
 void Palette::mousePressEvent(QMouseEvent *ev)
 {
-    if (ev->pos().x() < 0 || ev->pos().x() > this->width)
+    // the pixmap may be smaller than the label; ignore clicks outside of it
+    if (ev->pos().x() < 0 || ev->pos().x() >= this->width)
         return;
-    if (ev->pos().y() < 0 || ev->pos().y() > this->height)
+    if (ev->pos().y() < 0 || ev->pos().y() >= this->height)
         return;
 
     int color_pos = 0;

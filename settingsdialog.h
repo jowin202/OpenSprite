@@ -10,7 +10,7 @@ namespace Ui {
 class SettingsDialog;
 }
 
-class options;
+struct options;
 
 class SettingsDialog : public QWidget
 {
@@ -20,7 +20,7 @@ public:
     explicit SettingsDialog(options *opt, QWidget *parent = nullptr);
     ~SettingsDialog();
 
-    void keyPressEvent(QKeyEvent *e) {
+    void keyPressEvent(QKeyEvent *e) override {
         if(e->key() == Qt::Key_Escape)
             this->on_button_cancel_clicked();
         else if (e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter)
@@ -42,6 +42,10 @@ private slots:
 
 signals:
     void finished();
+
+public:
+    // writes the default values; if force is false, only missing keys are set
+    static void apply_defaults(QSettings &settings, bool force);
 
 
 private:

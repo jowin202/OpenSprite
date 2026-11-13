@@ -7,7 +7,7 @@
 #include <QFileDialog>
 #include <QKeyEvent>
 
-class options;
+struct options;
 
 namespace Ui {
 class ExportDialog;
@@ -22,7 +22,7 @@ public:
     ~ExportDialog();
 
 
-    void keyPressEvent(QKeyEvent *e) {
+    void keyPressEvent(QKeyEvent *e) override {
         if(e->key() == Qt::Key_Escape)
             this->on_button_close_clicked();
         else if (e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter)
