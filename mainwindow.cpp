@@ -197,15 +197,8 @@ MainWindow::MainWindow(QWidget *parent)
     quickEditor->set_opt(&opt);
     quickEditor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    // Shift all existing sidebar items down by one row to make room at row 0
-    QGridLayout *sideLayout = qobject_cast<QGridLayout*>(this->ui->groupBox->layout());
-    for (int i = sideLayout->count() - 1; i >= 0; i--) {
-        int r, c, rs, cs;
-        sideLayout->getItemPosition(i, &r, &c, &rs, &cs);
-        QLayoutItem *item = sideLayout->takeAt(i);
-        sideLayout->addItem(item, r + 1, c, rs, cs);
-    }
-    sideLayout->addWidget(quickEditor, 0, 0, 1, 3);
+    // row 0 of the sidebar is reserved for the Quick Editor in mainwindow.ui
+    this->ui->layout_quickeditor->addWidget(quickEditor);
 
     // Restore saved visibility state (default: off)
     QSettings qeSettings;
